@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .btn{
+            float:right;
+            margin-top:5px;
+            background-color:white;
+            border:1px solid white;
+        }
+        .btn:hover{
+            border: 1px solid black;
+        }
+        .btn:active{
+            background-color:#E7E9EB;
+            border: 1px solid black;
+        }
+        .marg-each *:not(.im){
+            margin: 10px;
+        }
+        #yellow{padding:10px;background-color: yellow;}
+        #green{padding: 10px;background-color: green;}
+        #blue{padding:10px;background-color: blue;}
+        #red{padding:10px;background-color: red;}
+        #purple{padding:10px;background-color: purple;}
+        #pink{padding:10px;background-color: pink;}
+    </style>
+</head>
+<body>
+    <form>
+        <div class="marg-each" id="inputWrapper">
+            <input class="myInput" type="text" placeholder="regular expression" /><span class="im" id="yellow"></span>
+            <input class="myInput" type="text" placeholder="regular expression" /><span class="im" id="green"></span>
+            <input class="myInput" type="text" placeholder="regular expression" /><span class="im" id="blue"></span>
+            <input class="myInput" type="text" placeholder="regular expression" /><span class="im" id="red"></span>
+            <input class="myInput" type="text" placeholder="regular expression" /><span class="im" id="purple"></span>
+            <input class="myInput" type="text" placeholder="regular expression" /><span class="im" id="pink"></span>
+        </div>
+    </form>
+</body>
+</html>

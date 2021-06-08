@@ -1,0 +1,32 @@
+{
+    "manifest_version": 2,
+    "name": "Chrome Regular Expressions",
+    "version": "1.0",
+    "description": "This is an extension built to increase functionality of the ctrl+f shortcut in google chrome.",
+    "permissions": [
+        "activeTab",
+        "notifications",
+        "declarativeContent"
+    ],
+    "content_scripts": [
+        {
+            "matches": ["*://*/*", "https://*/"],
+            "js": ["domManip.js"],
+            "css": ["myStyles.css"]
+        }
+    ],
+    "browser_action": {
+        "default_icon": {
+            "16": "regex.png",
+            "24": "regex.png",
+            "32": "regex.png"
+        },
+        "default_title": "Regular Expressions",
+        "default_popup": "popup.html"
+    },
+    "icons": {
+        "16": "regex.png",
+        "48": "regex.png",
+        "128": "regex.png"
+    }
+}

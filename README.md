@@ -1,2 +1,2 @@
 # chrome-regex
-regular expression functionality for ctrl+f search
+Regular expression functionality for ctrl+f search
