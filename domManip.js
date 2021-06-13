@@ -1,39 +1,57 @@
 
-const word = /\d+[.] (\w+ \w+|\w+-\w+|\w+)/;
+var word;
 const root = document.querySelector('body');
-const killRecursion = false;
-recursive(root, word);
+var killRecursion = false;
+var args = [];
 
-function recursive(node, searchText){
-    if(!killRecursion){
-        if(node.nodeType === Node.TEXT_NODE){
-            var stg = node.textContent + '';
-            var reg = new RegExp(searchText, 'i');//DO NOT CHANGE TO GLOBAL!!!
-            var parent = node.parentNode;
-            if(reg.test(stg)){
-                parent.replaceChild(document.createTextNode(createNewInnerText(node.data, reg)), node);
-                var newHtml = parent.innerHTML;
-                var left = /&lt;font class="highlight-me"&gt;/g;
-                var right = /&lt;[/]font&gt;/g;
-                newHtml = newHtml.replace(left, `<font class="highlight-me">`); 
-                newHtml = newHtml.replace(right, '</font>');
-                parent.innerHTML = newHtml;
-                console.log(parent.innerHTML);
-            }
-        } else if(node.hasChildNodes()){
-            var children = node.childNodes;
-            var chOgLength = children.length;
-            for(var i = 0;i<chOgLength;i++){
-                recursive(children[i], searchText);
-                if(chOgLength<children.length){
-                    i += children.length - chOgLength;
-                    chOgLength = children.length;
-                }
+chrome.runtime.onMessage.addListener((msg, sender, response) => {
+    if((msg.from === 'popup') && (msg.subject === 'newDomInfo')){
+        undoRecursion(args);
+        word = new RegExp(msg.data);
+        args = recursive(root, word);
+    }
+    response('we got the message');
+});
+
+function recursive(node, searchText, args){
+    if(node.nodeType === Node.TEXT_NODE){
+        var stg = node.textContent + '';
+        var reg = new RegExp(searchText, 'i');//DO NOT CHANGE TO GLOBAL!!!
+        var parent = node.parentNode;
+        var newNode;
+        if(reg.test(stg)){
+            newNode = document.createTextNode(createNewInnerText(node.data, reg));
+            parent.replaceChild(newNode, node);
+            var newHtml = parent.innerHTML;
+            var left = /&lt;font class="highlight-me"&gt;/g;
+            var right = /&lt;[/]font&gt;/g;
+            newHtml = newHtml.replace(left, `<font class="highlight-me">`); 
+            newHtml = newHtml.replace(right, '</font>');
+            parent.innerHTML = newHtml;
+        }
+        args.push([node, newNode, parent]);
+        return 0;
+    } else if(node.hasChildNodes()){
+        var children = node.childNodes;
+        var chOgLength = children.length;
+        for(var i = 0;i<chOgLength;i++){
+            recursive(children[i], searchText, args);
+            if(chOgLength<children.length){
+                i += children.length - chOgLength;
+                chOgLength = children.length;
             }
         }
     }
-    return null;
+    return args;
 }
+function undoRecursion(args){
+    for(var i = 0;i<args.length;i++){
+        if(args[i][1]){
+            args[i][2].replaceChild(args[i][1], args[i][0]);
+        }
+    }
+}
+
 function createNewInnerText(myInnerText, reg){
     var regG = new RegExp(reg, 'ig');
     // get the matched strings and their indexes inside the parent string
@@ -77,4 +95,3 @@ function indexesOf(regExpression, stg){
     }
     return arr;
 }
-

@@ -1,4 +1,35 @@
 
+var inputs;
+window.addEventListener('DOMContentLoaded', () => {
+    inputs = document.querySelectorAll('input');
+    inputs.forEach(elem => {
+        elem.addEventListener('input', sendData);
+    })
+});
+
+
+function sendData(e){
+    var data = e.target.value;
+    var id = e.target.id;
+    chrome.tabs.query({
+        active: true,
+        currentWindow: true
+    }, tabs => {
+        chrome.tabs.sendMessage(
+            tabs[0].id,
+            {
+                from: 'popup',
+                subject: 'newDomInfo',
+                data,
+                id
+            },
+            setDomInfo
+        );
+    });
+}
+function setDomInfo(info) {
+    // console.log(info);
+}
 
 // const form = document.querySelector('form');
 
