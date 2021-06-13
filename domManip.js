@@ -1,66 +1,35 @@
 
-
-
-// getData();
-// function getData(){
-//     chrome.runtime.sendMessage('get-popup-info', (response) => {
-//         console.log('received popup info: ', response);
-//     });
-// }
-
-
-
-const word = 'the';
+const word = /\d+[.] (\w+ \w+|\w+-\w+|\w+)/;
 const root = document.querySelector('body');
-
+const killRecursion = false;
 recursive(root, word);
 
 function recursive(node, searchText){
-    
-    // if the node is not a text node, move on to the next child node or sibling node
-    if(node.hasChildNodes()||node.nodeType != Node.TEXT_NODE){
-        // if the current Node has children
-        if(node.hasChildNodes()){
+    if(!killRecursion){
+        if(node.nodeType === Node.TEXT_NODE){
+            var stg = node.textContent + '';
+            var reg = new RegExp(searchText, 'i');//DO NOT CHANGE TO GLOBAL!!!
+            var parent = node.parentNode;
+            if(reg.test(stg)){
+                parent.replaceChild(document.createTextNode(createNewInnerText(node.data, reg)), node);
+                var newHtml = parent.innerHTML;
+                var left = /&lt;font class="highlight-me"&gt;/g;
+                var right = /&lt;[/]font&gt;/g;
+                newHtml = newHtml.replace(left, `<font class="highlight-me">`); 
+                newHtml = newHtml.replace(right, '</font>');
+                parent.innerHTML = newHtml;
+                console.log(parent.innerHTML);
+            }
+        } else if(node.hasChildNodes()){
             var children = node.childNodes;
             var chOgLength = children.length;
-            // iterate through children of the current node
             for(var i = 0;i<chOgLength;i++){
                 recursive(children[i], searchText);
-            }
-        }
-        // if the node is a text node then manipulate the text
-    }else {
-        // has to be textContent and not innerText because we havent gotten the parent Node yet
-        var stg = node.textContent + '';
-        var reg = new RegExp(searchText, 'i');//DO NOT CHANGE TO GLOBAL!!!
-        if(reg.test(stg)){
-
-            // declare the text Nodes parent
-            var parent = node.parentNode;
-            
-            // place holder for the parent node
-            var pHoldParent = document.createElement(parent.tagName);
-            var pChildren = pHoldParent.childNodes;
-            pHoldParent.innerHTML = parent.innerHTML;
-            var newHtml;
-            if(pChildren&&pChildren.length>1){
-                for(child in pChildren){
-                    if(pChildren[child].nodeType === Node.TEXT_NODE){
-                        pHoldParent.replaceChild(document.createTextNode(createNewInnerText(pChildren[child].data, reg)), pChildren[child]);
-                    }
+                if(chOgLength<children.length){
+                    i += children.length - chOgLength;
+                    chOgLength = children.length;
                 }
-            }else {
-                // replace the holder innerText with the newly constructed string
-                pHoldParent.innerText = createNewInnerText(pHoldParent.innerText, reg);
             }
-            newHtml = pHoldParent.innerHTML;
-            // replace all of my tags that are converted to strings back to tags
-            var left = /&lt;font class="highlight-me"&gt;/g;
-            var right = /&lt;[/]font&gt;/g;
-            newHtml = newHtml.replace(left, `<font class="highlight-me">`); newHtml = newHtml.replace(right, '</font>');
-            
-            // replace the parent html with newly styled html string
-            parent.innerHTML = newHtml;
         }
     }
     return null;
