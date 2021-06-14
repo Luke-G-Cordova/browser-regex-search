@@ -6,51 +6,72 @@ var args = [];
 
 chrome.runtime.onMessage.addListener((msg, sender, response) => {
     if((msg.from === 'popup') && (msg.subject === 'newDomInfo')){
-        undoRecursion(args);
-        word = new RegExp(msg.data);
-        args = recursive(root, word);
+        // undoRecursion(args);
+        // word = new RegExp(msg.data);
+        // args = recursive(root, word);
     }
     response('we got the message');
 });
 
-function recursive(node, searchText, args){
-    if(node.nodeType === Node.TEXT_NODE){
-        var stg = node.textContent + '';
-        var reg = new RegExp(searchText, 'i');//DO NOT CHANGE TO GLOBAL!!!
-        var parent = node.parentNode;
-        var newNode;
-        if(reg.test(stg)){
-            newNode = document.createTextNode(createNewInnerText(node.data, reg));
-            parent.replaceChild(newNode, node);
-            var newHtml = parent.innerHTML;
-            var left = /&lt;font class="highlight-me"&gt;/g;
-            var right = /&lt;[/]font&gt;/g;
-            newHtml = newHtml.replace(left, `<font class="highlight-me">`); 
-            newHtml = newHtml.replace(right, '</font>');
-            parent.innerHTML = newHtml;
-        }
-        args.push([node, newNode, parent]);
-        return 0;
-    } else if(node.hasChildNodes()){
-        var children = node.childNodes;
-        var chOgLength = children.length;
-        for(var i = 0;i<chOgLength;i++){
-            recursive(children[i], searchText, args);
-            if(chOgLength<children.length){
-                i += children.length - chOgLength;
-                chOgLength = children.length;
+var nodesToChange = treeWalker('the');
+var nodesChanged = [];
+console.log(nodesToChange);
+var newNode;
+var parent;
+var nodeData;
+var reg = new RegExp('the', 'i');
+var left = /&lt;font class="highlight-me"&gt;/g;var right = /&lt;[/]font&gt;/g;
+for(var i = 0;i<nodesToChange.length;i++){
+    parent = nodesToChange[i][1];
+    nodeData = nodesToChange[i][0].data;
+    
+    newNode = document.createTextNode(createNewInnerText(nodeData, reg));
+    try{
+        parent.replaceChild(newNode, nodesToChange[i][0]);
+        var newHtml = parent.innerHTML;
+        newHtml = newHtml.replace(left, `<font class="highlight-me">`); 
+        newHtml = newHtml.replace(right, '</font>');
+        parent.innerHTML = newHtml;
+    }catch(err){
+        console.log('hello');
+    }
+    
+
+    nodesChanged.push(newNode);
+}
+
+
+
+function treeWalker(searchText){
+    var myTW = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+    var currentNode = myTW.currentNode;
+    var nodes = [];
+    var reg = new RegExp(searchText, 'i');
+    var nodeData;
+    var parent;
+    while (currentNode){
+        nodeData = currentNode.data + '';
+        parent = currentNode.parentElement;
+        if(parent.tagName != 'SCRIPT' && 
+            parent.tagName != 'NOSCRIPT' && 
+            parent.tagName != 'STYLE' && 
+            nodeData.trim() != '' &&
+            reg.test(nodeData)
+        ){
+            var newTW = document.createTreeWalker(parent);
+            var newCurrentNode = newTW.currentNode;
+            while(newCurrentNode = newTW.nextNode()){
+                nodes.push([newCurrentNode, parent]);
+                currentNode = myTW.nextNode();
             }
+            currentNode = myTW.previousNode();
         }
+        currentNode = myTW.nextNode();
     }
-    return args;
+    return nodes;
 }
-function undoRecursion(args){
-    for(var i = 0;i<args.length;i++){
-        if(args[i][1]){
-            args[i][2].replaceChild(args[i][1], args[i][0]);
-        }
-    }
-}
+
+
 
 function createNewInnerText(myInnerText, reg){
     var regG = new RegExp(reg, 'ig');
@@ -95,3 +116,45 @@ function indexesOf(regExpression, stg){
     }
     return arr;
 }
+
+
+
+
+// function recursive(node, searchText, args){
+//     if(node.nodeType === Node.TEXT_NODE){
+//         var stg = node.textContent + '';
+//         var reg = new RegExp(searchText, 'i');//DO NOT CHANGE TO GLOBAL!!!
+//         var parent = node.parentNode;
+//         var newNode;
+//         if(reg.test(stg)){
+//             newNode = document.createTextNode(createNewInnerText(node.data, reg));
+//             parent.replaceChild(newNode, node);
+//             var newHtml = parent.innerHTML;
+//             var left = /&lt;font class="highlight-me"&gt;/g;
+//             var right = /&lt;[/]font&gt;/g;
+//             newHtml = newHtml.replace(left, `<font class="highlight-me">`); 
+//             newHtml = newHtml.replace(right, '</font>');
+//             parent.innerHTML = newHtml;
+//         }
+//         args.push([node, newNode, parent]);
+//         return 0;
+//     } else if(node.hasChildNodes()){
+//         var children = node.childNodes;
+//         var chOgLength = children.length;
+//         for(var i = 0;i<chOgLength;i++){
+//             recursive(children[i], searchText, args);
+//             if(chOgLength<children.length){
+//                 i += children.length - chOgLength;
+//                 chOgLength = children.length;
+//             }
+//         }
+//     }
+//     return args;
+// }
+// function undoRecursion(args){
+//     for(var i = 0;i<args.length;i++){
+//         if(args[i][1]){
+//             args[i][2].replaceChild(args[i][1], args[i][0]);
+//         }
+//     }
+// }
