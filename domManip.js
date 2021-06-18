@@ -1,7 +1,7 @@
 
 var word;
 const root = document.querySelector('body');
-var killRecursion = false;
+
 var args = [];
 
 chrome.runtime.onMessage.addListener((msg, sender, response) => {
@@ -14,31 +14,33 @@ chrome.runtime.onMessage.addListener((msg, sender, response) => {
 });
 
 var nodesToChange = treeWalker('the');
-var nodesChanged = [];
 console.log(nodesToChange);
-var newNode;
-var parent;
-var nodeData;
-var reg = new RegExp('the', 'i');
-var left = /&lt;font class="highlight-me"&gt;/g;var right = /&lt;[/]font&gt;/g;
-for(var i = 0;i<nodesToChange.length;i++){
-    parent = nodesToChange[i][1];
-    nodeData = nodesToChange[i][0].data;
+// var nodesChanged = [];
+// // console.log(nodesToChange);
+
+// var newNode;
+// var parent;
+// var nodeData;
+// var reg = new RegExp('the', 'i');
+// var left = /&lt;font class="highlight-me"&gt;/g;var right = /&lt;[/]font&gt;/g;
+// for(var i = 0;i<nodesToChange.length;i++){
+//     parent = nodesToChange[i][1];
+//     nodeData = nodesToChange[i][0].data;
     
-    newNode = document.createTextNode(createNewInnerText(nodeData, reg));
-    try{
-        parent.replaceChild(newNode, nodesToChange[i][0]);
-        var newHtml = parent.innerHTML;
-        newHtml = newHtml.replace(left, `<font class="highlight-me">`); 
-        newHtml = newHtml.replace(right, '</font>');
-        parent.innerHTML = newHtml;
-    }catch(err){
-        console.log('hello');
-    }
+//     newNode = document.createTextNode(createNewInnerText(nodeData, reg));
+//     try{
+//         parent.replaceChild(newNode, nodesToChange[i][0]);
+//         var newHtml = parent.innerHTML;
+//         newHtml = newHtml.replace(left, `<font class="highlight-me">`); 
+//         newHtml = newHtml.replace(right, '</font>');
+//         parent.innerHTML = newHtml;
+//     }catch(err){
+//         // console.log('hello');
+//     }
     
 
-    nodesChanged.push(newNode);
-}
+//     nodesChanged.push(newNode);
+// }
 
 
 
@@ -58,13 +60,21 @@ function treeWalker(searchText){
             nodeData.trim() != '' &&
             reg.test(nodeData)
         ){
-            var newTW = document.createTreeWalker(parent);
-            var newCurrentNode = newTW.currentNode;
-            while(newCurrentNode = newTW.nextNode()){
-                nodes.push([newCurrentNode, parent]);
-                currentNode = myTW.nextNode();
+            if(parent.childNodes.length === 1){
+                nodes.push([currentNode, parent]);
+            } else {
+                var newTW = document.createTreeWalker(parent);
+                var newCurrent = newTW.currentNode;
+                var args = [];
+                while(newCurrent){
+                    args.push(newCurrent);
+                    newCurrent = newTW.nextNode();
+                    currentNode = myTW.nextNode();
+                }
+                nodes.push([args, parent]);
             }
-            currentNode = myTW.previousNode();
+            // nodes.push([currentNode, parent]);
+            
         }
         currentNode = myTW.nextNode();
     }
