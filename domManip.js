@@ -24,20 +24,31 @@ var left = /&lt;font class="highlight-me"&gt;/g;var right = /&lt;[/]font&gt;/g;
 for(var i = 0;i<nodesToChange.length;i++){
     parent = nodesToChange[i][1];
     nodeData = nodesToChange[i][0].data;
-    
+
     newNode = document.createTextNode(createNewInnerText(nodeData, reg));
-    try{
-        parent.replaceChild(newNode, nodesToChange[i][0]);
-        var newHtml = parent.innerHTML;
-        newHtml = newHtml.replace(left, `<font class="highlight-me">`); 
-        newHtml = newHtml.replace(right, '</font>');
-        parent.innerHTML = newHtml;
-    }catch(err){
-        
-    }
+    parent.replaceChild(newNode, nodesToChange[i][0]);
+
+    var newHtml = parent.innerHTML;
+    newHtml = newHtml.replace(left, `<font class="highlight-me">`); 
+    newHtml = newHtml.replace(right, '</font>');
+    parent.innerHTML = newHtml;
+
+    var grandParent = parent.parentElement;
+    // var counter = 0;
+    // if(grandParent && grandParent.childNodes){
+    //     for(var j = 0; j<grandParent.childNodes.length;j++){
+    //         if(grandParent.childNodes[j] === parent){
+    //             counter ++;
+    //         }
+    //     }
+    // }
+    console.log(nodesToChange[i][1]);
+    // console.log(nodesToChange[i][0].parentElement.parentElement);
+    
     
 
     nodesChanged.push(newNode);
+
 }
 
 
