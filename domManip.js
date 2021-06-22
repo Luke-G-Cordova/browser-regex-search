@@ -33,14 +33,7 @@ for(var i = 0;i<nodesToChange.length;i++){
         newHtml = newHtml.replace(right, '</font>');
         parent.innerHTML = newHtml;
     }catch(err){
-        var newNodesToChange = treeWalker('the');
-        console.log(newNodesToChange[i][0]);
-        console.log(newNodesToChange[i][1]);
-        newNodesToChange[i][1].replaceChild(newNode, newNodesToChange[i][0]);
-        var newHtml = newNodesToChange[i][1].innerHTML;
-        newHtml = newHtml.replace(left, `<font class="highlight-me">`); 
-        newHtml = newHtml.replace(right, '</font>');
-        newNodesToChange[i][1].innerHTML = newHtml;
+        
     }
     
 
