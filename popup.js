@@ -10,7 +10,6 @@ window.addEventListener('DOMContentLoaded', () => {
 
 function sendData(e){
     var data = e.target.value;
-    var id = e.target.id;
     chrome.tabs.query({
         active: true,
         currentWindow: true
@@ -20,8 +19,7 @@ function sendData(e){
             {
                 from: 'popup',
                 subject: 'newDomInfo',
-                data,
-                id
+                data
             },
             setDomInfo
         );
