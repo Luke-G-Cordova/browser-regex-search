@@ -2,43 +2,44 @@
 var word;
 const root = document.querySelector('body');
 
-var args = [];
 
 chrome.runtime.onMessage.addListener((msg, sender, response) => {
     if((msg.from === 'popup') && (msg.subject === 'newDomInfo')){
-
+        clearHighlight();
+        console.log(msg.data);
+        addHighlight(msg.data);
     }
     response('we got the message');
 });
 
-var nodesToChange = treeWalker('the');
-console.log(nodesToChange);
-var nodesChanged = [];
-// console.log(nodesToChange);
 
-var newNode;
-var parent;
-var nodeData;
-var reg = new RegExp('the', 'i');
-var left = /&lt;font class="highlight-me"&gt;/g;var right = /&lt;[/]font&gt;/g;
-for(var i = 0;i<nodesToChange.length;i++){
-    parent = nodesToChange[i].parentNode;
-    newNode = document.createTextNode(createNewInnerText(nodesToChange[i].data, reg));
-    parent.replaceChild(newNode, nodesToChange[i]);
-    // var newHtml = parent.innerHTML;
-    // newHtml = newHtml.replace(left, `<font class="highlight-me">`); 
-    // newHtml = newHtml.replace(right, '</font>');
-    // parent.innerHTML = newHtml;
 
-    // nodesChanged.push(newNode);
+
+
+
+
+function clearHighlight(){
+    var left = /<font class="highlight-me">/g;var right = /<[/]font>/g;
+    var newHtml = root.innerHTML;
+    newHtml = newHtml.replace(left, ''); 
+    newHtml = newHtml.replace(right, '');
+    root.innerHTML = newHtml;
 }
-var newHtml = root.innerHTML;
+function addHighlight(reg){
+    var nodes = treeWalker(reg);
+    var reg = new RegExp(reg, 'i');
+    var left = /&lt;font class="highlight-me"&gt;/g;var right = /&lt;[/]font&gt;/g;
+    var newNode;
+    for(var i = 0;i<nodes.length;i++){
+        newNode = document.createTextNode(createNewInnerText(nodes[i].data, reg));
+        nodes[i].parentNode.replaceChild(newNode, nodes[i]);
+    }
+    var newHtml = root.innerHTML;
+    newHtml = newHtml.replace(left, `<font class="highlight-me">`); 
+    newHtml = newHtml.replace(right, '</font>');
+    root.innerHTML = newHtml;
 
-newHtml = newHtml.replace(left, `<font class="highlight-me">`); 
-newHtml = newHtml.replace(right, '</font>');
-root.innerHTML = newHtml;
-
-
+}
 
 function treeWalker(searchText){
     var myTW = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
