@@ -1,0 +1,21 @@
+{
+  "name": "chrome-regex",
+  "version": "1.0.0",
+  "description": "Regular expression functionality for ctrl+f search",
+  "main": "background.js",
+  "scripts": {
+    "dev": "node test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Luke-G-Cordova/chrome-regex.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Luke-G-Cordova/chrome-regex/issues"
+  },
+  "homepage": "https://github.com/Luke-G-Cordova/chrome-regex#readme",
+  "dependencies": {}
+}

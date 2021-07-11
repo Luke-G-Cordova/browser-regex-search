@@ -5,9 +5,9 @@ const root = document.querySelector('body');
 
 chrome.runtime.onMessage.addListener((msg, sender, response) => {
     if((msg.from === 'popup') && (msg.subject === 'newDomInfo')){
-        clearHighlight();
-        addHighlight(msg.data);
-        
+        // clearHighlight();
+        // console.log(msg.data);
+        // addHighlight(msg.data);
     }
     response('we got the message');
 });
