@@ -1,25 +1,29 @@
 
-var word;
-const root = document.querySelector('body');
 
 
+
+// listen for messages from the popup and the background
 chrome.runtime.onMessage.addListener((msg, sender, response) => {
+    // this is the main highlight statement.
+    // need to do some adjustment for different colors
     if((msg.from === 'popup') && (msg.subject === 'newDomInfo')){
-        // clearHighlight();
-        // console.log(msg.data);
-        // addHighlight(msg.data);
+        clearHighlight();
+        addHighlight(msg.data);
     }
+    // this is to handle the popup going out of focus
+    if((msg.from === 'background' && (msg.subject === 'popupClosed'))) {
+        clearHighlight();
+    }
+    // respond with a message. could change this in the future. 
     response('we got the message');
 });
 
 
-function clearHighlight(){
-    var left = /<font class="highlight-me">/g;var right = /<[/]font>/g;
-    var newHtml = root.innerHTML;
-    newHtml = newHtml.replace(left, ''); 
-    newHtml = newHtml.replace(right, '');
-    root.innerHTML = newHtml;
-}
+// logic for replacing dom with hilighted version
+
+
+const root = document.querySelector('body');
+
 function addHighlight(reg){
     var nodes = treeWalker(reg);
     var reg = new RegExp(reg, 'i');
@@ -33,9 +37,14 @@ function addHighlight(reg){
     newHtml = newHtml.replace(left, `<font class="highlight-me">`); 
     newHtml = newHtml.replace(right, '</font>');
     root.innerHTML = newHtml;
-
 }
-
+function clearHighlight(){
+    var left = /<font class="highlight-me">/g;var right = /<[/]font>/g;
+    var newHtml = root.innerHTML;
+    newHtml = newHtml.replace(left, ''); 
+    newHtml = newHtml.replace(right, '');
+    root.innerHTML = newHtml;
+}
 function treeWalker(searchText){
     var myTW = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
     var currentNode = myTW.currentNode;
@@ -53,15 +62,11 @@ function treeWalker(searchText){
             reg.test(nodeData)
         ){
             nodes.push(currentNode);
-            
         }
         currentNode = myTW.nextNode();
     }
     return nodes;
 }
-
-
-
 function createNewInnerText(myInnerText, reg){
     var regG = new RegExp(reg, 'ig');
     var matches = indexesOf(regG, myInnerText);
