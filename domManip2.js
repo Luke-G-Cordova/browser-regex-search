@@ -1,33 +1,63 @@
-
-
-
-let nodes = getAllNodes();
-
 // window.getComputedStyle(parent, null).display === 'block' &&
-const root = document.querySelector('body');
-const left = /&lt;font class="highlight-me"&gt;/g;
-const right = /&lt;[/]font&gt;/g;
+// const root = document.querySelector('body');
+// const left = /&lt;font class="highlight-me"&gt;/g;
+// const right = /&lt;[/]font&gt;/g;
 
 
-let searchText = new RegExp('the in', 'i');
-for(node in nodes){
-    
-    if(window.getComputedStyle(nodes[node], null).display === 'block'){
-        console.log(nodes[node].innerHTML);
+const parser = new DOMParser();
 
-        var newNode = document.createTextNode(createNewInnerText(nodes[node].innerText, searchText));
-        nodes[node].parentNode.replaceChild(newNode, nodes[node]);
-        console.log(newNode);
 
-        var newHtml = root.innerHTML;
-        newHtml = newHtml.replace(left, `<font class="highlight-me">`); 
-        newHtml = newHtml.replace(right, '</font>');
-        root.innerHTML = newHtml;
-    }else if(window.getComputedStyle(nodes[node], null).display === 'inline'){
-        console.log('inline');
+
+// let nodes = getAllNodes('the int');
+// console.log(nodes);
+let myHTML = 'hello tHe <span>inthed 10 THE the intintiv</span>the<p>hello I am th<p class="myDeepP">e intthe person</p></p>';
+let doc = parser.parseFromString(myHTML, 'text/html');
+var search = new RegExp('the int', 'ig');
+
+let body = doc.querySelector('body');
+let fullSearch = indexesOf(search, body.innerText);
+let htmlSearch = indexesOf(search, body.innerHTML);
+let bodyTW = doc.createTreeWalker(doc.body, NodeFilter.SHOW_ALL);
+let currentNode = bodyTW.currentNode;
+let nodes = [];
+while(currentNode = bodyTW.nextNode()){
+    if(currentNode.nodeType === Node.TEXT_NODE && nodes[nodes.length-1] && (nodes[nodes.length-1][0] === currentNode.parentElement)){
+    }else{
+        nodes.push([currentNode, 0]);
     }
-    
 }
+console.log(nodes);
+
+let stg = ''
+for(let i = 0;i<nodes.length;i++){
+    let text = nodes[i][0].data||nodes[i][0].innerHTML;
+    nodes[i][1] = stg.length;
+    stg += text;
+}
+
+let matches = indexesOf(search, stg);
+// console.log(matches);
+// console.log(stg);
+
+for(let i = 0;i<matches.length; i++){
+    let endNode = nodes.find((elem, j) => matches[i][1] < nodes[j][1]);
+    let startNode = nodes[nodes.indexOf(endNode) - 1];
+    let matchEnd = matches[i][1] + matches[i][0].length;
+    let startHTML;
+    let endHTML;
+    if (matchEnd > endNode[1]){
+        startHTML = startNode[0].innerHTML || startNode[0].parentElement.innerHTML;
+        endHTML = endNode[0].innerHTML || endNode[0].parentElement.innerHTML;
+
+        console.log(matches[i]);
+        console.log(startHTML.substring(matches[i][1], endNode[1]));
+        console.log(endHTML.substring(0, matchEnd - endNode[1]));
+        // console.log(endHTML);
+        // console.log(startNode[0].substring(matches[i][1], endNode[1]));
+    }
+}
+
+
 
 
 function createNewInnerText(myInnerText, reg){
@@ -52,6 +82,46 @@ function createNewInnerText(myInnerText, reg){
     }
     return newInnerText;
 }
+
+
+// function getAllNodes(searchText){
+//     var myTW = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+//     var currentNode;
+//     var currentNode = myTW.currentNode;
+//     var search = new RegExp(searchText, 'ig');
+//     var nodes = [];
+//     var nodeData;
+//     var parent;
+//     while (currentNode = myTW.nextNode()){
+//         nodeData = currentNode.data + '';
+//         parent = currentNode.parentElement;
+//         if(
+//             parent.tagName != 'SCRIPT' && 
+//             parent.tagName != 'NOSCRIPT' && 
+//             parent.tagName != 'STYLE' && 
+//             nodeData.trim() != ''&&
+//             window.getComputedStyle(parent, '').display == 'block'&&
+//             search.test(parent.innerText)
+//         ){
+
+//             nodes.push(parent);
+            
+//         }else{
+            
+            
+//         }
+//     }
+//     return nodes;
+// }
+
+
+
+
+
+
+
+
+
 function indexesOf(regExpression, stg){
     var arr = [];
     var regExp = new RegExp(regExpression, 'i');
@@ -69,30 +139,7 @@ function indexesOf(regExpression, stg){
     return arr;
 }
 
-function getAllNodes(){
-    var myTW = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
-    var currentNode;
-    var currentNode = myTW.currentNode;
-    var nodes = [];
-    var nodeData;
-    var parent;
-    while (currentNode = myTW.nextNode()){
-        nodeData = currentNode.data + '';
-        parent = currentNode.parentElement;
-        if(
-            parent.tagName != 'SCRIPT' && 
-            parent.tagName != 'NOSCRIPT' && 
-            parent.tagName != 'STYLE' && 
-            nodeData.trim() != ''
-        ){
-            let same = nodes.find(elem => elem.parentElement === parent);
-            if(!same) {
-                nodes.push(parent);
-            }
-        }
-    }
-    return nodes;
-}
+
 
 
 
