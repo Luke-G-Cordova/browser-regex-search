@@ -4,60 +4,102 @@
 // const right = /&lt;[/]font&gt;/g;
 
 
-const parser = new DOMParser();
+// const parser = new DOMParser();
 
 
 
 // let nodes = getAllNodes('the int');
 // console.log(nodes);
-let myHTML = 'hello tHe <span>inthed 10 THE the intintiv</span>the<p>hello I am th<p class="myDeepP">e intthe person</p></p>';
-let doc = parser.parseFromString(myHTML, 'text/html');
-var search = new RegExp('the int', 'ig');
+// let myHTML = 'hello tHe <span>inthed 10 THE the intintiv</span>the<p>hello I am th<p class="myDeepP">e intthe person</p></p>';
+// let doc = parser.parseFromString(myHTML, 'text/html');
+// var search = new RegExp('the int', 'ig');
 
-let body = doc.querySelector('body');
-let fullSearch = indexesOf(search, body.innerText);
-let htmlSearch = indexesOf(search, body.innerHTML);
-let bodyTW = doc.createTreeWalker(doc.body, NodeFilter.SHOW_ALL);
-let currentNode = bodyTW.currentNode;
-let nodes = [];
-while(currentNode = bodyTW.nextNode()){
-    if(currentNode.nodeType === Node.TEXT_NODE && nodes[nodes.length-1] && (nodes[nodes.length-1][0] === currentNode.parentElement)){
-    }else{
-        nodes.push([currentNode, 0]);
+// let body = doc.querySelector('body');
+// let fullSearch = indexesOf(search, body.innerText);
+// let htmlSearch = indexesOf(search, body.innerHTML);
+// let bodyTW = doc.createTreeWalker(doc.body, NodeFilter.SHOW_ALL);
+// let currentNode = bodyTW.currentNode;
+// let nodes = [];
+// while(currentNode = bodyTW.nextNode()){
+//     if(currentNode.nodeType === Node.TEXT_NODE && nodes[nodes.length-1] && (nodes[nodes.length-1][0] === currentNode.parentElement)){
+//     }else{
+//         nodes.push([currentNode, 0]);
+//     }
+// }
+// console.log(nodes);
+
+// let stg = ''
+// for(let i = 0;i<nodes.length;i++){
+//     let text = nodes[i][0].data||nodes[i][0].innerHTML;
+//     nodes[i][1] = stg.length;
+//     stg += text;
+// }
+
+// let matches = indexesOf(search, stg);
+// // console.log(matches);
+// // console.log(stg);
+
+// for(let i = 0;i<matches.length; i++){
+//     let endNode = nodes.find((elem, j) => matches[i][1] < nodes[j][1]);
+//     let startNode = nodes[nodes.indexOf(endNode) - 1];
+//     let matchEnd = matches[i][1] + matches[i][0].length;
+//     let startHTML;
+//     let endHTML;
+//     if (matchEnd > endNode[1]){
+//         startHTML = startNode[0].innerHTML || startNode[0].parentElement.innerHTML;
+//         endHTML = endNode[0].innerHTML || endNode[0].parentElement.innerHTML;
+
+//         console.log(matches[i]);
+//         console.log(startHTML.substring(matches[i][1], endNode[1]));
+//         console.log(endHTML.substring(0, matchEnd - endNode[1]));
+//         // console.log(endHTML);
+//         // console.log(startNode[0].substring(matches[i][1], endNode[1]));
+//     }
+// }
+
+
+
+var matchText = function(node, regex, callback, excludeElements) { 
+
+    excludeElements || (excludeElements = ['script', 'style', 'iframe', 'canvas']);
+    var child = node.firstChild;
+
+    while (child) {
+        switch (child.nodeType) {
+        case 1:
+            if (excludeElements.indexOf(child.tagName.toLowerCase()) > -1)
+                break;
+            matchText(child, regex, callback, excludeElements);
+            break;
+        case 3:
+            var bk = 0;
+            child.data.replace(regex, function(all) {
+                var args = [].slice.call(arguments),
+                    offset = args[args.length - 2],
+                    newTextNode = child.splitText(offset+bk), tag;
+                bk -= child.data.length + all.length;
+
+                newTextNode.data = newTextNode.data.substr(all.length);
+                tag = callback.apply(window, [child].concat(args));
+                child.parentNode.insertBefore(tag, newTextNode);
+                child = newTextNode;
+            });
+            regex.lastIndex = 0;
+            break;
+        }
+
+        child = child.nextSibling;
     }
-}
-console.log(nodes);
 
-let stg = ''
-for(let i = 0;i<nodes.length;i++){
-    let text = nodes[i][0].data||nodes[i][0].innerHTML;
-    nodes[i][1] = stg.length;
-    stg += text;
-}
+    return node;
+};
 
-let matches = indexesOf(search, stg);
-// console.log(matches);
-// console.log(stg);
-
-for(let i = 0;i<matches.length; i++){
-    let endNode = nodes.find((elem, j) => matches[i][1] < nodes[j][1]);
-    let startNode = nodes[nodes.indexOf(endNode) - 1];
-    let matchEnd = matches[i][1] + matches[i][0].length;
-    let startHTML;
-    let endHTML;
-    if (matchEnd > endNode[1]){
-        startHTML = startNode[0].innerHTML || startNode[0].parentElement.innerHTML;
-        endHTML = endNode[0].innerHTML || endNode[0].parentElement.innerHTML;
-
-        console.log(matches[i]);
-        console.log(startHTML.substring(matches[i][1], endNode[1]));
-        console.log(endHTML.substring(0, matchEnd - endNode[1]));
-        // console.log(endHTML);
-        // console.log(startNode[0].substring(matches[i][1], endNode[1]));
-    }
-}
-
-
+console.log(matchText(document.body, new RegExp("the", "ig"), function(node, match, offset) {
+    var span = document.createElement("span");
+    span.className = "highlight-me";
+    span.textContent = match;
+    return span;
+}));
 
 
 function createNewInnerText(myInnerText, reg){
