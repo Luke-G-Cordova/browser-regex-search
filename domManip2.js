@@ -77,7 +77,7 @@ function matchText(node, regex, callback, excludeElements) {
     return node;
 };
 
-edges(document.body, new RegExp('the', 'ig'), function(node, match, offset){
+highlight(document.body, new RegExp('the', 'ig'), function(match){
     var span = document.createElement("span");
     span.className = "highlight-me";
     span.textContent = match;
@@ -85,7 +85,57 @@ edges(document.body, new RegExp('the', 'ig'), function(node, match, offset){
 });
 
 
-function edges(child, regex, callback){
+
+function highlight(root, regex, callback, excludes){
+    excludes || (excludes = ['script', 'style', 'iframe', 'canvas']);
+
+    
+    var tw = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+    var currentNode = tw.currentNode;
+    function myNextNode(){
+        var node = tw.nextNode();
+        if(!node) return node;
+        var prevNode;
+        while(excludes.indexOf(node.parentNode.tagName.toLowerCase()) > -1){
+            node = tw.nextNode();
+        }
+        tw.previousNode();
+        while(excludes.indexOf(tw.currentNode.parentNode.tagName.toLowerCase()) > -1){
+            tw.previousNode();
+        }
+        return node;
+    }
+
+    var futureNode;
+    var str = '';
+    var test;
+    var tag;
+    while(
+        (currentNode = tw.nextNode()) && 
+        (currentNode = excludes.indexOf(currentNode.parentNode.tagName.toLowerCase()) > -1 ? tw.nextNode() : currentNode)
+    ){
+        
+        if(test = regex.exec(currentNode.data)){
+            var newNode = currentNode.splitText(test.index);
+            newNode.data = newNode.data.substr(test[0].length);
+            tag = callback(test[0]);
+            currentNode.parentNode.insertBefore(tag, newNode);
+        }
+        if(futureNode = myNextNode()){
+            str = currentNode.data + futureNode.data;
+            // console.log(regex.exec(str));
+            console.log(str);
+        }
+
+        str = currentNode.data;
+    }
+}
+
+
+
+
+
+function edges1(child, regex, callback){
     let tw = document.createTreeWalker(child, NodeFilter.SHOW_TEXT);
     let currentNode = tw.currentNode;
     currentNode = tw.nextNode();
