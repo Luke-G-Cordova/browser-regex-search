@@ -1,12 +1,12 @@
 // http://blog.alexanderdickson.com/javascript-replacing-text
 
 
-console.log(matchText(document.body, new RegExp("the", "ig"), function(node, match, offset) {
-    var span = document.createElement("span");
-    span.className = "highlight-me";
-    span.textContent = match;
-    return span;
-}));
+// matchText(document.body, new RegExp("the", "ig"), function(node, match, offset) {
+//     var span = document.createElement("span");
+//     span.className = "highlight-me";
+//     span.textContent = match;
+//     return span;
+// });
 function matchText(node, regex, callback, excludeElements) { 
     excludeElements || (excludeElements = ['script', 'style', 'iframe', 'canvas']);
     var child = node.firstChild;
@@ -24,6 +24,8 @@ function matchText(node, regex, callback, excludeElements) {
                 // changing the function(all) to a => function 
                 // changes the scope of arguments to the parent 
                 // functions parameters
+                console.log(child);
+                console.log(child.data);
                 child.data.replace(regex, function(match) {
                     
                     var tag;
@@ -61,6 +63,7 @@ function matchText(node, regex, callback, excludeElements) {
                     // set child to newTextNode
                     child = newTextNode;
                 });
+                console.log(child.data);
                 regex.lastIndex = 0;
 
                 // nextSib = child.previousSibling;
@@ -74,5 +77,81 @@ function matchText(node, regex, callback, excludeElements) {
     return node;
 };
 
+edges(document.querySelector('#test'), new RegExp('the', 'ig'), function(node, match, offset){
+    var span = document.createElement("span");
+    span.className = "highlight-me";
+    span.textContent = match;
+    return span;
+});
 
+function edges(child, regex, callback){
+    let tw = document.createTreeWalker(child, NodeFilter.SHOW_TEXT);
+    let currentNode = tw.currentNode;
+    let previousNode;
+    let str = '';
+    let nodeIndexes = [];
+    let lastIndex = 0;
+    let test;
+    while(currentNode = tw.nextNode()){
+
+        regex.lastIndex = 0;
+        nodeIndexes.push([currentNode, str.length]);
+        let matchSize = 0;
+        while(test = regex.exec(str)){
+            /*
+            lastIndex = regex.lastIndex;
+            */
+            lastIndex = regex.lastIndex;
+            var newNode = previousNode.splitText(test.index);
+            console.log(test);
+            
+            // matchSize = test[0].length;
+            newNode.data = newNode.data.substr(test[0].length);
+            
+            console.log(newNode);
+
+            var args = [previousNode, test[0], 0];
+            var tag = callback.apply(window, args);
+            previousNode.parentNode.insertBefore(tag, newNode);
+            previousNode = newNode;
+        }
+        if(previousNode){
+            previousNode.parentNode.normalize();
+        }
+
+        regex.lastIndex = lastIndex;
+        str += currentNode.data;
+
+        if(test = regex.exec(str)){
+            var newPrevNode = previousNode.splitText(test.index);
+            var ogPrevData = newPrevNode.data;
+            var prevArgs = [previousNode, ogPrevData, 0];
+            newPrevNode.data = '';
+            var prevTag = callback.apply(window, prevArgs);
+            previousNode.parentNode.insertBefore(prevTag, newPrevNode);
+            
+
+            var of = test[0].length - ogPrevData.length;
+            of = of < 0 ? of * -1 : of ;
+            previousNode = currentNode.splitText(of);
+            var newCurNode = currentNode;
+            var ogCurData = newCurNode.data;
+            var curArgs = [newCurNode, ogCurData, 0];
+            newCurNode.data = '';
+            var curTag = callback.apply(window, curArgs);
+            currentNode.parentNode.insertBefore(curTag, newCurNode);
+
+            currentNode = tw.nextNode();
+            // console.log(currentNode);
+        }else{
+            previousNode = currentNode;
+        }
+        str = currentNode.data;
+        
+    }
+
+    // console.log(window.getComputedStyle(child, '').display);
+    // console.log(child);
+    // console.log(child.childNodes);
+}
 
