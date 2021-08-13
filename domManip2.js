@@ -84,6 +84,7 @@ edges(document.body, new RegExp('the', 'ig'), function(node, match, offset){
     return span;
 });
 
+
 function edges(child, regex, callback){
     let tw = document.createTreeWalker(child, NodeFilter.SHOW_TEXT);
     let currentNode = tw.currentNode;
@@ -113,9 +114,6 @@ function edges(child, regex, callback){
         
         if(currentNode.data.indexOf('\n') !== -1){
             currentNode.data = currentNode.data.trim();
-        }
-        if(previousNode.data.indexOf('\n') !== -1){
-            previousNode.data = previousNode.data.trim();
         }
         str += currentNode.data;
 
