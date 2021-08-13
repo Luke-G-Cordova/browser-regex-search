@@ -77,7 +77,7 @@ function matchText(node, regex, callback, excludeElements) {
     return node;
 };
 
-edges(document.querySelector('#test'), new RegExp('the', 'ig'), function(node, match, offset){
+edges(document.body, new RegExp('the', 'ig'), function(node, match, offset){
     var span = document.createElement("span");
     span.className = "highlight-me";
     span.textContent = match;
@@ -87,50 +87,48 @@ edges(document.querySelector('#test'), new RegExp('the', 'ig'), function(node, m
 function edges(child, regex, callback){
     let tw = document.createTreeWalker(child, NodeFilter.SHOW_TEXT);
     let currentNode = tw.currentNode;
-    let previousNode;
-    let str = '';
+    currentNode = tw.nextNode();
+    let previousNode = currentNode;
+    let str = currentNode.data.trim();
     let nodeIndexes = [];
     let lastIndex = 0;
     let test;
-    while(currentNode = tw.nextNode()){
+    while(currentNode){
 
         regex.lastIndex = 0;
         nodeIndexes.push([currentNode, str.length]);
-        let matchSize = 0;
-        while(test = regex.exec(str)){
-            /*
-            lastIndex = regex.lastIndex;
-            */
-            lastIndex = regex.lastIndex;
-            var newNode = previousNode.splitText(test.index);
-            console.log(test);
-            
-            // matchSize = test[0].length;
-            newNode.data = newNode.data.substr(test[0].length);
-            
-            console.log(newNode);
 
-            var args = [previousNode, test[0], 0];
+        
+        while(test = regex.exec(str)){
+            var newNode = previousNode.splitText(test.index);
+            newNode.data = newNode.data.substr(test[0].length);
+            str = newNode.data;
+            var args = [newNode, test[0], 0];
             var tag = callback.apply(window, args);
             previousNode.parentNode.insertBefore(tag, newNode);
             previousNode = newNode;
         }
-        if(previousNode){
-            previousNode.parentNode.normalize();
+        
+        regex.lastIndex = 0;
+        
+        if(currentNode.data.indexOf('\n') !== -1){
+            currentNode.data = currentNode.data.trim();
         }
-
-        regex.lastIndex = lastIndex;
+        if(previousNode.data.indexOf('\n') !== -1){
+            previousNode.data = previousNode.data.trim();
+        }
         str += currentNode.data;
 
         if(test = regex.exec(str)){
-            var newPrevNode = previousNode.splitText(test.index);
-            var ogPrevData = newPrevNode.data;
-            var prevArgs = [previousNode, ogPrevData, 0];
-            newPrevNode.data = '';
-            var prevTag = callback.apply(window, prevArgs);
-            previousNode.parentNode.insertBefore(prevTag, newPrevNode);
-            
-
+            var ogPrevData = '';
+            if(previousNode.data.trim() !== ''){
+                var newPrevNode = previousNode.splitText(test.index);
+                ogPrevData = newPrevNode.data
+                var prevArgs = [previousNode, ogPrevData, 0];
+                newPrevNode.data = '';
+                var prevTag = callback.apply(window, prevArgs);
+                previousNode.parentNode.insertBefore(prevTag, newPrevNode);
+            }
             var of = test[0].length - ogPrevData.length;
             of = of < 0 ? of * -1 : of ;
             previousNode = currentNode.splitText(of);
@@ -142,12 +140,11 @@ function edges(child, regex, callback){
             currentNode.parentNode.insertBefore(curTag, newCurNode);
 
             currentNode = tw.nextNode();
-            // console.log(currentNode);
         }else{
             previousNode = currentNode;
         }
         str = currentNode.data;
-        
+        currentNode = tw.nextNode();
     }
 
     // console.log(window.getComputedStyle(child, '').display);
