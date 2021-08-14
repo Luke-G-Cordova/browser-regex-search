@@ -77,7 +77,7 @@ function highlight(root, regex, callback, excludes){
             tw.nextNode();
         }
     }
-    function trimBadNodes(node){
+    function trimBadHtmlNodes(node){
         if(node.data.indexOf('\n') !== -1){
             var block = node.nextSibling;
             if(block && block !== root){
@@ -108,7 +108,11 @@ function highlight(root, regex, callback, excludes){
         }
         if(currentNode){
 
-            trimBadNodes(currentNode);
+            trimBadHtmlNodes(currentNode);
+
+            // this statement takes care of all
+            // the matches that happen accross
+            // single nodes 
             if(test = regex.exec(currentNode.data)){
                 var newNode = currentNode.splitText(test.index);
                 newNode.data = newNode.data.substr(test[0].length);
@@ -120,8 +124,18 @@ function highlight(root, regex, callback, excludes){
             
             regex.lastIndex = 0;
             
+            // this statement takes care of all 
+            // the matches that happen accross
+            // multiple nodes
+            // ----------------------------------------- TODO -------------------------------------
+            // right now it works across only 
+            // 2 individual nodes, I need to make 
+            // it work accross any amount of individual
+            // SIBLING nodes.
             if(nextNode = showFutureNode()){
-                trimBadNodes(nextNode);
+
+                trimBadHtmlNodes(nextNode);
+
                 var firstHalf = currentNode.data;
                 var lastIndex = 0;
                 while(test = regex.exec(firstHalf)){
