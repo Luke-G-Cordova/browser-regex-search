@@ -44,6 +44,15 @@ function clearHighlight(keys){
     }
     index = 0;
 }
+// highlight(document.body, new RegExp('the the', 'ig'), function(match){
+//     var span = document.createElement("span");
+//     span.className = `chrome-regeggz-span highlight-me`;
+//     span.style.backgroundColor = `yellow`;
+//     span.style.color = `black`;
+//     span.textContent = match;
+//     return span;
+// });
+
 function highlight(root, regex, callback, excludes){
     excludes || (excludes = ['script', 'style', 'iframe', 'canvas']);
     var tw = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
@@ -68,6 +77,21 @@ function highlight(root, regex, callback, excludes){
             tw.nextNode();
         }
     }
+    function trimBadNodes(node){
+        if(node.data.indexOf('\n') !== -1){
+            var block = node.nextSibling;
+            if(block && block !== root){
+                if(block.nodeType === Node.ELEMENT_NODE && window.getComputedStyle(block, null).display !== 'block'){
+                    var before = after = '';
+                    after = (node.data[node.data.length - 1] === ' ' || node.data[node.data.length - 1] === '\n') ? ' ' : '';
+                    before = (node.data[0] === ' ' || node.data[0] === '\n') ? ' ' : '';
+                    node.data = before + node.data.trim() + after;
+                }else if(block.nodeType === Node.ELEMENT_NODE && window.getComputedStyle(block, null).display === 'block'){
+                    node.data = ' ' + node.data.trimStart();
+                }
+            }
+        }
+    }
     var nextNode;
     var str = '';
     var test;
@@ -83,6 +107,8 @@ function highlight(root, regex, callback, excludes){
             currentNode = tw.nextNode();
         }
         if(currentNode){
+
+            trimBadNodes(currentNode);
             if(test = regex.exec(currentNode.data)){
                 var newNode = currentNode.splitText(test.index);
                 newNode.data = newNode.data.substr(test[0].length);
@@ -95,7 +121,7 @@ function highlight(root, regex, callback, excludes){
             regex.lastIndex = 0;
             
             if(nextNode = showFutureNode()){
-                
+                trimBadNodes(nextNode);
                 var firstHalf = currentNode.data;
                 var lastIndex = 0;
                 while(test = regex.exec(firstHalf)){
@@ -107,7 +133,6 @@ function highlight(root, regex, callback, excludes){
                 
                 str = firstHalf + secondHalf;
                 test = regex.exec(str);
-                
                 if(test && test.index < firstHalf.length){
                     var newNode = currentNode.splitText(test.index);
                     var ogNewNodeData = newNode.data;
