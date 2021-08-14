@@ -1,130 +1,133 @@
+var index = 0;
 
-
-
-
-// listen for messages from the popup and the background
 chrome.runtime.onMessage.addListener((msg, sender, response) => {
-    // this is the main highlight statement.
-    // need to do some adjustment for different colors
     if((msg.from === 'popup') && (msg.subject === 'newDomInfo')){
         clearHighlight();
-        addHighlight(msg.data);
+        if(msg.data !== ''){
+            highlight(document.body, new RegExp(msg.data, 'ig'), function(match){
+                index++;
+                var span = document.createElement("span");
+                span.className = "chrome-regeggz-span highlight-me yellow";
+                span.id = `chrome-regeggz-id-${index}`;
+                span.textContent = match;
+                return span;
+            });
+        }
     }
-    // this is to handle the popup going out of focus
     if((msg.from === 'background' && (msg.subject === 'popupClosed'))) {
         clearHighlight();
     }
-    // respond with a message. could change this in the future. 
     response('we got the message');
 });
 
+// http://blog.alexanderdickson.com/javascript-replacing-text
 
-// logic for replacing dom with hilighted version
-
-
-const root = document.querySelector('body');
-
-// function addHighlight(reg){
-//     var nodes = treeWalker(reg);
-//     var reg = new RegExp(reg, 'i');
-//     var left = /&lt;font class="highlight-me"&gt;/g;var right = /&lt;[/]font&gt;/g;
-//     var newNode;
-//     for(var i = 0;i<nodes.length;i++){
-//         newNode = document.createTextNode(createNewInnerText(nodes[i].data, reg));
-//         nodes[i].parentNode.replaceChild(newNode, nodes[i]);
-//     }
-//     var newHtml = root.innerHTML;
-//     newHtml = newHtml.replace(left, `<font class="highlight-me">`); 
-//     newHtml = newHtml.replace(right, '</font>');
-//     root.innerHTML = newHtml;
-// }
-
-console.log(document.body.innerHTML);
-console.log(document.body.innerText);
-// addHighlight('the');
-function addHighlight(reg){
-    var nodes = treeWalker(reg);
-
-    console.log(nodes);
-    // var tag;
-    // var args = [].slice.call(arguments);
-    // console.log(args);
-    // var offset = args[args.length - 2];
-    // var newTextNode = child.splitText(offset+bk);
-    // bk -= child.data.length + match.length;
-
-    // newTextNode.data = newTextNode.data.substr(match.length);
-    // tag = callback.apply(window, [child].concat(args));
-
-    // child.parentNode.insertBefore(tag, newTextNode);
-    // child.parentNode.normalize();
-    // child = newTextNode;
-}
 
 
 function clearHighlight(){
-    var left = /<font class="highlight-me">/g;var right = /<[/]font>/g;
-    var newHtml = root.innerHTML;
-    newHtml = newHtml.replace(left, ''); 
-    newHtml = newHtml.replace(right, '');
-    root.innerHTML = newHtml;
+    var elems = document.querySelectorAll('span.chrome-regeggz-span.highlight-me');
+    var node;
+    var elements = [].slice.call(elems);
+    for(i = 0;i<elements.length;i++){
+        node = elements[i].childNodes[0];
+        elements[i].parentNode.replaceChild(elements[i].childNodes[0], elements[i]);
+        node.parentNode.normalize();
+        // node = document.createTextNode(elements[i].innerHTML);
+        // current.data = content;
+        // elems[i].parentNode.replaceChild(current, elems[i]);
+        // current.parentNode.normalize();
+    }
+    index = 0;
 }
-function treeWalker(searchText){
-    var myTW = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
-    var currentNode = myTW.currentNode;
-    var nodes = [];
-    var reg = new RegExp(searchText, 'ig');
-    var nodeData;
-    var parent;
-    while (currentNode){
-        nodeData = currentNode.data + '';
-        parent = currentNode.parentElement;
-        if(parent.tagName != 'SCRIPT' && 
-            parent.tagName != 'NOSCRIPT' && 
-            parent.tagName != 'STYLE' && 
-            nodeData.trim() != '' 
+function highlight(root, regex, callback, excludes){
+    excludes || (excludes = ['script', 'style', 'iframe', 'canvas']);
+    var tw = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+    var currentNode = tw.currentNode;
+
+    function showFutureNode(){
+        var node = tw.nextNode();
+        if(!node) return node;
+        var prevNode;
+        while(excludes.indexOf(node.parentNode.tagName.toLowerCase()) > -1){
+            node = tw.nextNode();
+        }
+        tw.previousNode();
+        while(excludes.indexOf(tw.currentNode.parentNode.tagName.toLowerCase()) > -1){
+            tw.previousNode();
+        }
+        return node;
+    }
+    function changeTWNextNode(){
+        tw.nextNode();
+        while(excludes.indexOf(tw.currentNode.parentNode.tagName.toLowerCase()) > -1){
+            tw.nextNode();
+        }
+    }
+    var nextNode;
+    var str = '';
+    var test;
+    var tag;
+    while(
+        (currentNode = tw.nextNode())
+    ){
+        while(
+            currentNode &&
+            (excludes.indexOf(currentNode.parentNode.tagName.toLowerCase()) > -1 || 
+            currentNode.data.trim() === '')
         ){
-            nodes.push(currentNode);
+            currentNode = tw.nextNode();
         }
-        currentNode = myTW.nextNode();
-    }
-    return nodes;
-}
-function createNewInnerText(myInnerText, reg){
-    var regG = new RegExp(reg, 'ig');
-    var matches = indexesOf(regG, myInnerText);
-    var newInnerText = '';
-    for(var i = 0;i<matches.length;i++){
-        var addString = `<font class="highlight-me">${matches[i][0]}</font>`;
-        newInnerText += 
-            myInnerText.substring(
-                matches[i-1]?matches[i-1][0].length + matches[i-1][1]: 0, 
-                matches[i][1]
-            )
-        ;
-        newInnerText += addString;
-        newInnerText += matches[i+1] ? '' : 
-            myInnerText.substring(
-                matches[i][1] + matches[i][0].length, 
-                myInnerText.length
-            )
-        ;
-    }
-    return newInnerText;
-}
-function indexesOf(regExpression, stg){
-    var arr = [];
-    var regExp = new RegExp(regExpression, 'i');
-    var myStg = stg;
-    var match;
-    while(regExp.test(myStg)){
-        match = regExp.exec(myStg);
-        arr.push([match[0], match.index]);
-        var repl = '';
-        for(var i = 0;i<match[0].length;i++){
-            repl += ' ';
+        if(currentNode){
+            if(test = regex.exec(currentNode.data)){
+                var newNode = currentNode.splitText(test.index);
+                newNode.data = newNode.data.substr(test[0].length);
+                tag = callback(test[0]);
+                newNode.parentNode.insertBefore(tag, newNode);
+                changeTWNextNode();
+                currentNode = tw.currentNode;
+            }
+            
+            regex.lastIndex = 0;
+            
+            if(nextNode = showFutureNode()){
+                
+                var firstHalf = currentNode.data;
+                var lastIndex = 0;
+                while(test = regex.exec(firstHalf)){
+                    lastIndex = regex.lastIndex;
+                }
+                regex.lastIndex = lastIndex;
+                
+                var secondHalf = nextNode.data;
+                
+                str = firstHalf + secondHalf;
+                test = regex.exec(str);
+                
+                if(test && test.index < firstHalf.length){
+                    var newNode = currentNode.splitText(test.index);
+                    var ogNewNodeData = newNode.data;
+                    newNode.data = '';
+                    tag = callback(ogNewNodeData);
+                    newNode.parentNode.insertBefore(tag, newNode);
+                    currentNode = tw.nextNode();
+
+                    var of = test[0].length - ogNewNodeData.length;
+                    var newNextNode = nextNode.splitText(of);
+                    changeTWNextNode();
+                    currentNode = tw.nextNode();
+                    var ogData = currentNode.data;
+                    currentNode.data = '';
+                    tag = callback(ogData);
+                    newNextNode.parentNode.insertBefore(tag, newNextNode);
+                    changeTWNextNode();
+                    currentNode = tw.currentNode;
+                }
+            }
+            
+            regex.lastIndex = 0;
+            
+            str = '';
         }
-        myStg = myStg.replace(regExp, repl);
     }
-    return arr;
+    return root;
 }

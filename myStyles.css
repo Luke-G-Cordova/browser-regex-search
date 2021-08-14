@@ -1,29 +1,29 @@
 
-.highlight-me, .green{
+span.chrome-regeggz-span.highlight-me.green{
     background-color: green;
     color: lightgray;
 }
-.highlight.blue{
+span.chrome-regeggz-span.highlight-me.blue{
     background-color: blue;
     color: lightgray;
 }
-.highlight-me, .red{
+span.chrome-regeggz-span.highlight-me.red{
     background-color: red;
     color: lightgray;
 }
-.highlight-me, .purple{
+span.chrome-regeggz-span.highlight-me.purple{
     background-color: purple;
     color: lightgray;
 }
-.highlight-me, .pink{
+span.chrome-regeggz-span.highlight-me.pink{
     background-color: pink;
     color: lightgray;
 }
-.highlight-me, .yellow{
+span.chrome-regeggz-span.highlight-me.yellow{
     background-color: yellow;
     color: black;
 }
-.highlight-me{
+span.chrome-regeggz-span.highlight-me{
     background-color: yellow;
     color: black;
 }
