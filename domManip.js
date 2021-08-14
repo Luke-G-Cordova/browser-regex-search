@@ -1,36 +1,46 @@
-var index = 0;
 
+
+var index = 0;
+var elemKeys = [];
 chrome.runtime.onMessage.addListener((msg, sender, response) => {
     if((msg.from === 'popup') && (msg.subject === 'newDomInfo')){
-        clearHighlight();
+        if(elemKeys.indexOf(msg.key) === -1) elemKeys.push(msg.key);
+        
+        clearHighlight(msg.key);
+
         if(msg.data !== ''){
             highlight(document.body, new RegExp(msg.data, 'ig'), function(match){
                 index++;
                 var span = document.createElement("span");
-                span.className = `chrome-regeggz-span highlight-me`;
+                span.className = `chrome-regeggz-span highlight-me ${msg.key}`;
                 span.style.backgroundColor = `rgb(${msg.color})`;
                 span.style.color = `black`;
-                span.id = `chrome-regeggz-id-${index}`;
+                span.id = `${index}|${msg.color}`;
                 span.textContent = match;
                 return span;
             });
         }
     }
     if((msg.from === 'background' && (msg.subject === 'popupClosed'))) {
-        clearHighlight();
+        clearHighlight(elemKeys);
     }
     response('we got the message');
 });
 
 // http://blog.alexanderdickson.com/javascript-replacing-text
-function clearHighlight(){
-    var elems = document.querySelectorAll('span.chrome-regeggz-span.highlight-me');
+function clearHighlight(keys){
+    var elems;
     var node;
-    var elements = [].slice.call(elems);
-    for(i = 0;i<elements.length;i++){
-        node = elements[i].childNodes[0];
-        elements[i].parentNode.replaceChild(elements[i].childNodes[0], elements[i]);
-        node.parentNode.normalize();
+    var elements;
+    var keysCopy = [].concat(keys);
+    for(j = 0;j<keysCopy.length;j++){
+        elems = document.querySelectorAll(`span.chrome-regeggz-span.highlight-me.${keysCopy[j]}`);
+        elements = [].slice.call(elems);
+        for(i = 0;i<elements.length;i++){
+            node = elements[i].childNodes[0];
+            elements[i].parentNode.replaceChild(elements[i].childNodes[0], elements[i]);
+            node.parentNode.normalize();
+        }
     }
     index = 0;
 }
