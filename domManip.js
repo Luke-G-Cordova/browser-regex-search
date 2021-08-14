@@ -7,7 +7,9 @@ chrome.runtime.onMessage.addListener((msg, sender, response) => {
             highlight(document.body, new RegExp(msg.data, 'ig'), function(match){
                 index++;
                 var span = document.createElement("span");
-                span.className = "chrome-regeggz-span highlight-me yellow";
+                span.className = `chrome-regeggz-span highlight-me`;
+                span.style.backgroundColor = `rgb(${msg.color})`;
+                span.style.color = `black`;
                 span.id = `chrome-regeggz-id-${index}`;
                 span.textContent = match;
                 return span;
@@ -21,9 +23,6 @@ chrome.runtime.onMessage.addListener((msg, sender, response) => {
 });
 
 // http://blog.alexanderdickson.com/javascript-replacing-text
-
-
-
 function clearHighlight(){
     var elems = document.querySelectorAll('span.chrome-regeggz-span.highlight-me');
     var node;
@@ -32,10 +31,6 @@ function clearHighlight(){
         node = elements[i].childNodes[0];
         elements[i].parentNode.replaceChild(elements[i].childNodes[0], elements[i]);
         node.parentNode.normalize();
-        // node = document.createTextNode(elements[i].innerHTML);
-        // current.data = content;
-        // elems[i].parentNode.replaceChild(current, elems[i]);
-        // current.parentNode.normalize();
     }
     index = 0;
 }
@@ -123,9 +118,7 @@ function highlight(root, regex, callback, excludes){
                     currentNode = tw.currentNode;
                 }
             }
-            
             regex.lastIndex = 0;
-            
             str = '';
         }
     }

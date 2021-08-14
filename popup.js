@@ -27,7 +27,8 @@ function sendData(e){
             {
                 from: 'popup',
                 subject: 'newDomInfo',
-                data
+                data,
+                color: e.path[0].id
             }
         );
     });
