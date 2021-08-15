@@ -44,7 +44,7 @@ function clearHighlight(keys){
     }
     index = 0;
 }
-// highlight(document.body, new RegExp('the the', 'ig'), function(match){
+// highlight(document.body, new RegExp('the', 'ig'), function(match){
 //     var span = document.createElement("span");
 //     span.className = `chrome-regeggz-span highlight-me`;
 //     span.style.backgroundColor = `yellow`;
@@ -53,9 +53,14 @@ function clearHighlight(keys){
 //     return span;
 // });
 
+
 function highlight(root, regex, callback, excludes){
     excludes || (excludes = ['script', 'style', 'iframe', 'canvas']);
+    // TODO: make a filter for the treewalker to filter 
+    // out blank text nodes and take out the current filter
+    // system in the main loop of this function
     var tw = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+
     var currentNode = tw.currentNode;
 
     function showFutureNode(){
@@ -92,6 +97,7 @@ function highlight(root, regex, callback, excludes){
             }
         }
     }
+    
     var nextNode;
     var str = '';
     var test;
@@ -134,7 +140,11 @@ function highlight(root, regex, callback, excludes){
             // SIBLING nodes.
             if(nextNode = showFutureNode()){
 
+
+
+
                 trimBadHtmlNodes(nextNode);
+
 
                 var firstHalf = currentNode.data;
                 var lastIndex = 0;
@@ -148,6 +158,9 @@ function highlight(root, regex, callback, excludes){
                 str = firstHalf + secondHalf;
                 test = regex.exec(str);
                 if(test && test.index < firstHalf.length){
+
+
+
                     var newNode = currentNode.splitText(test.index);
                     var ogNewNodeData = newNode.data;
                     newNode.data = '';
@@ -172,4 +185,140 @@ function highlight(root, regex, callback, excludes){
         }
     }
     return root;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+test(document.body, new RegExp('the', 'ig'), function(match) {
+    var span = document.createElement("span");
+    span.className = `chrome-regeggz-span highlight-me`;
+    span.style.backgroundColor = `yellow`;
+    span.style.color = `black`;
+    span.textContent = match;
+    return span;
+});
+
+function test(root, regex, callback, excludes){
+    excludes || (excludes = ['script', 'style', 'iframe', 'canvas']);
+    var tw = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, function(node) {
+        if(
+            node.data.trim() === '' || 
+            excludes.indexOf(node.parentNode.tagName.toLowerCase()) > -1
+        ){
+            return NodeFilter.FILTER_REJECT;
+        }
+        return NodeFilter.FILTER_ACCEPT;
+    });
+    function trimBadHtmlNodes(node){
+        if(node.data.indexOf('\n') !== -1){
+            var block = node.nextSibling;
+            if(block && block !== root){
+                if(block.nodeType === Node.ELEMENT_NODE && window.getComputedStyle(block, null).display !== 'block'){
+                    var before = after = '';
+                    after = (node.data[node.data.length - 1] === ' ' || node.data[node.data.length - 1] === '\n') ? ' ' : '';
+                    before = (node.data[0] === ' ' || node.data[0] === '\n') ? ' ' : '';
+                    node.data = before + node.data.trim() + after;
+                }else if(block.nodeType === Node.ELEMENT_NODE && window.getComputedStyle(block, null).display === 'block'){
+                    node.data = ' ' + node.data.trimStart();
+                }
+            }
+        }
+    }
+    function relativeNodes(node1, node2){
+        var parNode1 = node1, parNode2 = node2;
+        var atRoot = false;
+        while(true){
+            atRoot = parNode1 === root && parNode2 === root;
+            if(atRoot) return null;
+            if(parNode1.parentNode === node2.parentNode) return node2.parentNode;
+            if(parNode2.parentNode === node1.parentNode) return node1.parentNode;
+            if(parNode1 !== root){
+                parNode1 = parNode1.parentNode;
+                if(window.getComputedStyle(parNode1, '').display === 'block'){
+                    parNode1 = root;
+                }
+            }
+            if(parNode2 !== root){
+                parNode2 = parNode2.parentNode;
+                if(window.getComputedStyle(parNode2, '').display === 'block'){
+                    parNode2 = root;
+                }
+            }
+        }
+    }
+
+    var nodes = [];
+    var groupedNodes = [];
+    var lastElem;
+    while(tw.nextNode()){
+        trimBadHtmlNodes(tw.currentNode);
+        if(groupedNodes.length === 0){
+            groupedNodes.push([]);
+            groupedNodes[groupedNodes.length - 1].push(tw.currentNode);
+        }else{
+            lastElem = nodes[nodes.length -1];
+            if(relativeNodes(tw.currentNode, lastElem)){
+                groupedNodes[groupedNodes.length - 1].push(tw.currentNode);
+            }else{
+                groupedNodes[groupedNodes.length] = [];
+                groupedNodes[groupedNodes.length - 1].push(tw.currentNode);
+            }
+        }
+        nodes.push(tw.currentNode);
+    }
+    
+    var masterStr = '';
+    var test;
+    var test2;
+    var tag;
+    console.log(groupedNodes);
+    for(i = 0;i<groupedNodes.length;i++){
+
+        masterStr = groupedNodes[i].map(elem => elem.data).join('');
+
+        while(test = regex.exec(masterStr)){
+            var lastRegIndex = regex.lastIndex;
+
+            var j = 0;
+            var nodeParts = groupedNodes[i][j].data;
+            while(test.index > nodeParts.length - 1){
+                j++;
+                nodeParts += groupedNodes[i][j].data || groupedNodes[i][j].innerText;
+            }
+
+            regex.lastIndex = 0;
+            test2 = regex.exec(groupedNodes[i][j].data);
+
+            var inThisNode = nodeParts.substr(test.index);
+
+            
+
+            
+
+            console.log(test2.index);
+
+            var newNode = groupedNodes[i][j].splitText(test2.index);
+
+            newNode.data = newNode.data.substr(test2[0].length, newNode.data.length - 1);
+            tag = callback(test2[0]);
+            var insertedNode = newNode.parentNode.insertBefore(tag, newNode);
+            groupedNodes[i].splice(j + 1, 0, insertedNode, newNode);
+            
+            nodeParts = '';
+            regex.lastIndex = lastRegIndex;
+        }
+        regex.lastIndex = 0;
+    }
 }
