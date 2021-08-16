@@ -43,16 +43,15 @@ function clearHighlight(keys){
         }
     }
     index = 0;
-} 
+}
 
-// highlight(document.body, new RegExp('the', 'ig'), function(match) {
-//     var span = document.createElement("span");
-//     span.className = `chrome-regeggz-span highlight-me`;
-//     span.style.backgroundColor = `yellow`;
-//     span.style.color = `black`;
-//     span.textContent = match;
-//     return span;
-// });
+highlight(document.body, new RegExp('superduper', 'ig'), function(match) {
+    var span = document.createElement("span");
+    span.style.backgroundColor = `yellow`;
+    span.style.color = `black`;
+    span.textContent = match;
+    return span;
+});
 
 function highlight(root, regex, callback, excludes){
     excludes || (excludes = ['script', 'style', 'iframe', 'canvas']);
@@ -103,6 +102,7 @@ function highlight(root, regex, callback, excludes){
         }
     }
 
+    // group the nodes by common parent in an array
     var nodes = [];
     var groupedNodes = [];
     var lastElem;
@@ -122,19 +122,21 @@ function highlight(root, regex, callback, excludes){
         }
         nodes.push(tw.currentNode);
     }
-    
+    console.log(groupedNodes);
     var masterStr = '';
     var test;
     var test2;
     var tag;
-    console.log(groupedNodes);
+    var newNode;
     for(i = 0;i<groupedNodes.length;i++){
 
         masterStr = groupedNodes[i].map(elem => elem.data).join('');
 
+        // for all node groups that contain at least one match
         while(test = regex.exec(masterStr)){
             var lastRegIndex = regex.lastIndex;
 
+            // find nodes with an occurence of the match
             var j = 0;
             var nodeParts = groupedNodes[i][j].data;
             while(test.index > nodeParts.length - 1){
@@ -142,13 +144,16 @@ function highlight(root, regex, callback, excludes){
                 nodeParts += groupedNodes[i][j].data || groupedNodes[i][j].innerText;
             }
 
+            // find the match with in the node
             regex.lastIndex = 0;
             test2 = regex.exec(groupedNodes[i][j].data);
 
+            // find if this node only contains part of the match
             var inThisNode = nodeParts.substr(test.index);
 
-            
-
+            // if the current node only contains part of the match,
+            // test2 will not be able to detect, so this is the construction
+            // of test2 to account for that case. 
             test2 || (
                 test2 = [], 
                 test2[0] = inThisNode, 
@@ -156,18 +161,42 @@ function highlight(root, regex, callback, excludes){
                 test2['input'] = groupedNodes[i][j].data,
                 test2['groups'] = undefined
             );
+
+            // var helpStr = test2[0];
+            var helpArr = [];
+            helpArr.push(test2[0]);
+            for(k = 0 ; helpArr.join('').length < test[0].length ; k++){
+                newNode = groupedNodes[i][j].splitText(groupedNodes[i][j].length - helpArr[k].length);
+                tag = callback(helpArr[k]);
+                newNode.data = '';
+                insertedNode = newNode.parentNode.insertBefore(tag, newNode);
+                groupedNodes[i].splice(j + 1, 0, insertedNode.firstChild, newNode);
+                newNode.parentNode.normalize();
+                j+=3;
+                helpArr.push(groupedNodes[i][j].data);
+            }
+
+            var lastNode = helpArr.pop();
+            if(helpArr[0]/*test[0] !== helpArr.join('')*/){
+                newNode = groupedNodes[i][j].splitText(0);
+                tag = callback(lastNode.substr(0, test[0].length - helpArr.join('').length));
+                newNode.data = newNode.data.substr(test[0].length - helpArr.join('').length);
+                insertedNode = newNode.parentNode.insertBefore(tag, newNode);
+                groupedNodes[i].splice(j + 1, 0, insertedNode.firstChild, newNode);
+                newNode.parentNode.normalize();
+            }
             
             
-            // takes care of individual full matches, and the first 
-            // part of a match between nodes.
+
+            
+
+            /*
             var newNode = groupedNodes[i][j].splitText(test2.index);
             newNode.data = newNode.data.substr(test2[0].length, newNode.data.length - 1);
             tag = callback(test2[0]);
             var insertedNode = newNode.parentNode.insertBefore(tag, newNode);
             groupedNodes[i].splice(j + 1, 0, insertedNode, newNode);
 
-
-            
             if(test2[0] !== test[0]){
                 var helpStr = groupedNodes[i][j + 1].innerText;
                 j += 3;
@@ -189,7 +218,7 @@ function highlight(root, regex, callback, excludes){
                 insertedNode = groupedNodes[i][j].parentNode.insertBefore(tag, groupedNodes[i][j]);
                 groupedNodes[i].splice(j + 1, 0, insertedNode, newNode);
             }
-
+            */
 
             nodeParts = '';
             regex.lastIndex = lastRegIndex;
