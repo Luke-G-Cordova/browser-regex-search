@@ -45,7 +45,7 @@ function clearHighlight(keys){
     index = 0;
 }
 
-highlight(document.body, new RegExp('superduper', 'ig'), function(match) {
+highlight(document.body, new RegExp('the', 'ig'), function(match) {
     var span = document.createElement("span");
     span.style.backgroundColor = `yellow`;
     span.style.color = `black`;
@@ -122,7 +122,9 @@ function highlight(root, regex, callback, excludes){
         }
         nodes.push(tw.currentNode);
     }
+
     console.log(groupedNodes);
+
     var masterStr = '';
     var test;
     var test2;
@@ -141,16 +143,14 @@ function highlight(root, regex, callback, excludes){
             var nodeParts = groupedNodes[i][j].data;
             while(test.index > nodeParts.length - 1){
                 j++;
-                nodeParts += groupedNodes[i][j].data || groupedNodes[i][j].innerText;
+                nodeParts += groupedNodes[i][j].data;
             }
-
             // find the match with in the node
             regex.lastIndex = 0;
             test2 = regex.exec(groupedNodes[i][j].data);
-
             // find if this node only contains part of the match
             var inThisNode = nodeParts.substr(test.index);
-
+            
             // if the current node only contains part of the match,
             // test2 will not be able to detect, so this is the construction
             // of test2 to account for that case. 
@@ -162,7 +162,6 @@ function highlight(root, regex, callback, excludes){
                 test2['groups'] = undefined
             );
 
-            // var helpStr = test2[0];
             var helpArr = [];
             helpArr.push(test2[0]);
             for(k = 0 ; helpArr.join('').length < test[0].length ; k++){
@@ -177,53 +176,27 @@ function highlight(root, regex, callback, excludes){
             }
 
             var lastNode = helpArr.pop();
-            if(helpArr[0]/*test[0] !== helpArr.join('')*/){
+            if(helpArr[0]){
                 newNode = groupedNodes[i][j].splitText(0);
                 tag = callback(lastNode.substr(0, test[0].length - helpArr.join('').length));
                 newNode.data = newNode.data.substr(test[0].length - helpArr.join('').length);
                 insertedNode = newNode.parentNode.insertBefore(tag, newNode);
                 groupedNodes[i].splice(j + 1, 0, insertedNode.firstChild, newNode);
                 newNode.parentNode.normalize();
+            }else{
+                newNode = groupedNodes[i][j].splitText(test2.index);
+                tag = callback(test2[0]);
+                newNode.data = newNode.data.substr(test2[0].length);
+                insertedNode = newNode.parentNode.insertBefore(tag, newNode);
+                groupedNodes[i].splice(j + 1, 0, insertedNode.firstChild, newNode);
+                newNode.parentNode.normalize();
             }
-            
-            
-
-            
-
-            /*
-            var newNode = groupedNodes[i][j].splitText(test2.index);
-            newNode.data = newNode.data.substr(test2[0].length, newNode.data.length - 1);
-            tag = callback(test2[0]);
-            var insertedNode = newNode.parentNode.insertBefore(tag, newNode);
-            groupedNodes[i].splice(j + 1, 0, insertedNode, newNode);
-
-            if(test2[0] !== test[0]){
-                var helpStr = groupedNodes[i][j + 1].innerText;
-                j += 3;
-                while(helpStr.length < test[0].length){
-                    helpStr += groupedNodes[i][j].data;
-                    if(helpStr.length < test[0].length){
-                        newNode = groupedNodes[i][j].splitText(0);
-                        tag = callback(newNode.data);
-                        newNode.data = '';
-                        insertedNode = newNode.parentNode.insertBefore(tag, newNode);
-                        groupedNodes[i].splice(j + 1, 0, insertedNode, newNode);
-                        j+=3;
-                    }
-                }
-                var match = test[0].substr(helpStr.length - groupedNodes[i][j].data.length)
-                newNode = groupedNodes[i][j].splitText(match.length);
-                tag = callback(groupedNodes[i][j].data);
-                groupedNodes[i][j].data = '';
-                insertedNode = groupedNodes[i][j].parentNode.insertBefore(tag, groupedNodes[i][j]);
-                groupedNodes[i].splice(j + 1, 0, insertedNode, newNode);
-            }
-            */
 
             nodeParts = '';
             regex.lastIndex = lastRegIndex;
         }
         regex.lastIndex = 0;
+        
     }
 }
 // highlight(document.body, new RegExp('the', 'ig'), function(match){
