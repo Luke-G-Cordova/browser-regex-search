@@ -45,13 +45,13 @@ function clearHighlight(keys){
     index = 0;
 }
 
-highlight(document.body, new RegExp('it m', 'ig'), function(match) {
-    var span = document.createElement("span");
-    span.style.backgroundColor = `yellow`;
-    span.style.color = `black`;
-    span.textContent = match;
-    return span;
-});
+// highlight(document.body, new RegExp('name is', 'ig'), function(match) {
+//     var span = document.createElement("span");
+//     span.style.backgroundColor = `yellow`;
+//     span.style.color = `black`;
+//     span.textContent = match;
+//     return span;
+// });
 
 function highlight(root, regex, callback, excludes){
     excludes || (excludes = ['script', 'style', 'iframe', 'canvas']);
@@ -67,20 +67,13 @@ function highlight(root, regex, callback, excludes){
     function trimBadHtmlNodes(node){
         if(node.data.indexOf('\n') !== -1){
             var block = node.nextSibling;
-            if(!block){
-                var before = after = '';
+            var before = after = '';
+            if(!block || block.nodeType === Node.ELEMENT_NODE && window.getComputedStyle(block, null).display !== 'block'){
                 after = (node.data[node.data.length - 1] === ' ' || node.data[node.data.length - 1] === '\n') ? ' ' : '';
                 before = (node.data[0] === ' ' || node.data[0] === '\n') ? ' ' : '';
                 node.data = before + node.data.trim() + after;
-            }else if(block !== root){
-                if(block.nodeType === Node.ELEMENT_NODE && window.getComputedStyle(block, null).display !== 'block'){
-                    var before = after = '';
-                    after = (node.data[node.data.length - 1] === ' ' || node.data[node.data.length - 1] === '\n') ? ' ' : '';
-                    before = (node.data[0] === ' ' || node.data[0] === '\n') ? ' ' : '';
-                    node.data = before + node.data.trim() + after;
-                }else if(block.nodeType === Node.ELEMENT_NODE && window.getComputedStyle(block, null).display === 'block'){
-                    node.data = ' ' + node.data.trimStart();
-                }
+            }else if(block && block.nodeType === Node.ELEMENT_NODE && window.getComputedStyle(block, null).display === 'block'){
+                node.data = ' ' + node.data.trimStart();
             }
         }
     }
@@ -128,7 +121,7 @@ function highlight(root, regex, callback, excludes){
         nodes.push(tw.currentNode);
     }
 
-    console.log(groupedNodes);
+    // console.log(groupedNodes);
 
     var masterStr = '';
     var test;
