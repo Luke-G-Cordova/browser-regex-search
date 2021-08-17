@@ -45,7 +45,7 @@ function clearHighlight(keys){
     index = 0;
 }
 
-highlight(document.body, new RegExp('the', 'ig'), function(match) {
+highlight(document.body, new RegExp('it m', 'ig'), function(match) {
     var span = document.createElement("span");
     span.style.backgroundColor = `yellow`;
     span.style.color = `black`;
@@ -67,7 +67,12 @@ function highlight(root, regex, callback, excludes){
     function trimBadHtmlNodes(node){
         if(node.data.indexOf('\n') !== -1){
             var block = node.nextSibling;
-            if(block && block !== root){
+            if(!block){
+                var before = after = '';
+                after = (node.data[node.data.length - 1] === ' ' || node.data[node.data.length - 1] === '\n') ? ' ' : '';
+                before = (node.data[0] === ' ' || node.data[0] === '\n') ? ' ' : '';
+                node.data = before + node.data.trim() + after;
+            }else if(block !== root){
                 if(block.nodeType === Node.ELEMENT_NODE && window.getComputedStyle(block, null).display !== 'block'){
                     var before = after = '';
                     after = (node.data[node.data.length - 1] === ' ' || node.data[node.data.length - 1] === '\n') ? ' ' : '';
