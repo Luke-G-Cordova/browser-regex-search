@@ -169,9 +169,8 @@ function highlight(root, regex, callback, excludes){
                 tag = callback(helpArr[k]);
                 newNode.data = '';
                 insertedNode = newNode.parentNode.insertBefore(tag, newNode);
-                groupedNodes[i].splice(j + 1, 0, insertedNode.firstChild, newNode);
-                newNode.parentNode.normalize();
-                j+=3;
+                groupedNodes[i][j] = insertedNode.firstChild;
+                j++;
                 helpArr.push(groupedNodes[i][j].data);
             }
 
@@ -181,15 +180,18 @@ function highlight(root, regex, callback, excludes){
                 tag = callback(lastNode.substr(0, test[0].length - helpArr.join('').length));
                 newNode.data = newNode.data.substr(test[0].length - helpArr.join('').length);
                 insertedNode = newNode.parentNode.insertBefore(tag, newNode);
-                groupedNodes[i].splice(j + 1, 0, insertedNode.firstChild, newNode);
-                newNode.parentNode.normalize();
+
+                groupedNodes[i][j] = insertedNode.firstChild;
+                if(newNode.data.length > 0){
+                    groupedNodes[i].splice(j + 1, 0, newNode);
+                }
             }else{
                 newNode = groupedNodes[i][j].splitText(test2.index);
                 tag = callback(test2[0]);
                 newNode.data = newNode.data.substr(test2[0].length);
                 insertedNode = newNode.parentNode.insertBefore(tag, newNode);
+
                 groupedNodes[i].splice(j + 1, 0, insertedNode.firstChild, newNode);
-                newNode.parentNode.normalize();
             }
 
             nodeParts = '';
