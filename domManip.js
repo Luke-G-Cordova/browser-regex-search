@@ -30,22 +30,27 @@ chrome.runtime.onMessage.addListener((msg, sender, response) => {
 // http://blog.alexanderdickson.com/javascript-replacing-text
 function clearHighlight(keys){
     var elems;
-    var node;
+    var nodes;
     var elements;
     var keysCopy = [].concat(keys);
     for(j = 0;j<keysCopy.length;j++){
         elems = document.querySelectorAll(`span.chrome-regeggz-span.highlight-me.${keysCopy[j]}`);
         elements = [].slice.call(elems);
         for(i = 0;i<elements.length;i++){
-            node = elements[i].childNodes[0];
-            elements[i].parentNode.replaceChild(elements[i].childNodes[0], elements[i]);
-            node.parentNode.normalize();
+            nodes = [].slice.call(elements[i].childNodes);
+            var nodesFragment = document.createDocumentFragment();
+            for(node in nodes){
+                nodesFragment.appendChild(nodes[node]);
+            }
+            elements[i].parentNode.replaceChild(nodesFragment, elements[i]);
+            elements[i] = nodes[0];
+            nodes[0].parentNode.normalize();
         }
     }
     index = 0;
 }
 
-// highlight(document.body, new RegExp('name is', 'ig'), function(match) {
+// highlight(document.body, new RegExp('the', 'ig'), function(match) {
 //     var span = document.createElement("span");
 //     span.style.backgroundColor = `yellow`;
 //     span.style.color = `black`;
@@ -73,7 +78,8 @@ function highlight(root, regex, callback, excludes){
                 before = (node.data[0] === ' ' || node.data[0] === '\n') ? ' ' : '';
                 node.data = before + node.data.trim() + after;
             }else if(block && block.nodeType === Node.ELEMENT_NODE && window.getComputedStyle(block, null).display === 'block'){
-                node.data = ' ' + node.data.trimStart();
+                before = (node.data[0] === ' ' || node.data[0] === '\n') ? ' ' : '';
+                node.data = before + node.data.trimStart();
             }
         }
     }
@@ -138,7 +144,8 @@ function highlight(root, regex, callback, excludes){
 
             // find nodes with an occurence of the match
             var j = 0;
-            var nodeParts = groupedNodes[i][j].data;
+            var nodeParts = '' + groupedNodes[i][j].data;
+
             while(test.index > nodeParts.length - 1){
                 j++;
                 nodeParts += groupedNodes[i][j].data;
@@ -148,7 +155,8 @@ function highlight(root, regex, callback, excludes){
             test2 = regex.exec(groupedNodes[i][j].data);
             // find if this node only contains part of the match
             var inThisNode = nodeParts.substr(test.index);
-            
+
+
             // if the current node only contains part of the match,
             // test2 will not be able to detect, so this is the construction
             // of test2 to account for that case. 
@@ -162,18 +170,25 @@ function highlight(root, regex, callback, excludes){
 
             var helpArr = [];
             helpArr.push(test2[0]);
+
             for(k = 0 ; helpArr.join('').length < test[0].length ; k++){
+                
                 newNode = groupedNodes[i][j].splitText(groupedNodes[i][j].length - helpArr[k].length);
                 tag = callback(helpArr[k]);
                 newNode.data = '';
                 insertedNode = newNode.parentNode.insertBefore(tag, newNode);
-                groupedNodes[i][j] = insertedNode.firstChild;
+                if(groupedNodes[i][j].data.length === 0){
+                    groupedNodes[i][j] = insertedNode.firstChild;
+                }else{
+                    groupedNodes[i].splice(j + 1, 0, insertedNode.firstChild);
+                    j++;
+                }
                 j++;
                 helpArr.push(groupedNodes[i][j].data);
             }
-
             var lastNode = helpArr.pop();
             if(helpArr[0]){
+
                 newNode = groupedNodes[i][j].splitText(0);
                 tag = callback(lastNode.substr(0, test[0].length - helpArr.join('').length));
                 newNode.data = newNode.data.substr(test[0].length - helpArr.join('').length);
@@ -194,6 +209,7 @@ function highlight(root, regex, callback, excludes){
 
             nodeParts = '';
             regex.lastIndex = lastRegIndex;
+
         }
         regex.lastIndex = 0;
         
