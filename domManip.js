@@ -1,5 +1,4 @@
 
-
 var index = 0;
 var elemKeys = [];
 chrome.runtime.onMessage.addListener((msg, sender, response) => {

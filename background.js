@@ -1,10 +1,6 @@
 
-// listen for a connection from the popup script
 chrome.runtime.onConnect.addListener((port) => {
     if(port.name === 'popup'){
-        // when the popup script is out of focus, 
-        // send a message to the domManip to clear 
-        // any left over highlight
         port.onDisconnect.addListener(() => {
             let sendObj = {
                 from: 'background',
@@ -19,7 +15,6 @@ chrome.runtime.onConnect.addListener((port) => {
 chrome.commands.onCommand.addListener((command) => {
     console.log(`Command "${command}" triggered`);
 });
-// send data based on a sendObj object
 function sendData(sendObj){
     chrome.tabs.query({
         active: true,

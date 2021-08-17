@@ -1,8 +1,6 @@
 
-// connect to the background script
 chrome.runtime.connect({ name: 'popup' });
-// when popup is loaded listen for an input and
-// send data to domManip.js
+
 var inputs;
 window.addEventListener('DOMContentLoaded', () => {
     inputs = document.querySelectorAll('input');
@@ -11,7 +9,7 @@ window.addEventListener('DOMContentLoaded', () => {
         elem.addEventListener('input', sendData);
     })
 });
-// send data based on the evalue
+
 function sendData(e){
     var data = e.target.value;
     var key = e.target.name;
