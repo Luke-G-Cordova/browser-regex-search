@@ -16,7 +16,7 @@
         }
     ],
     "background":{
-        "service_worker":"background.js"
+        "service_worker": "background.js"
     },
     "action": {
         "default_icon": {
@@ -31,5 +31,12 @@
         "16": "regex.png",
         "48": "regex.png",
         "128": "regex.png"
+    },
+    "commands":{
+        "_execute_action":{
+            "suggested_key": {
+                "default": "Ctrl+Shift+L"
+            }
+        }
     }
 }

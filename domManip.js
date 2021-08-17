@@ -25,6 +25,7 @@ chrome.runtime.onMessage.addListener((msg, sender, response) => {
     response('we got the message');
 });
 
+
 // http://blog.alexanderdickson.com/javascript-replacing-text
 function clearHighlight(keys){
     var elems;

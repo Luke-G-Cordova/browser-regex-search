@@ -1,5 +1,4 @@
 
-
 // listen for a connection from the popup script
 chrome.runtime.onConnect.addListener((port) => {
     if(port.name === 'popup'){
@@ -17,7 +16,9 @@ chrome.runtime.onConnect.addListener((port) => {
         });
     }
 });
-
+chrome.commands.onCommand.addListener((command) => {
+    console.log(`Command "${command}" triggered`);
+});
 // send data based on a sendObj object
 function sendData(sendObj){
     chrome.tabs.query({
