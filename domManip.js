@@ -1,12 +1,13 @@
 
 var index = 0;
 var elemKeys = [];
+var count = 0;
 chrome.runtime.onMessage.addListener((msg, sender, response) => {
     if((msg.from === 'popup') && (msg.subject === 'newDomInfo')){
         if(elemKeys.indexOf(msg.key) === -1) elemKeys.push(msg.key);
         clearHighlight(msg.key);
         if(msg.data !== '' && msg.data[msg.data.length - 1] !== '\\'){
-            highlight(document.body, new RegExp(msg.data, 'ig'), function(match){
+            count = highlight(document.body, new RegExp(msg.data, 'ig'), function(match){
                 index++;
                 var span = document.createElement("span");
                 span.className = `chrome-regeggz-span highlight-me ${msg.key}`;
@@ -16,12 +17,14 @@ chrome.runtime.onMessage.addListener((msg, sender, response) => {
                 span.textContent = match;
                 return span;
             });
+            response(count);
+        }else{
+            response(0);
         }
     }
     if((msg.from === 'background' && (msg.subject === 'popupClosed'))) {
         clearHighlight(elemKeys);
     }
-    response('we got the message');
 });
 
 
@@ -121,12 +124,14 @@ function highlight(root, regex, callback, excludes){
     var test2;
     var tag;
     var newNode;
+    var count = 0;
     for(i = 0;i<groupedNodes.length;i++){
 
         masterStr = groupedNodes[i].map(elem => elem.data).join('');
 
         while(test = regex.exec(masterStr)){
             var lastRegIndex = regex.lastIndex;
+            count++;
             var j = 0;
             var nodeParts = '' + groupedNodes[i][j].data;
 
@@ -192,4 +197,5 @@ function highlight(root, regex, callback, excludes){
         }
         regex.lastIndex = 0;
     }
+    return count;
 }
