@@ -6,27 +6,63 @@ var defRejects = ['\\', '\\w', '\\w+', '\\D', '\\D+', '\\S', '\\S+', '.'];
 
 chrome.runtime.onMessage.addListener((msg, sender, response) => {
     if((msg.from === 'popup') && (msg.subject === 'newDomInfo')){
-        if(elemKeys.indexOf(msg.key) === -1) elemKeys.push(msg.key);
 
+        if(elemKeys.indexOf(msg.key) === -1) {
+            elemKeys.push(msg.key);
+            elemKeys.push(index);
+        } 
+
+        
         clearHighlight(msg.key);
 
         if(msg.data !== '' && defRejects.indexOf(msg.data) === -1){
-            count = highlight(document.body, new RegExp(msg.data, 'ig'), function(match){
-                index++;
+            count = highlight(document.body, new RegExp(msg.data, 'ig'), function(match, sameMatchID){
                 var span = document.createElement("span");
                 span.className = `chrome-regeggz-span highlight-me ${msg.key}`;
                 span.style.backgroundColor = `rgb(${msg.color})`;
                 span.style.color = `black`;
-                span.id = `${index}|${msg.color}`;
+                console.log(sameMatchID);
+                if(sameMatchID){
+                    span.id = `${index}|${msg.color}|${msg.key}|${sameMatchID}`;
+                    index--;
+                }else{
+                    span.id = `${index}|${msg.color}|${msg.key}`;
+                }
+                
+                index++;
                 span.textContent = match;
                 return span;
             });
+            window.location.assign(window.location.origin + window.location.pathname + `#0|${msg.color}|${msg.key}`);
             response(count);
         }else{
             response(0);
         }
     }
-    if((msg.from === 'background' && (msg.subject === 'popupClosed'))) {
+
+
+    if((msg.from === 'popup') && (msg.subject === 'changeCurrent') && elemKeys.indexOf(msg.key) !== -1 ){
+        if(msg.data.indexOf('next') !== -1){
+            var regCurrent = /(^|\s)current(\s|$)/;
+            var current = ' current';
+
+            var currentIndex = elemKeys[elemKeys.indexOf(msg.key) + 1];
+            var prevElem = document.getElementById(`${currentIndex-1}|${msg.color}|${msg.key}`);
+
+            if(prevElem && regCurrent.test(prevElem.className)){
+                prevElem.className = prevElem.className.replace(regCurrent, '');
+            }
+            var nextElem = document.getElementById(`${currentIndex}|${msg.color}|${msg.key}`);
+            nextElem.className += current;
+
+            elemKeys[elemKeys.indexOf(msg.key) + 1] ++;
+        }else if(msg.data.indexOf('prev') !== -1){
+            console.log(msg.color);
+
+        }
+        
+    }
+    if((msg.from === 'background') && (msg.subject === 'popupClosed')) {
         clearHighlight(elemKeys);
     }
 });
@@ -158,11 +194,12 @@ function highlight(root, regex, callback, excludes){
 
             var helpArr = [];
             helpArr.push(test2[0]);
+            var sameMatchID = 1;
 
             for(k = 0 ; helpArr.join('').length < test[0].length ; k++){
                 
                 newNode = groupedNodes[i][j].splitText(groupedNodes[i][j].length - helpArr[k].length);
-                tag = callback(helpArr[k]);
+                tag = callback(helpArr[k], sameMatchID);
                 newNode.data = '';
                 insertedNode = newNode.parentNode.insertBefore(tag, newNode);
                 if(groupedNodes[i][j].data.length === 0){
@@ -172,13 +209,14 @@ function highlight(root, regex, callback, excludes){
                     j++;
                 }
                 j++;
+                sameMatchID++;
                 helpArr.push(groupedNodes[i][j].data);
             }
             var lastNode = helpArr.pop();
             if(helpArr[0]){
 
                 newNode = groupedNodes[i][j].splitText(0);
-                tag = callback(lastNode.substr(0, test[0].length - helpArr.join('').length));
+                tag = callback(lastNode.substr(0, test[0].length - helpArr.join('').length), sameMatchID);
                 newNode.data = newNode.data.substr(test[0].length - helpArr.join('').length);
                 insertedNode = newNode.parentNode.insertBefore(tag, newNode);
 
@@ -186,6 +224,7 @@ function highlight(root, regex, callback, excludes){
                 if(newNode.data.length > 0){
                     groupedNodes[i].splice(j + 1, 0, newNode);
                 }
+                sameMatchID++;
             }else{
                 newNode = groupedNodes[i][j].splitText(test2.index);
                 tag = callback(test2[0]);
