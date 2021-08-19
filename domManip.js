@@ -2,11 +2,15 @@
 var index = 0;
 var elemKeys = [];
 var count = 0;
+var defRejects = ['\\', '\\w', '\\w+', '\\D', '\\D+', '\\S', '\\S+', '.'];
+
 chrome.runtime.onMessage.addListener((msg, sender, response) => {
     if((msg.from === 'popup') && (msg.subject === 'newDomInfo')){
         if(elemKeys.indexOf(msg.key) === -1) elemKeys.push(msg.key);
+
         clearHighlight(msg.key);
-        if(msg.data !== '' && msg.data[msg.data.length - 1] !== '\\'){
+
+        if(msg.data !== '' && defRejects.indexOf(msg.data) === -1){
             count = highlight(document.body, new RegExp(msg.data, 'ig'), function(match){
                 index++;
                 var span = document.createElement("span");
@@ -26,7 +30,6 @@ chrome.runtime.onMessage.addListener((msg, sender, response) => {
         clearHighlight(elemKeys);
     }
 });
-
 
 // http://blog.alexanderdickson.com/javascript-replacing-text
 function clearHighlight(keys){
