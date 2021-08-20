@@ -16,24 +16,24 @@ chrome.runtime.onMessage.addListener((msg, sender, response) => {
         clearHighlight(msg.key);
 
         if(msg.data !== '' && defRejects.indexOf(msg.data) === -1){
+            let multiNodeMatchId;
             count = highlight(document.body, new RegExp(msg.data, 'ig'), function(match, sameMatchID){
+                multiNodeMatchId = sameMatchID;
                 var span = document.createElement("span");
                 span.className = `chrome-regeggz-span highlight-me ${msg.key}`;
                 span.style.backgroundColor = `rgb(${msg.color})`;
                 span.style.color = `black`;
-                console.log(sameMatchID);
-                if(sameMatchID){
-                    span.id = `${index}|${msg.color}|${msg.key}|${sameMatchID}`;
+                if(multiNodeMatchId){
+                    span.id = `${index}|${msg.color}|${msg.key}|${multiNodeMatchId}`;
                     index--;
                 }else{
-                    span.id = `${index}|${msg.color}|${msg.key}`;
+                    span.id = `${index}|${msg.color}|${msg.key}|${multiNodeMatchId}`;
                 }
-                
                 index++;
                 span.textContent = match;
                 return span;
             });
-            window.location.assign(window.location.origin + window.location.pathname + `#0|${msg.color}|${msg.key}`);
+            window.location.assign(window.location.origin + window.location.pathname + `#0|${msg.color}|${msg.key}|${multiNodeMatchId}`);
             response(count);
         }else{
             response(0);
@@ -58,7 +58,6 @@ chrome.runtime.onMessage.addListener((msg, sender, response) => {
             elemKeys[elemKeys.indexOf(msg.key) + 1] ++;
         }else if(msg.data.indexOf('prev') !== -1){
             console.log(msg.color);
-
         }
         
     }
@@ -299,7 +298,7 @@ function highlight(root, regex, callback, excludes){
             if(helpArr[0]){
 
                 newNode = groupedNodes[i][j].splitText(0);
-                tag = callback(lastNode.substr(0, test[0].length - helpArr.join('').length), sameMatchID);
+                tag = callback(lastNode.substr(0, test[0].length - helpArr.join('').length), 0);
                 newNode.data = newNode.data.substr(test[0].length - helpArr.join('').length);
                 insertedNode = newNode.parentNode.insertBefore(tag, newNode);
 
@@ -310,7 +309,7 @@ function highlight(root, regex, callback, excludes){
                 sameMatchID++;
             }else{
                 newNode = groupedNodes[i][j].splitText(test2.index);
-                tag = callback(test2[0]);
+                tag = callback(test2[0], 0);
                 newNode.data = newNode.data.substr(test2[0].length);
                 insertedNode = newNode.parentNode.insertBefore(tag, newNode);
 
