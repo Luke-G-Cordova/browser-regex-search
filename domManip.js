@@ -15,25 +15,54 @@ chrome.runtime.onMessage.addListener((msg, sender, response) => {
         
         clearHighlight(msg.key);
 
+        // this if statement checks if the msg.data variable, or the variable that
+        // will be passed as the regular expression to be searched, is valid or not
         if(msg.data !== '' && defRejects.indexOf(msg.data) === -1){
+            
+            // this variable just scopes the sameMatchID variable outside
+            // of the callback to highlight()
             let multiNodeMatchId;
+
+            // count stores the amount of matches in the page.
+            // we are searching through the body node of the document 
+            // the msg.data variable is instantiated as a RegExp object
+            //      and is made both case insensitive ('i') and searched
+            //      globally ('g') through a tested string. The g modifier
+            //      is the more important of the two and should always be
+            //      included.
+            // the callback function returns the desired element to replace
+            //      the matched text found in the page
             count = highlight(document.body, new RegExp(msg.data, 'ig'), function(match, sameMatchID){
+                // store the sameMatchID outside of the scope of this function for later use
                 multiNodeMatchId = sameMatchID;
+
+                // create an inline element
                 var span = document.createElement("span");
+
+                // give it a unique class to be referenced with css or js later
                 span.className = `chrome-regeggz-span highlight-me ${msg.key}`;
+
+                // style the element, in the future consider doing rounded borders
+                // for multi node borders may have to use border-top-left-radius
+                // or something similar
                 span.style.backgroundColor = `rgb(${msg.color})`;
                 span.style.color = `black`;
-                if(multiNodeMatchId){
-                    span.id = `${index}|${msg.color}|${msg.key}|${multiNodeMatchId}`;
-                    index--;
-                }else{
-                    span.id = `${index}|${msg.color}|${msg.key}|${multiNodeMatchId}`;
-                }
-                index++;
+
+                // create a unique id for the element
+                span.id = `${index}|${msg.color}|${msg.key}|${multiNodeMatchId}`;
+
+                // if this is not the last node in the match, do not 
+                // increase the index of the match
+                index = multiNodeMatchId > -1 ? index : index + 1;
+
+                // give the element text and return it
                 span.textContent = match;
                 return span;
             });
-            window.location.assign(window.location.origin + window.location.pathname + `#0|${msg.color}|${msg.key}|${multiNodeMatchId}`);
+
+            // jump to the first occurrence of the match on the page.
+            window.location.assign(window.location.origin + window.location.pathname + `#0|${msg.color}|${msg.key}|0`);
+            
             response(count);
         }else{
             response(0);
@@ -272,7 +301,7 @@ function highlight(root, regex, callback, excludes){
             helpArr.push(test2[0]);
 
             // TODO: this is for id's for highlighted matches accross multiple nodes
-            var sameMatchID = 1;
+            var sameMatchID = 0;
             
             // this for loop takes care of the first node that the match occures in, and
             // all subsequent matches, excluding the very last match.
@@ -298,7 +327,7 @@ function highlight(root, regex, callback, excludes){
             if(helpArr[0]){
 
                 newNode = groupedNodes[i][j].splitText(0);
-                tag = callback(lastNode.substr(0, test[0].length - helpArr.join('').length), 0);
+                tag = callback(lastNode.substr(0, test[0].length - helpArr.join('').length), -1);
                 newNode.data = newNode.data.substr(test[0].length - helpArr.join('').length);
                 insertedNode = newNode.parentNode.insertBefore(tag, newNode);
 
