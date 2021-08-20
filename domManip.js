@@ -1,18 +1,27 @@
 
 var index = 0;
 var elemKeys = [];
+var currentIndexes = [];
+var matchCounts = [];
 var count = 0;
 var defRejects = ['\\', '\\w', '\\w+', '\\D', '\\D+', '\\S', '\\S+', '.'];
 
 chrome.runtime.onMessage.addListener((msg, sender, response) => {
-    if((msg.from === 'popup') && (msg.subject === 'newDomInfo')){
+    
+    if(
+        (msg.from === 'popup') && 
+        (msg.subject === 'newDomInfo')
+    ){
 
+        // if the msg.key is a new one, in the case of creating
+        // a new input in the popup, add the key to the elemKeys
+        // array and the current index
         if(elemKeys.indexOf(msg.key) === -1) {
             elemKeys.push(msg.key);
-            elemKeys.push(index);
+            currentIndexes.push(index);
         } 
 
-        
+        // make sure to clear all previous matches from this key
         clearHighlight(msg.key);
 
         // this if statement checks if the msg.data variable, or the variable that
@@ -60,33 +69,61 @@ chrome.runtime.onMessage.addListener((msg, sender, response) => {
                 return span;
             });
 
-            // jump to the first occurrence of the match on the page.
-            window.location.assign(window.location.origin + window.location.pathname + `#0|${msg.color}|${msg.key}|0`);
+            // jump to the first occurrence of the match on the page, 
+            // which is always of id #0|{current collor}|{current key}|-1
+            window.location.assign(window.location.origin + window.location.pathname + `#0|${msg.color}|${msg.key}|-1`);
             
+            matchCounts.push(count);
+
+            // respond to the popup with the amount of matches
             response(count);
         }else{
             response(0);
         }
     }
 
+    if(
+        (msg.from === 'popup') && 
+        (msg.subject === 'changeCurrent') && 
+        (elemKeys.indexOf(msg.key) !== -1)
+    ){
+        let regCurrent = /(^|\s)current(\s|$)/;
+        let current = ' current';
+        let currentIndex;
+        let prevElem;
+        let nextElem;
 
-    if((msg.from === 'popup') && (msg.subject === 'changeCurrent') && elemKeys.indexOf(msg.key) !== -1 ){
         if(msg.data.indexOf('next') !== -1){
-            var regCurrent = /(^|\s)current(\s|$)/;
-            var current = ' current';
-
-            var currentIndex = elemKeys[elemKeys.indexOf(msg.key) + 1];
-            var prevElem = document.getElementById(`${currentIndex-1}|${msg.color}|${msg.key}`);
-
-            if(prevElem && regCurrent.test(prevElem.className)){
-                prevElem.className = prevElem.className.replace(regCurrent, '');
+            currentIndex = currentIndexes[elemKeys.indexOf(msg.key)];
+            prevElem = document.getElementById(`${currentIndex-1}|${msg.color}|${msg.key}|${-1}`);
+            nextElem = document.getElementById(`${currentIndex}|${msg.color}|${msg.key}|${-1}`);
+            for(let i = 0 ; (prevElem) || (nextElem) ; i++){
+                if(prevElem && regCurrent.test(prevElem.className)){
+                    prevElem.className = prevElem.className.replace(regCurrent, '');
+                }
+                if(nextElem){
+                    nextElem.className += current;
+                }
+                prevElem = document.getElementById(`${currentIndex-1}|${msg.color}|${msg.key}|${i}`);
+                nextElem = document.getElementById(`${currentIndex}|${msg.color}|${msg.key}|${i}`);
             }
-            var nextElem = document.getElementById(`${currentIndex}|${msg.color}|${msg.key}`);
-            nextElem.className += current;
-
-            elemKeys[elemKeys.indexOf(msg.key) + 1] ++;
+            currentIndexes[elemKeys.indexOf(msg.key)] ++;
         }else if(msg.data.indexOf('prev') !== -1){
-            console.log(msg.color);
+            currentIndex = currentIndexes[elemKeys.indexOf(msg.key)] - 1;
+            nextElem = document.getElementById(`${currentIndex}|${msg.color}|${msg.key}|${-1}`);
+            prevElem = document.getElementById(`${currentIndex-1}|${msg.color}|${msg.key}|${-1}`);
+            for(let i = 0 ; (nextElem) || (prevElem) ; i++){
+                if(nextElem && regCurrent.test(nextElem.className)){
+                    nextElem.className = nextElem.className.replace(regCurrent, '');
+                }
+                if(prevElem){
+                    console.log('here');
+                    prevElem.className += current;
+                }
+                nextElem = document.getElementById(`${currentIndex}|${msg.color}|${msg.key}|${i}`);
+                prevElem = document.getElementById(`${currentIndex-1}|${msg.color}|${msg.key}|${i}`);
+            }
+            currentIndexes[elemKeys.indexOf(msg.key)] --;
         }
         
     }
@@ -300,7 +337,15 @@ function highlight(root, regex, callback, excludes){
             // push the first occurrence of the match to the array
             helpArr.push(test2[0]);
 
-            // TODO: this is for id's for highlighted matches accross multiple nodes
+            // this paramater stores the current node with in the match, and is passed
+            // to the callback function as the second parameter.
+            // Ex. 
+            //      regex = 'superhuman'
+            //      matched nodes = 'su', 'per', 'hum', 'an'
+            //  in the above case, when 'su' gets sent to the callback, sameMatchID = 0,
+            //  'per' sameMatchID = 1, 'hum' sameMatchID = 2, and so on if there were more
+            //  nodes in this match. For the last node in any match, in this case 'an',
+            //  sameMatchID = -1. If there is only one node in the match, sameMatchID = -1.
             var sameMatchID = 0;
             
             // this for loop takes care of the first node that the match occures in, and
@@ -338,7 +383,7 @@ function highlight(root, regex, callback, excludes){
                 sameMatchID++;
             }else{
                 newNode = groupedNodes[i][j].splitText(test2.index);
-                tag = callback(test2[0], 0);
+                tag = callback(test2[0], -1);
                 newNode.data = newNode.data.substr(test2[0].length);
                 insertedNode = newNode.parentNode.insertBefore(tag, newNode);
 
