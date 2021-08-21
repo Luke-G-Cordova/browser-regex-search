@@ -31,7 +31,7 @@ function createInput(){
     input.placeholder = 'regular expression';
     input.name = key;
     input.regeggsColor = color;
-    div.appendChild(input);
+    input = div.appendChild(input);
 
     let count = document.createElement('span');
     count.innerHTML = '0/0';
@@ -68,7 +68,7 @@ function createInput(){
     div = form.appendChild(div);
     div.name = 'regeggs-key-' + Math.random().toString(36).substr(2, 5);
     
-    div.addEventListener('input', sendData);
+    input.addEventListener('input', sendData);
 
     document
         .querySelector(`button.next[name="${next.name}"]`)
