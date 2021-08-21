@@ -1,10 +1,10 @@
 
-var index = 0;
-var elemKeys = [];
-var currentIndexes = [];
-var matchCounts = [];
-var count = 0;
-var defRejects = ['\\', '\\w', '\\w+', '\\D', '\\D+', '\\S', '\\S+', '.'];
+let index = 0;
+let elemKeys = [];
+let currentIndexes = [];
+let matchCounts = [];
+let myHighlights = [];
+let defRejects = ['\\', '\\w', '\\w+', '\\D', '\\D+', '\\S', '\\S+', '.'];
 
 chrome.runtime.onMessage.addListener((msg, sender, response) => {
     
@@ -16,10 +16,13 @@ chrome.runtime.onMessage.addListener((msg, sender, response) => {
         // if the msg.key is a new one, in the case of creating
         // a new input in the popup, add the key to the elemKeys
         // array and the current index
+        index = 0;
         if(elemKeys.indexOf(msg.key) === -1) {
             elemKeys.push(msg.key);
             currentIndexes.push(index);
-        } 
+        }else{
+            currentIndexes[elemKeys.indexOf(msg.key)] = index;
+        }
 
         // make sure to clear all previous matches from this key
         clearHighlight(msg.key);
@@ -41,7 +44,7 @@ chrome.runtime.onMessage.addListener((msg, sender, response) => {
             //      included.
             // the callback function returns the desired element to replace
             //      the matched text found in the page
-            count = highlight(document.body, new RegExp(msg.data, 'ig'), function(match, sameMatchID){
+            myHighlights[elemKeys.indexOf(msg.key)] = highlight(document.body, new RegExp(msg.data, 'ig'), function(match, sameMatchID){
                 // store the sameMatchID outside of the scope of this function for later use
                 multiNodeMatchId = sameMatchID;
 
@@ -71,12 +74,13 @@ chrome.runtime.onMessage.addListener((msg, sender, response) => {
 
             // jump to the first occurrence of the match on the page, 
             // which is always of id #0|{current collor}|{current key}|-1
-            window.location.assign(window.location.origin + window.location.pathname + `#0|${msg.color}|${msg.key}|-1`);
+
+            // matchCounts[elemKeys.indexOf(msg.key)] = myHighlights[elemKeys.indexOf(msg.key)].count;
+            nextMatch(myHighlights[elemKeys.indexOf(msg.key)].elements, msg);
             
-            matchCounts.push(count);
 
             // respond to the popup with the amount of matches
-            response(count);
+            response(myHighlights[elemKeys.indexOf(msg.key)].count);
         }else{
             response(0);
         }
@@ -87,51 +91,86 @@ chrome.runtime.onMessage.addListener((msg, sender, response) => {
         (msg.subject === 'changeCurrent') && 
         (elemKeys.indexOf(msg.key) !== -1)
     ){
-        let regCurrent = /(^|\s)current(\s|$)/;
-        let current = ' current';
-        let currentIndex;
-        let prevElem;
-        let nextElem;
-
         if(msg.data.indexOf('next') !== -1){
-            currentIndex = currentIndexes[elemKeys.indexOf(msg.key)];
-            prevElem = document.getElementById(`${currentIndex-1}|${msg.color}|${msg.key}|${-1}`);
-            nextElem = document.getElementById(`${currentIndex}|${msg.color}|${msg.key}|${-1}`);
-            for(let i = 0 ; (prevElem) || (nextElem) ; i++){
-                if(prevElem && regCurrent.test(prevElem.className)){
-                    prevElem.className = prevElem.className.replace(regCurrent, '');
-                }
-                if(nextElem){
-                    nextElem.className += current;
-                }
-                prevElem = document.getElementById(`${currentIndex-1}|${msg.color}|${msg.key}|${i}`);
-                nextElem = document.getElementById(`${currentIndex}|${msg.color}|${msg.key}|${i}`);
-            }
-            currentIndexes[elemKeys.indexOf(msg.key)] ++;
+            nextMatch(myHighlights[elemKeys.indexOf(msg.key)].elements, msg);
         }else if(msg.data.indexOf('prev') !== -1){
-            currentIndex = currentIndexes[elemKeys.indexOf(msg.key)] - 1;
-            nextElem = document.getElementById(`${currentIndex}|${msg.color}|${msg.key}|${-1}`);
-            prevElem = document.getElementById(`${currentIndex-1}|${msg.color}|${msg.key}|${-1}`);
-            for(let i = 0 ; (nextElem) || (prevElem) ; i++){
-                if(nextElem && regCurrent.test(nextElem.className)){
-                    nextElem.className = nextElem.className.replace(regCurrent, '');
-                }
-                if(prevElem){
-                    console.log('here');
-                    prevElem.className += current;
-                }
-                nextElem = document.getElementById(`${currentIndex}|${msg.color}|${msg.key}|${i}`);
-                prevElem = document.getElementById(`${currentIndex-1}|${msg.color}|${msg.key}|${i}`);
-            }
-            currentIndexes[elemKeys.indexOf(msg.key)] --;
+            prevMatch(msg, elemKeys, currentIndexes, matchCounts[elemKeys.indexOf(msg.key)]);
         }
-        
     }
     if((msg.from === 'background') && (msg.subject === 'popupClosed')) {
         clearHighlight(elemKeys);
     }
 });
 
+function nextMatch(elements, msg, offset){
+    offset || (offset = 0);
+    const regCurrent = /(^|\s)current(\s|$)/;
+    const current = ' current';
+    let currElems = document.querySelectorAll(`span.chrome-regeggz-span.highlight-me.current.${msg.key}`);
+    console.log(elements);
+    if(currElems[0]){
+        // let i;
+        // for(i = 0;i < currElems.length;i++){
+        //     currElems[i].className = currElems[i].className.replace(regCurrent, '');
+        // }
+        
+    }else{
+        let currElem = document.getElementById(`${offset}|${msg.color}|${msg.key}|${-1}`);
+        for(let i = 0;currElem;i++){
+            currElem.className += current;
+            currElem = document.getElementById(`${offset}|${msg.color}|${msg.key}|${i}`);
+        }
+    }
+
+}
+function prevMatch(msg, elemKeys, currentIndexes, matchCap){
+    const regCurrent = /(^|\s)current(\s|$)/;
+    const current = ' current';
+    let currentIndex = currentIndexes[elemKeys.indexOf(msg.key)] - 1;
+
+    console.log(currentIndexes[elemKeys.indexOf(msg.key)]);
+
+    let prevElem = document.getElementById(`${currentIndex}|${msg.color}|${msg.key}|${-1}`);
+
+    let currElem = document.getElementById(
+        `${currentIndex - 1 === -1 ? matchCap - 1 : currentIndex-1}|${msg.color}|${msg.key}|${-1}`
+    );
+    console.log(currElem);
+    for(let i = 0 ; (prevElem) || (currElem) ; i++){
+        if(prevElem && regCurrent.test(prevElem.className)){
+            prevElem.className = prevElem.className.replace(regCurrent, '');
+        }
+        if(currElem){
+            currElem.className += current;
+        }
+        prevElem = document.getElementById(`${currentIndex}|${msg.color}|${msg.key}|${i}`);
+        currElem = document.getElementById(`${currentIndex-1}|${msg.color}|${msg.key}|${i}`);
+    }
+    currentIndexes[elemKeys.indexOf(msg.key)] = 
+        currentIndexes[elemKeys.indexOf(msg.key)] < 0 ? matchCap - 1 : currentIndexes[elemKeys.indexOf(msg.key)] - 1;
+
+    window.location.assign(window.location.origin + window.location.pathname + `#0|${msg.color}|${msg.key}|-1`);
+}
+// function prevMatch(msg, elemKeys, currentIndexes, matchCap){
+//     const regCurrent = /(^|\s)current(\s|$)/;
+//     const current = ' current';
+//     let currentIndex = currentIndexes[elemKeys.indexOf(msg.key)] - 1;
+//     let nextElem = document.getElementById(`${currentIndex}|${msg.color}|${msg.key}|${-1}`);
+//     let prevElem = document.getElementById(`${currentIndex-1}|${msg.color}|${msg.key}|${-1}`);
+//     for(let i = 0 ; (nextElem) || (prevElem) ; i++){
+//         if(nextElem && regCurrent.test(nextElem.className)){
+//             nextElem.className = nextElem.className.replace(regCurrent, '');
+//         }
+//         if(prevElem){
+//             prevElem.className += current;
+//         }
+//         nextElem = document.getElementById(`${currentIndex}|${msg.color}|${msg.key}|${i}`);
+//         prevElem = document.getElementById(`${currentIndex-1}|${msg.color}|${msg.key}|${i}`);
+//     }
+//     console.log(currentIndexes[elemKeys.indexOf(msg.key)]);
+//     currentIndexes[elemKeys.indexOf(msg.key)] --;//= 
+//         // currentIndexes[elemKeys.indexOf(msg.key)] - 1 <= 0 ? matchCap + 1 : currentIndexes[elemKeys.indexOf(msg.key)] - 1;
+// }
 // http://blog.alexanderdickson.com/javascript-replacing-text
 function clearHighlight(keys){
     var elems;
@@ -152,7 +191,6 @@ function clearHighlight(keys){
             nodes[0].parentNode.normalize();
         }
     }
-    index = 0;
 }
 
 
@@ -257,6 +295,7 @@ function highlight(root, regex, callback, excludes){
     var tag;
     var newNode;
     var count = 0;
+    var nodeList = [];
     for(i = 0;i<groupedNodes.length;i++){
 
         // masterStr is a string that contains the content of each
@@ -350,12 +389,14 @@ function highlight(root, regex, callback, excludes){
             
             // this for loop takes care of the first node that the match occures in, and
             // all subsequent matches, excluding the very last match.
+            nodeList.push([]);
             for(k = 0 ; helpArr.join('').length < test[0].length ; k++){
                 
                 newNode = groupedNodes[i][j].splitText(groupedNodes[i][j].length - helpArr[k].length);
                 tag = callback(helpArr[k], sameMatchID);
                 newNode.data = '';
                 insertedNode = newNode.parentNode.insertBefore(tag, newNode);
+                nodeList[nodeList.length - 1].push(insertedNode);
                 if(groupedNodes[i][j].data.length === 0){
                     groupedNodes[i][j] = insertedNode.firstChild;
                 }else{
@@ -375,7 +416,7 @@ function highlight(root, regex, callback, excludes){
                 tag = callback(lastNode.substr(0, test[0].length - helpArr.join('').length), -1);
                 newNode.data = newNode.data.substr(test[0].length - helpArr.join('').length);
                 insertedNode = newNode.parentNode.insertBefore(tag, newNode);
-
+                nodeList[nodeList.length - 1].push(insertedNode);
                 groupedNodes[i][j] = insertedNode.firstChild;
                 if(newNode.data.length > 0){
                     groupedNodes[i].splice(j + 1, 0, newNode);
@@ -386,7 +427,7 @@ function highlight(root, regex, callback, excludes){
                 tag = callback(test2[0], -1);
                 newNode.data = newNode.data.substr(test2[0].length);
                 insertedNode = newNode.parentNode.insertBefore(tag, newNode);
-
+                nodeList[nodeList.length - 1].push(insertedNode);
                 groupedNodes[i].splice(j + 1, 0, insertedNode.firstChild, newNode);
             }
 
@@ -402,5 +443,8 @@ function highlight(root, regex, callback, excludes){
         regex.lastIndex = 0;
     }
     // return the amount of matches in the root
-    return count;
+    return {
+        count,
+        elements: nodeList
+    };
 }

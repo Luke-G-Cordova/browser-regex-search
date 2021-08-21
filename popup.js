@@ -60,22 +60,28 @@ function createInput(){
     next = nextPrev.appendChild(next);
 
     div.appendChild(nextPrev);
-    prev.addEventListener('click', changeCurrent);
-    next.addEventListener('click', changeCurrent);
+    // prev.addEventListener('click', changeCurrent);
+    // next.addEventListener('click', changeCurrent);
 
 
 
     div = form.appendChild(div);
     div.name = 'regeggs-key-' + Math.random().toString(36).substr(2, 5);
+    
     div.addEventListener('input', sendData);
 
+    document
+        .querySelector(`button.next[name="${next.name}"]`)
+        .addEventListener('click', changeCurrent);
+    document
+        .querySelector(`button.prev[name="${prev.name}"]`)
+        .addEventListener('click', changeCurrent)
+    ;
 }
 function changeCurrent(e){
     e.preventDefault();
     var data = e.target.className;
     var [color, key] = e.target.name.split('|');
-    console.log(color);
-    console.log(key);
     chrome.tabs.query({
         active: true,
         currentWindow: true
