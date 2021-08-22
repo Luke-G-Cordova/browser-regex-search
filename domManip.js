@@ -4,7 +4,7 @@ let elemKeys = [];
 let currentIndexes = [];
 let matchCounts = [];
 let myHighlights = [];
-let defRejects = ['\\', '\\w', '\\w+', '\\D', '\\D+', '\\S', '\\S+', '.'];
+let defRejects = ['\\'];
 
 chrome.runtime.onMessage.addListener((msg, sender, response) => {
     let GI = elemKeys.indexOf(msg.key);
@@ -92,7 +92,7 @@ chrome.runtime.onMessage.addListener((msg, sender, response) => {
     ){
         if(msg.data.indexOf('next') !== -1){
 
-            currentIndexes[GI] = nextMatch(myHighlights[GI].elements, currentIndexes[GI]);
+            currentIndexes[GI] = nextMatch(myHighlights[GI].elements, currentIndexes[GI], 1);
             window.location.assign(window.location.origin + window.location.pathname + `#${currentIndexes[GI]}|${msg.color}|${msg.key}|-1`);
 
         }else if(msg.data.indexOf('prev') !== -1){
@@ -135,6 +135,7 @@ function nextMatch(elements, cIndex, direction){
     return cIndex;
 }
 
+/*
 
 // http://blog.alexanderdickson.com/javascript-replacing-text
 function clearHighlight(keys){
@@ -142,10 +143,11 @@ function clearHighlight(keys){
     var nodes;
     var elements;
     var keysCopy = [].concat(keys);
-    for(j = 0;j<keysCopy.length;j++){
+    
+    for(let j = 0;j<keysCopy.length;j++){
         elems = document.querySelectorAll(`span.chrome-regeggz-span.highlight-me.${keysCopy[j]}`);
         elements = [].slice.call(elems);
-        for(i = 0;i<elements.length;i++){
+        for(let i = 0;i<elements.length;i++){
             nodes = [].slice.call(elements[i].childNodes);
             var nodesFragment = document.createDocumentFragment();
             for(node in nodes){
@@ -253,6 +255,7 @@ function highlight(root, regex, callback, excludes){
         nodes.push(tw.currentNode);
     }
 
+
     // this for loop is the main algorithm for searching for matches.
     var masterStr = '';
     var test;
@@ -266,15 +269,16 @@ function highlight(root, regex, callback, excludes){
         // masterStr is a string that contains the content of each
         // group of nodes or paragraph.
         masterStr = groupedNodes[i].map(elem => elem.data).join('');
-
+        
         // loop while there is another match against the provided regex
         // in masterStr. 
         // Ex:
         //      regex = 'the'
         //      masterStr = 'the the the super the hi the'
         //   this will loop 5 for those inputs
+        // -----------------------------TODO: I need to make this a looot faster--------------------------
         while(test = regex.exec(masterStr)){
-
+            
             // storing the last found index of the regex so that I can 
             // reuse the regex to test other strings with out breaking
             // the loop
@@ -407,9 +411,11 @@ function highlight(root, regex, callback, excludes){
         // set the regex.lastIndex back to 0 just in case
         regex.lastIndex = 0;
     }
+    
     // return the amount of matches in the root
     return {
         count,
         elements: nodeList
     };
 }
+*/

@@ -5,10 +5,11 @@ function clearHighlight(keys){
     var nodes;
     var elements;
     var keysCopy = [].concat(keys);
-    for(j = 0;j<keysCopy.length;j++){
+    
+    for(let j = 0;j<keysCopy.length;j++){
         elems = document.querySelectorAll(`span.chrome-regeggz-span.highlight-me.${keysCopy[j]}`);
         elements = [].slice.call(elems);
-        for(i = 0;i<elements.length;i++){
+        for(let i = 0;i<elements.length;i++){
             nodes = [].slice.call(elements[i].childNodes);
             var nodesFragment = document.createDocumentFragment();
             for(node in nodes){
@@ -123,20 +124,23 @@ function highlight(root, regex, callback, excludes){
     var tag;
     var newNode;
     var count = 0;
-    for(i = 0;i<groupedNodes.length;i++){
+    var nodeList = [];
+    var groupedNodesLength = groupedNodes.length;
+    for(i = 0;i<groupedNodesLength;i++){
 
         // masterStr is a string that contains the content of each
         // group of nodes or paragraph.
         masterStr = groupedNodes[i].map(elem => elem.data).join('');
-
+        
         // loop while there is another match against the provided regex
         // in masterStr. 
         // Ex:
         //      regex = 'the'
         //      masterStr = 'the the the super the hi the'
         //   this will loop 5 for those inputs
+        // -----------------------------TODO: I need to make this a looot faster--------------------------
         while(test = regex.exec(masterStr)){
-
+            
             // storing the last found index of the regex so that I can 
             // reuse the regex to test other strings with out breaking
             // the loop
@@ -158,11 +162,13 @@ function highlight(root, regex, callback, excludes){
             // nodeParts keeps track of which node we are searching through
             // it is a string that gets each node from a group pushed
             // to the end of it
+            
             var nodeParts = '' + groupedNodes[i][j].data;
 
             // this loop finds which node contains the first occurence 
             // of the regex, j will represent the first occurence of the
-            while(test.index > nodeParts.length - 1){
+            var testIndex = test.index;
+            while(testIndex > nodeParts.length - 1){
                 j++;
                 nodeParts += groupedNodes[i][j].data;
             }
@@ -182,7 +188,7 @@ function highlight(root, regex, callback, excludes){
             //      oneNode has 'hi t' and the next has 'he bird', we still want 
             //          to be able to highlight the 'the' accross both nodes.
             //      in this case, inThisNode = 't'
-            var inThisNode = nodeParts.substr(test.index);
+            var inThisNode = nodeParts.substr(testIndex);
 
             // in the case of a match accross 2 nodes, test2 will not catch
             // the match because it matching against the full regex not part of it.
@@ -213,15 +219,15 @@ function highlight(root, regex, callback, excludes){
             //  nodes in this match. For the last node in any match, in this case 'an',
             //  sameMatchID = -1. If there is only one node in the match, sameMatchID = -1.
             var sameMatchID = 0;
-            
             // this for loop takes care of the first node that the match occures in, and
             // all subsequent matches, excluding the very last match.
+            nodeList.push([]);
             for(k = 0 ; helpArr.join('').length < test[0].length ; k++){
-                
                 newNode = groupedNodes[i][j].splitText(groupedNodes[i][j].length - helpArr[k].length);
                 tag = callback(helpArr[k], sameMatchID);
                 newNode.data = '';
                 insertedNode = newNode.parentNode.insertBefore(tag, newNode);
+                nodeList[nodeList.length - 1].push(insertedNode);
                 if(groupedNodes[i][j].data.length === 0){
                     groupedNodes[i][j] = insertedNode.firstChild;
                 }else{
@@ -241,18 +247,20 @@ function highlight(root, regex, callback, excludes){
                 tag = callback(lastNode.substr(0, test[0].length - helpArr.join('').length), -1);
                 newNode.data = newNode.data.substr(test[0].length - helpArr.join('').length);
                 insertedNode = newNode.parentNode.insertBefore(tag, newNode);
-
+                nodeList[nodeList.length - 1].push(insertedNode);
                 groupedNodes[i][j] = insertedNode.firstChild;
                 if(newNode.data.length > 0){
                     groupedNodes[i].splice(j + 1, 0, newNode);
                 }
                 sameMatchID++;
             }else{
+                
                 newNode = groupedNodes[i][j].splitText(test2.index);
                 tag = callback(test2[0], -1);
                 newNode.data = newNode.data.substr(test2[0].length);
                 insertedNode = newNode.parentNode.insertBefore(tag, newNode);
-
+                console.log(insertedNode);
+                nodeList[nodeList.length - 1].push(insertedNode);
                 groupedNodes[i].splice(j + 1, 0, insertedNode.firstChild, newNode);
             }
 
@@ -267,11 +275,10 @@ function highlight(root, regex, callback, excludes){
         // set the regex.lastIndex back to 0 just in case
         regex.lastIndex = 0;
     }
+    
     // return the amount of matches in the root
-    return count;
-}
-
-module.exports = {
-    clearHighlight,
-    highlight
+    return {
+        count,
+        elements: nodeList
+    };
 }
