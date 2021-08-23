@@ -5,11 +5,7 @@ chrome.runtime.connect({ name: 'popup' });
 
 var inputs;
 window.addEventListener('DOMContentLoaded', () => {
-    // inputs = document.querySelectorAll('input');
-    // inputs.forEach(elem => {
-    //     elem.name = 'regeggs-key-' + Math.random().toString(36).substr(2, 5);
-    //     elem.addEventListener('input', sendData);
-    // });
+    
     createInput();
     document
         .querySelector('#create-input')
@@ -95,6 +91,12 @@ function changeCurrent(e){
                 data,
                 key,
                 color
+            },
+            (res) => {
+                var show = document.querySelector('.matchCount')
+                var [top, bottom] = show.innerHTML.split('/');
+                show.innerHTML = `${res}/${bottom}`;
+
             }
         );
     });
@@ -118,7 +120,8 @@ function sendData(e){
                 key
             },
             (res) => {
-                e.target.nextElementSibling.innerHTML = ` 0/${res}`;
+                var [top, bottom] = e.target.nextElementSibling.innerHTML.split('/');
+                e.target.nextElementSibling.innerHTML = `${top}/${res-1}`;
             }
         );
     });

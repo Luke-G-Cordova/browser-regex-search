@@ -25,7 +25,6 @@ function clearHighlight(keys){
     }
 }
 
-
 function highlight(root, regex, callback, excludes){
     excludes || (excludes = ['script', 'style', 'iframe', 'canvas', 'noscript']);
 
@@ -119,14 +118,14 @@ function highlight(root, regex, callback, excludes){
             while(testIndex > nodeParts.length - 1){
                 j++;
                 
-                // ---figure out how to optimize this line---
+                
                 nodeParts = nodeParts + groupedNodes[i][j].data;
             }
 
             regex.lastIndex = 0;
 
             test2 = regex.exec(groupedNodes[i][j].data);
-            // ---figure out how to optimize this line---
+            
             var inThisNode = nodeParts.substr(testIndex);
 
             test2 || (

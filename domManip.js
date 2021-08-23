@@ -75,7 +75,7 @@ chrome.runtime.onMessage.addListener((msg, sender, response) => {
                 span.textContent = match;
                 return span;
             });
-            
+
             window.location.assign(window.location.origin + window.location.pathname + `#0|${msg.color}|${msg.key}|-1`);
 
             // respond to the popup with the amount of matches
@@ -94,12 +94,13 @@ chrome.runtime.onMessage.addListener((msg, sender, response) => {
 
             currentIndexes[GI] = nextMatch(myHighlights[GI].elements, currentIndexes[GI], 1);
             window.location.assign(window.location.origin + window.location.pathname + `#${currentIndexes[GI]}|${msg.color}|${msg.key}|-1`);
+            response(currentIndexes[GI]);
 
         }else if(msg.data.indexOf('prev') !== -1){
 
             currentIndexes[GI] = nextMatch(myHighlights[GI].elements, currentIndexes[GI], -1);
             window.location.assign(window.location.origin + window.location.pathname + `#${currentIndexes[GI]}|${msg.color}|${msg.key}|-1`);
-
+            response(currentIndexes[GI]);
         }
     }
     if((msg.from === 'background') && (msg.subject === 'popupClosed')) {
