@@ -29,6 +29,7 @@ function createInput(){
     input.className = 'myInput';
     input.type = 'text';
     input.placeholder = 'regular expression';
+    input.value = 'th';
     input.name = key;
     input.regeggsColor = color;
     input = div.appendChild(input);
