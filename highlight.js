@@ -10,7 +10,7 @@ function clearHighlight(keys){
     var keysCopy = [].concat(keys);
     
     for(let j = 0;j<keysCopy.length;j++){
-        elems = document.querySelectorAll(`span.chrome-regeggz-span.highlight-me.${keysCopy[j]}`);
+        elems = document.querySelectorAll(`highlight-me.chrome-regeggz-span.highlight-me.${keysCopy[j]}`);
         elements = [].slice.call(elems);
         for(let i = 0;i<elements.length;i++){
             nodes = [].slice.call(elements[i].childNodes);

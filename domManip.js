@@ -51,29 +51,29 @@ chrome.runtime.onMessage.addListener((msg, sender, response) => {
                 multiNodeMatchId = sameMatchID;
 
                 // create an inline element
-                var span = document.createElement("span");
+                var highlightMe = document.createElement("highlight-me");
 
                 // give it a unique class to be referenced with css or js later
-                span.className = `chrome-regeggz-span highlight-me ${msg.key}`;
+                highlightMe.className = `chrome-regeggz-highlightMe highlight-me ${msg.key}`;
                 if(index === 0){
-                    span.className += ' current';
+                    highlightMe.className += ' current';
                 }
                 // style the element, in the future consider doing rounded borders
                 // for multi node borders may have to use border-top-left-radius
                 // or something similar
-                span.style.backgroundColor = `rgb(${msg.color})`;
-                span.style.color = `black`;
+                highlightMe.style.backgroundColor = `rgb(${msg.color})`;
+                highlightMe.style.color = `black`;
 
                 // create a unique id for the element
-                span.id = `${index}|${msg.color}|${msg.key}|${multiNodeMatchId}`;
+                highlightMe.id = `${index}|${msg.color}|${msg.key}|${multiNodeMatchId}`;
 
                 // if this is not the last node in the match, do not 
                 // increase the index of the match
                 index = multiNodeMatchId > -1 ? index : index + 1;
 
                 // give the element text and return it
-                span.textContent = match;
-                return span;
+                highlightMe.textContent = match;
+                return highlightMe;
             });
 
             window.location.assign(window.location.origin + window.location.pathname + `#0|${msg.color}|${msg.key}|-1`);
