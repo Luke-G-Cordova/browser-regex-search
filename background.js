@@ -1,4 +1,5 @@
 
+var inputs = [];
 chrome.runtime.onConnect.addListener((port) => {
     if(port.name === 'popup'){
         port.onDisconnect.addListener(() => {
@@ -15,6 +16,12 @@ chrome.runtime.onConnect.addListener((port) => {
 chrome.commands.onCommand.addListener((command) => {
     console.log(`Command "${command}" triggered`);
 });
+chrome.runtime.onMessage.addListener((msg, sender, response) => {
+    if(msg.from === 'popup' && msg.subject === 'getInputs'){
+        response(inputs);
+    }
+});
+
 function sendData(sendObj){
     chrome.tabs.query({
         active: true,

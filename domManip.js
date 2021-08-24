@@ -54,7 +54,7 @@ chrome.runtime.onMessage.addListener((msg, sender, response) => {
                 var highlightMe = document.createElement("highlight-me");
 
                 // give it a unique class to be referenced with css or js later
-                highlightMe.className = `chrome-regeggz-highlightMe highlight-me ${msg.key}`;
+                highlightMe.className = `chrome-regeggz-highlight-me ${msg.key}`;
                 if(index === 0){
                     highlightMe.className += ' current';
                 }

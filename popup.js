@@ -3,29 +3,33 @@ chrome.runtime.connect({ name: 'popup' });
 
 
 
-var inputs;
 window.addEventListener('DOMContentLoaded', () => {
-    
-    createInput();
+    getInputs();
+    if(document.querySelectorAll('input.myInput').length === 0){
+        toBackground(createInput());
+    }
+
     document
         .querySelector('#create-input')
-        .addEventListener('click', createInput)
+        .addEventListener('click', () => {
+            toBackground(createInput());
+        })
     ;
 });
 
-function createInput(){
+function createInput(key, color){
     let form = document.querySelector('.mainForm');
-    let key = `regeggs-key-${Math.random().toString(36).substr(2, 5)}`;
-    let color = '0, 171, 37';
+    key || (key = `regeggs-key-${Math.random().toString(36).substr(2, 5)}`);
+    color || (color = '0, 171, 37');
 
     let div = document.createElement('div');
+    div.name = key;
     div.className = 'inputWrapper';
 
     let input = document.createElement('input');
     input.className = 'myInput';
     input.type = 'text';
     input.placeholder = 'regular expression';
-    input.value = 'th';
     input.name = key;
     input.regeggsColor = color;
     input = div.appendChild(input);
@@ -57,13 +61,9 @@ function createInput(){
     next = nextPrev.appendChild(next);
 
     div.appendChild(nextPrev);
-    // prev.addEventListener('click', changeCurrent);
-    // next.addEventListener('click', changeCurrent);
-
 
 
     div = form.appendChild(div);
-    div.name = 'regeggs-key-' + Math.random().toString(36).substr(2, 5);
     
     input.addEventListener('input', sendData);
 
@@ -74,6 +74,7 @@ function createInput(){
         .querySelector(`button.prev[name="${prev.name}"]`)
         .addEventListener('click', changeCurrent)
     ;
+    return div;
 }
 function changeCurrent(e){
     e.preventDefault();
@@ -124,5 +125,26 @@ function sendData(e){
                 e.target.nextElementSibling.innerHTML = `${top}/${res-1}`;
             }
         );
+    });
+}
+function getInputs(){
+    chrome.runtime.sendMessage({
+        from: 'popup',
+        subject: 'getInputs'
+    }, res => console.log(res));
+}
+function toBackground(key, color){
+    let form = document.querySelector('.mainForm');
+    chrome.runtime.sendMessage({
+        from: 'popup',
+        subject: 'newInput',
+        key,
+        color
+    }, res => {
+        if(res.length > 0){
+            for(let i = 0;i<res.length;i++){
+                createInput(res.key, res.color);
+            }
+        }
     });
 }
