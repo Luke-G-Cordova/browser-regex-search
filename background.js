@@ -14,7 +14,12 @@ chrome.runtime.onConnect.addListener((port) => {
     }
 });
 chrome.commands.onCommand.addListener((command) => {
-    console.log(`Command "${command}" triggered`);
+    if(command === 'open_popup'){
+        let sendObj = {
+            
+        };
+        sendData(sendObj);
+    }
 });
 chrome.runtime.onMessage.addListener((msg, sender, response) => {
     if(msg.from === 'popup' && msg.subject === 'getInputs'){
