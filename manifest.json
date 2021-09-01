@@ -11,8 +11,8 @@
     "content_scripts": [
         {
             "matches": ["*://*/*", "https://*/"],
-            "js": ["domManip.js", "picManip.js", "highlight.js"],
-            "css": ["myStyles.css"]
+            "js": ["domManip.js", "picManip.js", "highlight.js","domPopup.js"],
+            "css": ["myStyles.css", "popupStyles.css"]
         }
     ],
     "background":{

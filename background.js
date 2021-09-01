@@ -16,9 +16,11 @@ chrome.runtime.onConnect.addListener((port) => {
 chrome.commands.onCommand.addListener((command) => {
     if(command === 'open_popup'){
         let sendObj = {
-            
+            from: 'background',
+            subject: command
         };
         sendData(sendObj);
+        console.log('back');
     }
 });
 chrome.runtime.onMessage.addListener((msg, sender, response) => {
