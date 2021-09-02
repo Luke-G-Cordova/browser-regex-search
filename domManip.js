@@ -1,13 +1,12 @@
 
-let index = 0;
-let elemKeys = [];
-let currentIndexes = [];
-let matchCounts = [];
-let myHighlights = [];
-let defRejects = ['\\'];
+// let index = 0;
+// let ELEM_KEYS = [];
+// let CURRENT_INDEXES = [];
+// let MY_HIGHLIGHTS = [];
+// let DEF_REJECTS = ['\\'];
 
 chrome.runtime.onMessage.addListener((msg, sender, response) => {
-    let GI = elemKeys.indexOf(msg.key);
+    let GI = ELEM_KEYS.indexOf(msg.key);
     if(msg.from === 'me'){
         console.log(msg);
     }
@@ -17,16 +16,16 @@ chrome.runtime.onMessage.addListener((msg, sender, response) => {
     ){
 
         // if the msg.key is a new one, in the case of creating
-        // a new input in the popup, add the key to the elemKeys
+        // a new input in the popup, add the key to the ELEM_KEYS
         // array and the current index
-        index = 0;
+        CUR_INDEX = 0;
         if(GI === -1) {
-            elemKeys.push(msg.key);
-            GI = elemKeys.indexOf(msg.key);
+            ELEM_KEYS.push(msg.key);
+            GI = ELEM_KEYS.indexOf(msg.key);
 
-            currentIndexes.push(index);
+            CURRENT_INDEXES.push(CUR_INDEX);
         }else{
-            currentIndexes[GI] = index;
+            CURRENT_INDEXES[GI] = CUR_INDEX;
         }
 
         // make sure to clear all previous matches from this key
@@ -34,7 +33,7 @@ chrome.runtime.onMessage.addListener((msg, sender, response) => {
 
         // this if statement checks if the msg.data variable, or the variable that
         // will be passed as the regular expression to be searched, is valid or not
-        if(msg.data !== '' && defRejects.indexOf(msg.data) === -1){
+        if(msg.data !== '' && DEF_REJECTS.indexOf(msg.data) === -1){
             
             // this variable just scopes the sameMatchID variable outside
             // of the callback to highlight()
@@ -49,7 +48,7 @@ chrome.runtime.onMessage.addListener((msg, sender, response) => {
             //      included.
             // the callback function returns the desired element to replace
             //      the matched text found in the page
-            myHighlights[GI] = highlight(document.body, new RegExp(msg.data, 'ig'), function(match, sameMatchID){
+            MY_HIGHLIGHTS[GI] = highlight(document.body, new RegExp(msg.data, 'ig'), function(match, sameMatchID){
                 // store the sameMatchID outside of the scope of this function for later use
                 multiNodeMatchId = sameMatchID;
 
@@ -58,7 +57,7 @@ chrome.runtime.onMessage.addListener((msg, sender, response) => {
 
                 // give it a unique class to be referenced with css or js later
                 highlightMe.className = `chrome-regeggz-highlight-me ${msg.key}`;
-                if(index === 0){
+                if(CUR_INDEX === 0){
                     highlightMe.className += ' current';
                 }
                 // style the element, in the future consider doing rounded borders
@@ -68,11 +67,11 @@ chrome.runtime.onMessage.addListener((msg, sender, response) => {
                 highlightMe.style.color = `black`;
 
                 // create a unique id for the element
-                highlightMe.id = `${index}|${msg.color}|${msg.key}|${multiNodeMatchId}`;
+                highlightMe.id = `${CUR_INDEX}|${msg.color}|${msg.key}|${multiNodeMatchId}`;
 
                 // if this is not the last node in the match, do not 
-                // increase the index of the match
-                index = multiNodeMatchId > -1 ? index : index + 1;
+                // increase the CUR_INDEX of the match
+                CUR_INDEX = multiNodeMatchId > -1 ? CUR_INDEX : CUR_INDEX + 1;
 
                 // give the element text and return it
                 highlightMe.textContent = match;
@@ -82,7 +81,7 @@ chrome.runtime.onMessage.addListener((msg, sender, response) => {
             window.location.assign(window.location.origin + window.location.pathname + `#0|${msg.color}|${msg.key}|-1`);
 
             // respond to the popup with the amount of matches
-            response(myHighlights[GI].count);
+            response(MY_HIGHLIGHTS[GI].count);
         }else{
             response(0);
         }
@@ -95,19 +94,19 @@ chrome.runtime.onMessage.addListener((msg, sender, response) => {
     ){
         if(msg.data.indexOf('next') !== -1){
 
-            currentIndexes[GI] = nextMatch(myHighlights[GI].elements, currentIndexes[GI], 1);
-            window.location.assign(window.location.origin + window.location.pathname + `#${currentIndexes[GI]}|${msg.color}|${msg.key}|-1`);
-            response(currentIndexes[GI]);
+            CURRENT_INDEXES[GI] = nextMatch(MY_HIGHLIGHTS[GI].elements, CURRENT_INDEXES[GI], 1);
+            window.location.assign(window.location.origin + window.location.pathname + `#${CURRENT_INDEXES[GI]}|${msg.color}|${msg.key}|-1`);
+            response(CURRENT_INDEXES[GI]);
 
         }else if(msg.data.indexOf('prev') !== -1){
 
-            currentIndexes[GI] = nextMatch(myHighlights[GI].elements, currentIndexes[GI], -1);
-            window.location.assign(window.location.origin + window.location.pathname + `#${currentIndexes[GI]}|${msg.color}|${msg.key}|-1`);
-            response(currentIndexes[GI]);
+            CURRENT_INDEXES[GI] = nextMatch(MY_HIGHLIGHTS[GI].elements, CURRENT_INDEXES[GI], -1);
+            window.location.assign(window.location.origin + window.location.pathname + `#${CURRENT_INDEXES[GI]}|${msg.color}|${msg.key}|-1`);
+            response(CURRENT_INDEXES[GI]);
         }
     }
     if((msg.from === 'background') && (msg.subject === 'popupClosed')) {
-        // clearHighlight(elemKeys);
+        // clearHighlight(ELEM_KEYS);
     }
     
 });
