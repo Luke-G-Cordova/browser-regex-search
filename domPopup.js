@@ -1,6 +1,8 @@
 
 var popup = createPopup();
 
+popup.addEventListener('mousedown', dragMouse);
+
 chrome.runtime.onMessage.addListener((msg, sender, response) => {
     if((msg.from === 'background') && (msg.subject === 'open_popup')){
         if(popup.style.display === 'none'){
@@ -95,7 +97,7 @@ function createInput(key){
     
     // input.addEventListener('input', sendData);
 
-    colorInput.addEventListener('input', (e) => updateColor(colorInput.value));
+    colorInput.addEventListener('input', (e) => updateColor(colorInput.value, key));
 
     document
         .querySelector(`button.next[name="${next.name}"]`)
@@ -107,8 +109,25 @@ function createInput(key){
     return div;
 }
 
+function updateColor(color, key){
 
+}
 
 function changeCurrent(e) {
     e.preventDefault();
+}
+
+function dragMouse(e){
+    e.preventDefault();
+    document.addEventListener('mouseup', stopDrag);
+    document.addEventListener('mousemove', dragElement);
+}
+
+function dragElement(e){
+    e.preventDefault();
+}
+function stopDrag(e){
+    e.preventDefault();
+    document.onmouseup = null;
+    document.onmousemove = null;
 }
