@@ -11,8 +11,8 @@
     "content_scripts": [
         {
             "matches": ["*://*/*", "https://*/"],
-            "js": ["domManip.js", "picManip.js", "highlight.js"],
-            "css": ["myStyles.css"]
+            "js": ["globalVar.js", "domManip.js", "domPopup.js",  "highlight.js", "picManip.js"],
+            "css": ["myStyles.css", "popupStyles.css"]
         }
     ],
     "background":{
@@ -37,6 +37,12 @@
             "suggested_key": {
                 "default": "Ctrl+Shift+F"
             }
+        },
+        "open_popup":{
+            "suggested_key": {
+                "default": "Ctrl+Shift+F"
+            },
+            "description":"opens the dom based popup"
         }
     }
 }
