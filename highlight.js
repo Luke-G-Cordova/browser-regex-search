@@ -1,7 +1,3 @@
-
-
-
-
 // http://blog.alexanderdickson.com/javascript-replacing-text
 function clearHighlight(keys){
     var elems;
@@ -74,13 +70,11 @@ function highlight(root, regex, callback, excludes){
     var nodes = [];
     var groupedNodes = [];
     var lastElem;
-    var parentNodes = 0;
     while(tw.nextNode()){
         trimBadHtmlNodes(tw.currentNode);
         if(groupedNodes.length === 0){
             groupedNodes.push([]);
             groupedNodes[groupedNodes.length - 1].push(tw.currentNode);
-            parentNodes++;
         }else{
             lastElem = nodes[nodes.length -1];
             if(relativeNodes(tw.currentNode, lastElem)){
@@ -92,27 +86,6 @@ function highlight(root, regex, callback, excludes){
         }
         nodes.push(tw.currentNode);
     }
-    console.log(parentNodes);
-    console.log(groupedNodes);
-    // var nodes = [];
-    // var groupedNodes = [];
-    // var lastElem;
-    // while(tw.nextNode()){
-    //     trimBadHtmlNodes(tw.currentNode);
-    //     if(groupedNodes.length === 0){
-    //         groupedNodes.push([]);
-    //         groupedNodes[groupedNodes.length - 1].push(tw.currentNode);
-    //     }else{
-    //         lastElem = nodes[nodes.length -1];
-    //         if(relativeNodes(tw.currentNode, lastElem)){
-    //             groupedNodes[groupedNodes.length - 1].push(tw.currentNode);
-    //         }else{
-    //             groupedNodes[groupedNodes.length] = [];
-    //             groupedNodes[groupedNodes.length - 1].push(tw.currentNode);
-    //         }
-    //     }
-    //     nodes.push(tw.currentNode);
-    // }
     var masterStr = '';
     var test;
     var test2;
@@ -121,213 +94,109 @@ function highlight(root, regex, callback, excludes){
     var count = 0;
     var nodeList = [];
 
-    function highlightChunk(nodes){
-        var groupedNodesLength = groupedNodes.length;
-        for(i = 0;i<groupedNodesLength;i++){
 
-            masterStr = groupedNodes[i].map(elem => elem.data).join('');
+    var groupedNodesLength = groupedNodes.length;
+    for(i = 0;i<groupedNodesLength;i++){
 
-            while(test = regex.exec(masterStr)){
+        masterStr = groupedNodes[i].map(elem => elem.data).join('');
+
+        while(test = regex.exec(masterStr)){
+            
+            var lastRegIndex = regex.lastIndex;
+            
+            count++;
+
+            var j = 0;
+            
+            var nodeParts = '' + groupedNodes[i][j].data;
+
+            var testIndex = test.index;
+            while(testIndex > nodeParts.length - 1){
+                j++;
                 
-                var lastRegIndex = regex.lastIndex;
                 
-                count++;
-
-                var j = 0;
-                
-                var nodeParts = '' + groupedNodes[i][j].data;
-
-                var testIndex = test.index;
-                while(testIndex > nodeParts.length - 1){
-                    j++;
-                    
-                    
-                    nodeParts = nodeParts + groupedNodes[i][j].data;
-                }
-
-                regex.lastIndex = 0;
-
-                test2 = regex.exec(groupedNodes[i][j].data);
-                
-                var inThisNode = nodeParts.substr(testIndex);
-
-                test2 || (
-                    test2 = [], 
-                    test2[0] = inThisNode, 
-                    test2['index'] = groupedNodes[i][j].data.length - inThisNode.length, 
-                    test2['input'] = groupedNodes[i][j].data,
-                    test2['groups'] = undefined
-                );
-                
-                var helpArr = [];
-
-                helpArr.push(test2[0]);
-
-                var sameMatchID = 0;
-                nodeList.push([]);
-                for(k = 0 ; helpArr.join('').length < test[0].length ; k++){
-
-                    newNode = groupedNodes[i][j].splitText(groupedNodes[i][j].length - helpArr[k].length);
-                    tag = callback(helpArr[k], sameMatchID);
-                    newNode.data = '';
-                    insertedNode = newNode.parentNode.insertBefore(tag, newNode);
-                    nodeList[nodeList.length - 1].push(insertedNode);
-                    if(groupedNodes[i][j].data.length === 0){
-                        groupedNodes[i][j] = insertedNode.firstChild;
-                    }else{
-                        groupedNodes[i].splice(j + 1, 0, insertedNode.firstChild);
-                        j++;
-                    }
-                    j++;
-                    sameMatchID++;
-                    helpArr.push(groupedNodes[i][j].data);
-                }
-                var lastNode = helpArr.pop();
-                if(helpArr[0]){
-
-                    newNode = groupedNodes[i][j].splitText(0);
-                    tag = callback(lastNode.substr(0, test[0].length - helpArr.join('').length), -1);
-                    newNode.data = newNode.data.substr(test[0].length - helpArr.join('').length);
-                    insertedNode = newNode.parentNode.insertBefore(tag, newNode);
-                    nodeList[nodeList.length - 1].push(insertedNode);
-                    
-                    groupedNodes[i][j] = insertedNode.firstChild;
-                    if(newNode.data.length > 0){
-                        groupedNodes[i].splice(j + 1, 0, newNode);
-                    }
-                    sameMatchID++;
-                }else{
-                    newNode = groupedNodes[i][j].splitText(test2.index);
-                    
-                    tag = callback(test2[0], -1);
-                    newNode.data = newNode.data.substr(test2[0].length);
-                    insertedNode = newNode.parentNode.insertBefore(tag, newNode);
-
-                    nodeList[nodeList.length - 1].push(insertedNode);
-
-                    if(groupedNodes[i][j].data === ''){
-                        if(newNode.data === ''){
-                            groupedNodes[i].splice(j, 1, insertedNode.firstChild);
-                        }else{
-                            groupedNodes[i].splice(j, 1, insertedNode.firstChild, newNode);
-                        }
-                    }else{
-                        if(newNode.data === ''){
-                            groupedNodes[i].splice(j + 1, 0, insertedNode.firstChild);
-                        }else{
-                            groupedNodes[i].splice(j + 1, 0, insertedNode.firstChild, newNode);
-                        }
-                    }
-                }
-                nodeParts = '';
-                regex.lastIndex = lastRegIndex;
+                nodeParts = nodeParts + groupedNodes[i][j].data;
             }
+
             regex.lastIndex = 0;
+
+            test2 = regex.exec(groupedNodes[i][j].data);
+            
+            var inThisNode = nodeParts.substr(testIndex);
+
+            test2 || (
+                test2 = [], 
+                test2[0] = inThisNode, 
+                test2['index'] = groupedNodes[i][j].data.length - inThisNode.length, 
+                test2['input'] = groupedNodes[i][j].data,
+                test2['groups'] = undefined
+            );
+            
+            var helpArr = [];
+
+            helpArr.push(test2[0]);
+
+            var sameMatchID = 0;
+            nodeList.push([]);
+            for(k = 0 ; helpArr.join('').length < test[0].length ; k++){
+
+                newNode = groupedNodes[i][j].splitText(groupedNodes[i][j].length - helpArr[k].length);
+                tag = callback(helpArr[k], sameMatchID);
+                newNode.data = '';
+                insertedNode = newNode.parentNode.insertBefore(tag, newNode);
+                nodeList[nodeList.length - 1].push(insertedNode);
+                if(groupedNodes[i][j].data.length === 0){
+                    groupedNodes[i][j] = insertedNode.firstChild;
+                }else{
+                    groupedNodes[i].splice(j + 1, 0, insertedNode.firstChild);
+                    j++;
+                }
+                j++;
+                sameMatchID++;
+                helpArr.push(groupedNodes[i][j].data);
+            }
+            var lastNode = helpArr.pop();
+            if(helpArr[0]){
+
+                newNode = groupedNodes[i][j].splitText(0);
+                tag = callback(lastNode.substr(0, test[0].length - helpArr.join('').length), -1);
+                newNode.data = newNode.data.substr(test[0].length - helpArr.join('').length);
+                insertedNode = newNode.parentNode.insertBefore(tag, newNode);
+                nodeList[nodeList.length - 1].push(insertedNode);
+                
+                groupedNodes[i][j] = insertedNode.firstChild;
+                if(newNode.data.length > 0){
+                    groupedNodes[i].splice(j + 1, 0, newNode);
+                }
+                sameMatchID++;
+            }else{
+                newNode = groupedNodes[i][j].splitText(test2.index);
+                
+                tag = callback(test2[0], -1);
+                newNode.data = newNode.data.substr(test2[0].length);
+                insertedNode = newNode.parentNode.insertBefore(tag, newNode);
+
+                nodeList[nodeList.length - 1].push(insertedNode);
+
+                if(groupedNodes[i][j].data === ''){
+                    if(newNode.data === ''){
+                        groupedNodes[i].splice(j, 1, insertedNode.firstChild);
+                    }else{
+                        groupedNodes[i].splice(j, 1, insertedNode.firstChild, newNode);
+                    }
+                }else{
+                    if(newNode.data === ''){
+                        groupedNodes[i].splice(j + 1, 0, insertedNode.firstChild);
+                    }else{
+                        groupedNodes[i].splice(j + 1, 0, insertedNode.firstChild, newNode);
+                    }
+                }
+            }
+            nodeParts = '';
+            regex.lastIndex = lastRegIndex;
         }
+        regex.lastIndex = 0;
     }
-
-    // var groupedNodesLength = groupedNodes.length;
-    // for(i = 0;i<groupedNodesLength;i++){
-
-    //     masterStr = groupedNodes[i].map(elem => elem.data).join('');
-
-    //     while(test = regex.exec(masterStr)){
-            
-    //         var lastRegIndex = regex.lastIndex;
-            
-    //         count++;
-
-    //         var j = 0;
-            
-    //         var nodeParts = '' + groupedNodes[i][j].data;
-
-    //         var testIndex = test.index;
-    //         while(testIndex > nodeParts.length - 1){
-    //             j++;
-                
-                
-    //             nodeParts = nodeParts + groupedNodes[i][j].data;
-    //         }
-
-    //         regex.lastIndex = 0;
-
-    //         test2 = regex.exec(groupedNodes[i][j].data);
-            
-    //         var inThisNode = nodeParts.substr(testIndex);
-
-    //         test2 || (
-    //             test2 = [], 
-    //             test2[0] = inThisNode, 
-    //             test2['index'] = groupedNodes[i][j].data.length - inThisNode.length, 
-    //             test2['input'] = groupedNodes[i][j].data,
-    //             test2['groups'] = undefined
-    //         );
-            
-    //         var helpArr = [];
-
-    //         helpArr.push(test2[0]);
-
-    //         var sameMatchID = 0;
-    //         nodeList.push([]);
-    //         for(k = 0 ; helpArr.join('').length < test[0].length ; k++){
-
-    //             newNode = groupedNodes[i][j].splitText(groupedNodes[i][j].length - helpArr[k].length);
-    //             tag = callback(helpArr[k], sameMatchID);
-    //             newNode.data = '';
-    //             insertedNode = newNode.parentNode.insertBefore(tag, newNode);
-    //             nodeList[nodeList.length - 1].push(insertedNode);
-    //             if(groupedNodes[i][j].data.length === 0){
-    //                 groupedNodes[i][j] = insertedNode.firstChild;
-    //             }else{
-    //                 groupedNodes[i].splice(j + 1, 0, insertedNode.firstChild);
-    //                 j++;
-    //             }
-    //             j++;
-    //             sameMatchID++;
-    //             helpArr.push(groupedNodes[i][j].data);
-    //         }
-    //         var lastNode = helpArr.pop();
-    //         if(helpArr[0]){
-
-    //             newNode = groupedNodes[i][j].splitText(0);
-    //             tag = callback(lastNode.substr(0, test[0].length - helpArr.join('').length), -1);
-    //             newNode.data = newNode.data.substr(test[0].length - helpArr.join('').length);
-    //             insertedNode = newNode.parentNode.insertBefore(tag, newNode);
-    //             nodeList[nodeList.length - 1].push(insertedNode);
-                
-    //             groupedNodes[i][j] = insertedNode.firstChild;
-    //             if(newNode.data.length > 0){
-    //                 groupedNodes[i].splice(j + 1, 0, newNode);
-    //             }
-    //             sameMatchID++;
-    //         }else{
-    //             newNode = groupedNodes[i][j].splitText(test2.index);
-                
-    //             tag = callback(test2[0], -1);
-    //             newNode.data = newNode.data.substr(test2[0].length);
-    //             insertedNode = newNode.parentNode.insertBefore(tag, newNode);
-
-    //             nodeList[nodeList.length - 1].push(insertedNode);
-
-    //             if(groupedNodes[i][j].data === ''){
-    //                 if(newNode.data === ''){
-    //                     groupedNodes[i].splice(j, 1, insertedNode.firstChild);
-    //                 }else{
-    //                     groupedNodes[i].splice(j, 1, insertedNode.firstChild, newNode);
-    //                 }
-    //             }else{
-    //                 if(newNode.data === ''){
-    //                     groupedNodes[i].splice(j + 1, 0, insertedNode.firstChild);
-    //                 }else{
-    //                     groupedNodes[i].splice(j + 1, 0, insertedNode.firstChild, newNode);
-    //                 }
-    //             }
-    //         }
-    //         nodeParts = '';
-    //         regex.lastIndex = lastRegIndex;
-    //     }
-    //     regex.lastIndex = 0;
-    // }
     return {
         count,
         elements: nodeList
