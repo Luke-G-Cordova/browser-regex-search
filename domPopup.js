@@ -42,10 +42,9 @@ function createPopup() {
     btn.addEventListener('click', () => createInput());
     return div;
 }
-function createInput(key, color){
+function createInput(key){
     let form = document.querySelector('.mainForm');
     key || (key = `regeggs-key-${Math.random().toString(36).substr(2, 5)}`);
-    color || (color = '0, 171, 37');
 
     let div = document.createElement('div');
     div.name = key;
@@ -56,7 +55,6 @@ function createInput(key, color){
     input.type = 'text';
     input.placeholder = 'regular expression';
     input.name = key;
-    input.regeggsColor = color;
     input = div.appendChild(input);
 
     let count = document.createElement('span');
@@ -70,6 +68,10 @@ function createInput(key, color){
 
     let next = document.createElement('button');
     let prev = document.createElement('button');
+    let colorInput = document.createElement('input');
+    colorInput.type = 'color';
+    let color = '';
+
 
     next.innerHTML = '&#8620';
     next.className = 'next';
@@ -84,6 +86,7 @@ function createInput(key, color){
 
     prev = nextPrev.appendChild(prev);
     next = nextPrev.appendChild(next);
+    colorInput = nextPrev.appendChild(colorInput);
 
     div.appendChild(nextPrev);
 
@@ -91,6 +94,8 @@ function createInput(key, color){
     div = form.appendChild(div);
     
     // input.addEventListener('input', sendData);
+
+    colorInput.addEventListener('input', (e) => updateColor(colorInput.value));
 
     document
         .querySelector(`button.next[name="${next.name}"]`)
@@ -101,6 +106,8 @@ function createInput(key, color){
     ;
     return div;
 }
+
+
 
 function changeCurrent(e) {
     e.preventDefault();

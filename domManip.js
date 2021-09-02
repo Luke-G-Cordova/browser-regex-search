@@ -8,6 +8,9 @@ let defRejects = ['\\'];
 
 chrome.runtime.onMessage.addListener((msg, sender, response) => {
     let GI = elemKeys.indexOf(msg.key);
+    if(msg.from === 'me'){
+        console.log(msg);
+    }
     if(
         (msg.from === 'popup') && 
         (msg.subject === 'newDomInfo')
