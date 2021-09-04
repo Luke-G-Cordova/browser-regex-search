@@ -1,7 +1,6 @@
 
 var popup = createPopup();
-
-popup.addEventListener('mousedown', dragMouse);
+dragPopup(document.querySelector('div.chrome-regex-popup:not(div.chrome-regex-popup *)'));
 
 chrome.runtime.onMessage.addListener((msg, sender, response) => {
     if((msg.from === 'background') && (msg.subject === 'open_popup')){
@@ -16,15 +15,13 @@ chrome.runtime.onMessage.addListener((msg, sender, response) => {
 
 function createPopup() {
     let div = document.createElement('div');
-    div.style.position = 'fixed';
-    div.style.top = '100px';
-    div.style.right = '100px';
-    div.style.zIndex = '1000';
-    div.style.backgroundColor = 'white';
-    div.style.borderRadius = '10px';
-    div.style.border = '2px solid black';
+    div.className = 'chrome-regex-popup';
     div.style.display = 'none';
-    div.style.padding = '25px';
+
+    let exitBtn = document.createElement('button');
+    exitBtn.innerHTML = '&#9760;';
+    exitBtn.style.float = 'right';
+    exitBtn = div.appendChild(exitBtn);
 
     let form = document.createElement('form');
     form.style.display = 'flex';
@@ -41,6 +38,13 @@ function createPopup() {
     div.appendChild(form);
     div = document.body.appendChild(div);
     createInput();
+    exitBtn.addEventListener('click', () => {
+        if(div.style.display === 'none'){
+            div.style.display = 'block';
+        }else{
+            div.style.display = 'none';
+        }
+    });
     btn.addEventListener('click', () => createInput());
     return div;
 }
@@ -117,17 +121,24 @@ function changeCurrent(e) {
     e.preventDefault();
 }
 
-function dragMouse(e){
-    e.preventDefault();
-    document.addEventListener('mouseup', stopDrag);
-    document.addEventListener('mousemove', dragElement);
-}
+function dragPopup(elem){
+    var startX, startY, endX, endY;
 
-function dragElement(e){
-    e.preventDefault();
-}
-function stopDrag(e){
-    e.preventDefault();
-    document.onmouseup = null;
-    document.onmousemove = null;
+    elem.onmousedown = (e) => {
+        startX = e.clientX;
+        startY = e.clientY;
+        document.onmouseup = (ev) => {
+            ev.preventDefault();
+            document.onmouseup = null;
+            document.onmousemove = null;
+        };
+        document.onmousemove = (ev) => {
+            endX = ev.clientX;
+            endY = ev.clientY;
+            elem.style.top = elem.offsetTop + (endY - startY) + 'px';
+            elem.style.left = elem.offsetLeft + (endX - startX) + 'px';
+            startX = ev.clientX;
+            startY = ev.clientY;
+        };
+    }
 }

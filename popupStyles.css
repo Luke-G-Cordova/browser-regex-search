@@ -14,3 +14,20 @@
     margin: 0;
     padding: 0 5px;
 }
+.chrome-regex-popup{
+    position: absolute;
+    top: 1vh;
+    left: 70vw;
+    z-index: 1000;
+    background-color: white;
+    border-radius: 10px;
+    border: 5px solid grey;
+    padding: 25px;
+    
+}
+.chrome-regex-popup:hover{
+    cursor: pointer;
+}
+.chrome-regex-popup:active{
+    cursor: -webkit-grabbing; cursor: grabbing;
+}
