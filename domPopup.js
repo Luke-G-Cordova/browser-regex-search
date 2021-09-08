@@ -124,7 +124,7 @@ function changeCurrent(e) {
 
 function dragPopup(elem){
     var startX, startY, endX, endY;
-
+    var border = 10;
     elem.onmousedown = (e) => {
         startX = e.clientX;
         startY = e.clientY;
@@ -137,15 +137,12 @@ function dragPopup(elem){
             endX = ev.clientX;
             endY = ev.clientY;
 
-            // console.log(window);
-
-
             elem.style.left = elem.offsetLeft + (endX - startX) + 'px';
             elem.style.top = elem.offsetTop + (endY - startY) + 'px';
 
             // right/left edge of the popup
-            if(elem.offsetLeft + elem.clientWidth + 10 > window.innerWidth){
-                elem.style.left = window.innerWidth - elem.clientWidth - 10 + 'px';
+            if(elem.offsetLeft + elem.clientWidth + border > window.innerWidth){
+                elem.style.left = window.innerWidth - elem.clientWidth - border + 'px';
             }else if(elem.offsetLeft < 0){
                 elem.style.left = 0 + 'px';
             }else{
@@ -153,8 +150,8 @@ function dragPopup(elem){
             }
 
             // top/bottom edge of the popup
-            if(elem.offsetTop + elem.clientHeight + 10 > window.innerHeight){
-                elem.style.top = window.innerHeight - elem.clientHeight - 10 + 'px';
+            if(elem.offsetTop + elem.clientHeight + border > window.innerHeight){
+                elem.style.top = window.innerHeight - elem.clientHeight - border + 'px';
             }else if(elem.offsetTop < 0){
                 elem.style.top = 0 + 'px';
             }else{ 
