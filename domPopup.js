@@ -30,6 +30,7 @@ function createPopup() {
     form.style.flexDirection = 'column';
     form.className = 'mainForm';
 
+    
     let btn = document.createElement('button');
     btn.id = 'create-input';
     btn.appendChild(document.createTextNode('+'));
