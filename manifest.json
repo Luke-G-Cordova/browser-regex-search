@@ -35,7 +35,7 @@
     "commands":{
         "_execute_action":{
             "suggested_key": {
-                "default": "Ctrl+Shift+F"
+                "default": "Ctrl+Shift+L"
             }
         },
         "open_popup":{

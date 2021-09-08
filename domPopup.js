@@ -136,10 +136,28 @@ function dragPopup(elem){
         document.onmousemove = (ev) => {
             endX = ev.clientX;
             endY = ev.clientY;
-            elem.style.top = elem.offsetTop + (endY - startY) + 'px';
+
+
             elem.style.left = elem.offsetLeft + (endX - startX) + 'px';
-            startX = ev.clientX;
-            startY = ev.clientY;
+            elem.style.top = elem.offsetTop + (endY - startY) + 'px';
+
+            // right/left edge of the popup
+            if(elem.offsetLeft + elem.clientWidth > document.body.clientWidth){
+                elem.style.left = document.body.clientWidth - elem.clientWidth + 'px';
+            }else if(elem.offsetLeft < 0){
+                elem.style.left = 0 + 'px';
+            }else{
+                startX = ev.clientX;
+            }
+
+            // top/bottom edge of the popup
+            if(elem.offsetTop + elem.clientHeight > document.body.clientHeight){
+                elem.style.top = document.body.clientHeight - elem.clientHeight + 'px';
+            }else if(elem.offsetTop < 0){
+                elem.style.top = 0 + 'px';
+            }else{ 
+                startY = ev.clientY;
+            }
         };
     }
 }
