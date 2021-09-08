@@ -124,6 +124,7 @@ function changeCurrent(e) {
 
 function dragPopup(elem){
     var startX, startY, endX, endY;
+    var ogWindow = window.scrollY;
     var border = 10;
     elem.onmousedown = (e) => {
         startX = e.clientX;
@@ -136,7 +137,6 @@ function dragPopup(elem){
         document.onmousemove = (ev) => {
             endX = ev.clientX;
             endY = ev.clientY;
-
             elem.style.left = elem.offsetLeft + (endX - startX) + 'px';
             elem.style.top = elem.offsetTop + (endY - startY) + 'px';
 
@@ -158,5 +158,10 @@ function dragPopup(elem){
                 startY = ev.clientY;
             }
         };
+    }
+    document.onscroll = (e) => {
+        
+        elem.style.top = elem.offsetTop + window.scrollY - ogWindow + 'px';
+        ogWindow = window.scrollY;
     }
 }
