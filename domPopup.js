@@ -150,17 +150,16 @@ function dragPopup(elem){
             }
 
             // top/bottom edge of the popup
-            if(elem.offsetTop + elem.clientHeight + border > window.innerHeight){
-                elem.style.top = window.innerHeight - elem.clientHeight - border + 'px';
-            }else if(elem.offsetTop < 0){
-                elem.style.top = 0 + 'px';
+            if(elem.offsetTop + elem.clientHeight + border > window.innerHeight + window.scrollY){
+                elem.style.top = window.innerHeight + window.scrollY - elem.clientHeight - border + 'px';
+            }else if(elem.offsetTop < 0 + window.scrollY){
+                elem.style.top = 0 + window.scrollY + 'px';
             }else{ 
                 startY = ev.clientY;
             }
         };
     }
     document.onscroll = (e) => {
-        
         elem.style.top = elem.offsetTop + window.scrollY - ogWindow + 'px';
         ogWindow = window.scrollY;
     }
