@@ -24,6 +24,7 @@
     border: 5px solid grey;
     padding: 25px;
     min-width: 400px;
+    max-width: 400px;
 }
 .chrome-regex-popup:hover{
     cursor: pointer;
