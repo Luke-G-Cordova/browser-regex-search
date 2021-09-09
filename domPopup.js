@@ -1,17 +1,15 @@
 
+var ogWindow = window.scrollY;
+console.log(CUR_INDEX);
+
 var popup = createPopup();
 dragPopup(document.querySelector('div.chrome-regex-popup:not(div.chrome-regex-popup *)'));
 
 chrome.runtime.onMessage.addListener((msg, sender, response) => {
     if((msg.from === 'background') && (msg.subject === 'open_popup')){
-        if(popup.style.display === 'none'){
-            popup.style.display = 'block';
-        }else{
-            popup.style.display = 'none';
-        }
+        showPopup();
     }
 });
-
 
 function createPopup() {
     let div = document.createElement('div');
@@ -40,15 +38,12 @@ function createPopup() {
     div = document.body.appendChild(div);
     createInput();
     exitBtn.addEventListener('click', () => {
-        if(div.style.display === 'none'){
-            div.style.display = 'block';
-        }else{
-            div.style.display = 'none';
-        }
+        showPopup();
     });
     btn.addEventListener('click', () => createInput());
     return div;
 }
+
 function createInput(key){
     let form = document.querySelector('.mainForm');
     key || (key = `regeggs-key-${Math.random().toString(36).substr(2, 5)}`);
@@ -69,8 +64,6 @@ function createInput(key){
     count.className = 'matchCount';
     div.appendChild(count);
     
-
-
     let nextPrev = document.createElement('span');
 
     let next = document.createElement('button');
@@ -100,7 +93,7 @@ function createInput(key){
 
     div = form.appendChild(div);
     
-    // input.addEventListener('input', sendData);
+    input.addEventListener('input', sendData);
 
     colorInput.addEventListener('input', (e) => updateColor(colorInput.value, key));
 
@@ -122,9 +115,24 @@ function changeCurrent(e) {
     e.preventDefault();
 }
 
+function sendData(data, callback){
+
+
+}
+
+function showPopup(){
+    if(popup.style.display === 'none'){
+        popup.style.display = 'block';
+        popup.style.top = popup.offsetTop + window.scrollY - ogWindow + 'px';
+        ogWindow = window.scrollY;
+    }else{
+        popup.style.display = 'none';
+    }
+}
+
 function dragPopup(elem){
     var startX, startY, endX, endY;
-    var ogWindow = window.scrollY;
+    
     var border = 10;
     elem.onmousedown = (e) => {
         startX = e.clientX;
@@ -160,7 +168,9 @@ function dragPopup(elem){
         };
     }
     document.onscroll = (e) => {
-        elem.style.top = elem.offsetTop + window.scrollY - ogWindow + 'px';
-        ogWindow = window.scrollY;
+        if(elem.style.display === 'block'){
+            elem.style.top = elem.offsetTop + window.scrollY - ogWindow + 'px';
+            ogWindow = window.scrollY;
+        }
     }
 }
