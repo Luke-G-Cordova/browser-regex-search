@@ -23,7 +23,6 @@ function clearHighlight(keys){
 
 function highlight(root, regex, callback, excludes){
     excludes || (excludes = ['script', 'style', 'iframe', 'canvas', 'noscript']);
-
     var tw = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, function(node) {
         if(
             node.data.trim() === '' || 

@@ -1,6 +1,5 @@
 
 var ogWindow = window.scrollY;
-console.log(CUR_INDEX);
 
 var popup = createPopup();
 dragPopup(document.querySelector('div.chrome-regex-popup:not(div.chrome-regex-popup *)'));
@@ -70,6 +69,7 @@ function createInput(key){
     let prev = document.createElement('button');
     let colorInput = document.createElement('input');
     colorInput.type = 'color';
+    colorInput.value = '#FFFF00';
     let color = '';
 
 
@@ -93,9 +93,12 @@ function createInput(key){
 
     div = form.appendChild(div);
     
-    input.addEventListener('input', sendData);
+    input.addEventListener('input', (e) => {
+        highlightMe(key, input.value, colorInput.value);
+        input.focus();
+    });
 
-    colorInput.addEventListener('input', (e) => updateColor(colorInput.value, key));
+    colorInput.addEventListener('input', (e) => highlightMe(key, input.value, colorInput.value));
 
     document
         .querySelector(`button.next[name="${next.name}"]`)
@@ -106,18 +109,45 @@ function createInput(key){
     ;
     return div;
 }
-
-function updateColor(color, key){
-
-}
-
-function changeCurrent(e) {
+function changeCurrent(e){
     e.preventDefault();
 }
 
-function sendData(data, callback){
+function highlightMe(key, data, color){
+    let GI = ELEM_KEYS.indexOf(key);
+    CUR_INDEX = 0;
+    if(GI === -1) {
+        ELEM_KEYS.push(key);
+        GI = ELEM_KEYS.indexOf(key);
 
+        CURRENT_INDEXES.push(CUR_INDEX);
+    }else{
+        CURRENT_INDEXES[GI] = CUR_INDEX;
+    }
+    clearHighlight(key);
+    if(data !== '' && DEF_REJECTS.indexOf(data) === -1){
+        let multiNodeMatchId;
+        MY_HIGHLIGHTS[GI] = highlight(document.body, new RegExp(data, 'ig'), function(match, sameMatchID){
 
+            multiNodeMatchId = sameMatchID;
+            var highlightMe = document.createElement("highlight-me");
+
+            highlightMe.className = `chrome-regeggz-highlight-me ${key}`;
+            if(CUR_INDEX === 0){
+                highlightMe.className += ' current';
+            }
+            highlightMe.style.backgroundColor = `${color}`;
+            highlightMe.style.color = `black`;
+
+            highlightMe.id = `${CUR_INDEX}|${key}|${multiNodeMatchId}`;
+
+            CUR_INDEX = multiNodeMatchId > -1 ? CUR_INDEX : CUR_INDEX + 1;
+
+            highlightMe.textContent = match;
+            return highlightMe;
+        });
+
+    }
 }
 
 function showPopup(){
