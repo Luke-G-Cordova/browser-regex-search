@@ -11,7 +11,7 @@
     "content_scripts": [
         {
             "matches": ["*://*/*", "https://*/"],
-            "js": ["globalVar.js", "domManip.js", "domPopup.js",  "highlight.js", "picManip.js"],
+            "js": ["globalVar.js", "domPopup.js",  "highlight.js", "picManip.js"],
             "css": ["myStyles.css", "popupStyles.css"]
         }
     ],

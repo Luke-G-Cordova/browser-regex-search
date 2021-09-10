@@ -112,6 +112,35 @@ function createInput(key){
 function changeCurrent(e){
     e.preventDefault();
 }
+function getContrast50(hexcolor){
+    hexcolor = hexcolor.indexOf('#')>-1? hexcolor.substr(1): hexcolor;
+    console.log(parseInt(hexcolor, 16).toString(16));
+    return (parseInt(hexcolor, 16) > 0xffffff/2) ? 'black':'white';
+}
+
+function invertColor(hex) {
+    if (hex.indexOf('#') === 0) {
+        hex = hex.slice(1);
+    }
+    // convert 3-digit hex to 6-digits.
+    if (hex.length === 3) {
+        hex = hex[0] + hex[0] + hex[1] + hex[1] + hex[2] + hex[2];
+    }
+    if (hex.length !== 6) {
+        throw new Error('Invalid HEX color.');
+    }
+    // invert color components
+    var r = (255 - parseInt(hex.slice(0, 2), 16)).toString(16),
+        g = (255 - parseInt(hex.slice(2, 4), 16)).toString(16),
+        b = (255 - parseInt(hex.slice(4, 6), 16)).toString(16);
+    // pad each with zeros and return
+    return '#' + padZero(r) + padZero(g) + padZero(b);
+}
+function padZero(str, len) {
+    len = len || 2;
+    var zeros = new Array(len).join('0');
+    return (zeros + str).slice(-len);
+}
 
 function highlightMe(key, data, color){
     let GI = ELEM_KEYS.indexOf(key);
@@ -137,7 +166,7 @@ function highlightMe(key, data, color){
                 highlightMe.className += ' current';
             }
             highlightMe.style.backgroundColor = `${color}`;
-            highlightMe.style.color = `black`;
+            highlightMe.style.color = invertColor(color);
 
             highlightMe.id = `${CUR_INDEX}|${key}|${multiNodeMatchId}`;
 
