@@ -181,17 +181,13 @@ function showPopup(){
         popup.style.display = 'none';
     }
 }
-function inputFocus(){
-    return !!document.querySelector('div.chrome-regex-popup input:not([type=color]):hover');
-}
-
 function dragPopup(elem){
     var startX, startY, endX, endY;
     
     var border = 10;
     
     elem.onmousedown = (e) => {
-        if(!inputFocus()){
+        if(!document.querySelector('div.chrome-regex-popup input:not([type=color]):hover')){
             startX = e.clientX;
             startY = e.clientY;
             document.onmouseup = (ev) => {
