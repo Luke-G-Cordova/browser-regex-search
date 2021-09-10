@@ -181,9 +181,13 @@ function showPopup(){
         popup.style.display = 'none';
     }
 }
+function scale(num, inMin, inMax, outMin, outMax){
+    return (num - inMin)*(outMax-outMin)/(inMax-inMin)+outMin;
+}
 function dragPopup(elem){
     var startX, startY, endX, endY;
-    
+    var wHalf = window.innerWidth/2;
+    var bShadowValueX, bShadowValueX;
     var border = 10;
     
     elem.onmousedown = (e) => {
@@ -200,6 +204,13 @@ function dragPopup(elem){
                 endY = ev.clientY;
                 elem.style.left = elem.offsetLeft + (endX - startX) + 'px';
                 elem.style.top = elem.offsetTop + (endY - startY) + 'px';
+
+                bShadowValueX = elem.offsetLeft + (elem.clientWidth*2) - wHalf;
+                bShadowValueX = scale(bShadowValueX, 0, window.innerWidth, -25, 25);
+                bShadowValueY = elem.offsetTop + (elem.clientHeight*2) - wHalf;
+                bShadowValueY = scale(bShadowValueY, 0, window.innerHeight, -25, 25);
+                elem.style.boxShadow = `${bShadowValueX}px ${bShadowValueY}px 10px rgba(0,0,0, 1)`;
+                // box-shadow: 5px 5px 10px rgba(0,0,0, .3);
 
                 // right/left edge of the popup
                 if(elem.offsetLeft + elem.clientWidth + border > window.innerWidth){
