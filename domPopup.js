@@ -112,28 +112,21 @@ function createInput(key){
 function changeCurrent(e){
     e.preventDefault();
 }
-function getContrast50(hexcolor){
-    hexcolor = hexcolor.indexOf('#')>-1? hexcolor.substr(1): hexcolor;
-    console.log(parseInt(hexcolor, 16).toString(16));
-    return (parseInt(hexcolor, 16) > 0xffffff/2) ? 'black':'white';
-}
 
+// I should find a more eye pleasing soloution than this
 function invertColor(hex) {
     if (hex.indexOf('#') === 0) {
         hex = hex.slice(1);
     }
-    // convert 3-digit hex to 6-digits.
     if (hex.length === 3) {
         hex = hex[0] + hex[0] + hex[1] + hex[1] + hex[2] + hex[2];
     }
     if (hex.length !== 6) {
         throw new Error('Invalid HEX color.');
     }
-    // invert color components
     var r = (255 - parseInt(hex.slice(0, 2), 16)).toString(16),
         g = (255 - parseInt(hex.slice(2, 4), 16)).toString(16),
         b = (255 - parseInt(hex.slice(4, 6), 16)).toString(16);
-    // pad each with zeros and return
     return '#' + padZero(r) + padZero(g) + padZero(b);
 }
 function padZero(str, len) {
@@ -188,48 +181,54 @@ function showPopup(){
         popup.style.display = 'none';
     }
 }
+function inputFocus(){
+    return !!document.querySelector('div.chrome-regex-popup input:not([type=color]):hover');
+}
 
 function dragPopup(elem){
     var startX, startY, endX, endY;
     
     var border = 10;
+    
     elem.onmousedown = (e) => {
-        startX = e.clientX;
-        startY = e.clientY;
-        document.onmouseup = (ev) => {
-            ev.preventDefault();
-            document.onmouseup = null;
-            document.onmousemove = null;
-        };
-        document.onmousemove = (ev) => {
-            endX = ev.clientX;
-            endY = ev.clientY;
-            elem.style.left = elem.offsetLeft + (endX - startX) + 'px';
-            elem.style.top = elem.offsetTop + (endY - startY) + 'px';
+        if(!inputFocus()){
+            startX = e.clientX;
+            startY = e.clientY;
+            document.onmouseup = (ev) => {
+                ev.preventDefault();
+                document.onmouseup = null;
+                document.onmousemove = null;
+            };
+            document.onmousemove = (ev) => {
+                endX = ev.clientX;
+                endY = ev.clientY;
+                elem.style.left = elem.offsetLeft + (endX - startX) + 'px';
+                elem.style.top = elem.offsetTop + (endY - startY) + 'px';
 
-            // right/left edge of the popup
-            if(elem.offsetLeft + elem.clientWidth + border > window.innerWidth){
-                elem.style.left = window.innerWidth - elem.clientWidth - border + 'px';
-            }else if(elem.offsetLeft < 0){
-                elem.style.left = 0 + 'px';
-            }else{
-                startX = ev.clientX;
-            }
+                // right/left edge of the popup
+                if(elem.offsetLeft + elem.clientWidth + border > window.innerWidth){
+                    elem.style.left = window.innerWidth - elem.clientWidth - border + 'px';
+                }else if(elem.offsetLeft < 0){
+                    elem.style.left = 0 + 'px';
+                }else{
+                    startX = ev.clientX;
+                }
 
-            // top/bottom edge of the popup
-            if(elem.offsetTop + elem.clientHeight + border > window.innerHeight + window.scrollY){
-                elem.style.top = window.innerHeight + window.scrollY - elem.clientHeight - border + 'px';
-            }else if(elem.offsetTop < 0 + window.scrollY){
-                elem.style.top = 0 + window.scrollY + 'px';
-            }else{ 
-                startY = ev.clientY;
+                // top/bottom edge of the popup
+                if(elem.offsetTop + elem.clientHeight + border > window.innerHeight + window.scrollY){
+                    elem.style.top = window.innerHeight + window.scrollY - elem.clientHeight - border + 'px';
+                }else if(elem.offsetTop < 0 + window.scrollY){
+                    elem.style.top = 0 + window.scrollY + 'px';
+                }else{ 
+                    startY = ev.clientY;
+                }
+            };
+        }
+        document.onscroll = (e) => {
+            if(elem.style.display === 'block'){
+                elem.style.top = elem.offsetTop + window.scrollY - ogWindow + 'px';
+                ogWindow = window.scrollY;
             }
-        };
-    }
-    document.onscroll = (e) => {
-        if(elem.style.display === 'block'){
-            elem.style.top = elem.offsetTop + window.scrollY - ogWindow + 'px';
-            ogWindow = window.scrollY;
         }
     }
 }
