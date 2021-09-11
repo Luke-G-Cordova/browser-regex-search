@@ -208,11 +208,11 @@ function dragPopup(elem){
                 elem.style.left = elem.offsetLeft + (endX - startX) + 'px';
                 elem.style.top = elem.offsetTop + (endY - startY) + 'px';
 
-                bShadowValueX = elem.offsetLeft - wHalf;
-                bShadowValueX = scale(bShadowValueX, -wHalf, wHalf, -25, 25);
-                bShadowValueY = elem.offsetTop - hHalf;
-                bShadowValueY = scale(bShadowValueY, -hHalf, hHalf, -25, 25);
-                elem.style.boxShadow = `${bShadowValueX}px ${bShadowValueY}px 10px rgba(0,0,0, 1)`;
+                bShadowValueX = elem.offsetLeft + (elem.clientWidth/2) - wHalf;
+                bShadowValueX = scale(bShadowValueX, -wHalf, wHalf, -5, 5);
+                bShadowValueY = elem.offsetTop + (elem.clientHeight/2) - hHalf;
+                bShadowValueY = scale(bShadowValueY, -hHalf, hHalf, -5, 5);
+                elem.style.boxShadow = `${bShadowValueX}px ${bShadowValueY}px 7px rgba(0,0,0, .4)`;
                 // box-shadow: 5px 5px 10px rgba(0,0,0, .3);
 
                 // right/left edge of the popup
