@@ -144,7 +144,6 @@ function padZero(str, len) {
     var zeros = new Array(len).join('0');
     return (zeros + str).slice(-len);
 }
-
 function highlightMe(key, data, color){
     let GI = ELEM_KEYS.indexOf(key);
     CUR_INDEX = 0;
@@ -220,7 +219,7 @@ function dragPopup(elem){
 
                 bShadowValueX = elem.offsetLeft + (elem.clientWidth/2) - wHalf;
                 bShadowValueX = scale(bShadowValueX, -wHalf, wHalf, -5, 5);
-                bShadowValueY = elem.offsetTop + (elem.clientHeight/2) - hHalf;
+                bShadowValueY = elem.offsetTop - window.scrollY + (elem.clientHeight/2) - hHalf;
                 bShadowValueY = scale(bShadowValueY, -hHalf, hHalf, -5, 5);
                 elem.style.boxShadow = `${bShadowValueX}px ${bShadowValueY}px 7px rgba(0,0,0, .4)`;
                 // box-shadow: 5px 5px 10px rgba(0,0,0, .3);
