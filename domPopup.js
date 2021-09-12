@@ -243,11 +243,11 @@ function dragPopup(elem){
                 }
             };
         }
-        document.onscroll = (e) => {
-            if(elem.style.display === 'block'){
-                elem.style.top = elem.offsetTop + window.scrollY - ogWindow + 'px';
-                ogWindow = window.scrollY;
-            }
+    }
+    document.onscroll = (e) => {
+        if(elem.style.display === 'block'){
+            elem.style.top = elem.offsetTop + window.scrollY - ogWindow + 'px';
+            ogWindow = window.scrollY;
         }
     }
 }
