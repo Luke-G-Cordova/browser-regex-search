@@ -1,5 +1,5 @@
 
-var POPUP;
+// var POPUP;
 var CUR_INDEX = 0;
 var ELEM_KEYS = [];
 var CURRENT_INDEXES = [];

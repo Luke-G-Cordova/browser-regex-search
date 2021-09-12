@@ -98,7 +98,11 @@ function createInput(key){
         input.focus();
     });
 
-    colorInput.addEventListener('input', (e) => highlightMe(key, input.value, colorInput.value));
+    colorInput.addEventListener('input', (e) => {
+        // console.log(colorInput.value);
+        changeColor(key, colorInput.value);
+        // highlightMe(key, input.value, colorInput.value)
+    });
 
     document
         .querySelector(`button.next[name="${next.name}"]`)
@@ -112,7 +116,13 @@ function createInput(key){
 function changeCurrent(e){
     e.preventDefault();
 }
-
+function changeColor(key, color){
+    let matches = document.querySelectorAll(`highlight-me.${key}`);
+    matches.forEach((elem) => {
+        elem.style.backgroundColor = color;
+        elem.style.color = invertColor(color);
+    });
+}
 // I should find a more eye pleasing soloution than this
 function invertColor(hex) {
     if (hex.indexOf('#') === 0) {
@@ -188,7 +198,7 @@ function dragPopup(elem){
     var startX, startY, endX, endY;
     var wHalf = window.innerWidth/2;
     var hHalf = window.innerHeight/2;
-    var bShadowValueX, bShadowValueX;
+    var bShadowValueX, bShadowValueY;
     var border = 10;
     
     elem.onmousedown = (e) => {
