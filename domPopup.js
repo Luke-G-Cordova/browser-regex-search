@@ -6,19 +6,6 @@ var CURRENT_INDEXES = [];
 var MY_HIGHLIGHTS = [];
 var DEF_REJECTS = ['\\', ''];
 
-// async function loop1(){
-//     for (var i = 0; i < 10; i++) {
-//         await console.log(i);
-//     }
-// }
-// async function loop2(){
-//     for (var i = 10; i < 20; i++) {
-//         await console.log(i);
-//     }
-// }
-// loop1();
-// loop2();
-
 
 var popup = createPopup();
 dragPopup(document.querySelector('div.chrome-regex-popup:not(div.chrome-regex-popup *)'));
