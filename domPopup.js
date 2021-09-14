@@ -1,5 +1,24 @@
 
 var ogWindow = window.scrollY;
+var CUR_INDEX = 0;
+var ELEM_KEYS = [];
+var CURRENT_INDEXES = [];
+var MY_HIGHLIGHTS = [];
+var DEF_REJECTS = ['\\', ''];
+
+// async function loop1(){
+//     for (var i = 0; i < 10; i++) {
+//         await console.log(i);
+//     }
+// }
+// async function loop2(){
+//     for (var i = 10; i < 20; i++) {
+//         await console.log(i);
+//     }
+// }
+// loop1();
+// loop2();
+
 
 var popup = createPopup();
 dragPopup(document.querySelector('div.chrome-regex-popup:not(div.chrome-regex-popup *)'));
@@ -99,9 +118,7 @@ function createInput(key){
     });
 
     colorInput.addEventListener('input', (e) => {
-        // console.log(colorInput.value);
         changeColor(key, colorInput.value);
-        // highlightMe(key, input.value, colorInput.value)
     });
 
     document

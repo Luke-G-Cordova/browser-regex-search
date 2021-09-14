@@ -11,7 +11,7 @@ function clearHighlight(keys){
         for(let i = 0;i<elements.length;i++){
             nodes = [].slice.call(elements[i].childNodes);
             var nodesFragment = document.createDocumentFragment();
-            for(node in nodes){
+            for(let node in nodes){
                 nodesFragment.appendChild(nodes[node]);
             }
             elements[i].parentNode.replaceChild(nodesFragment, elements[i]);
