@@ -1,0 +1,12 @@
+
+body{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 90vh;
+}
+regeggs-card{
+    width: 170px;
+    height: 90px;
+    background-color: teal;
+}
