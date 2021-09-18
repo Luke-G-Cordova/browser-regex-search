@@ -47,4 +47,5 @@ function addHighlights(elem, prefix){
     return elem;
 }
 
+
 addHighlights(document.querySelector('regeggs-card'));
