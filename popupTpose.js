@@ -19,8 +19,8 @@ function addHighlights(elem, prefix){
     topH.style.height = 'inherit';
     topH.style.borderRadius = 'inherit';
     topH.style.boxSizing = 'border-box';
-    topH.style.borderTop = '2px solid rgba(255, 255, 255, .6)';
-    topH.style.borderBottom = '2px solid rgba(0, 0, 0, .3)';
+    topH.style.borderTop = '3px solid rgba(255, 255, 255, .6)';
+    topH.style.borderBottom = '3px solid rgba(0, 0, 0, .3)';
     
 
 
