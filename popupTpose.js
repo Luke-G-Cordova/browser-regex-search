@@ -10,7 +10,11 @@ function addHighlights(elem, prefix){
     if(elem.style.borderRadius === '') elem.style.borderRadius = '7px';
     let elemBackgroundColor = window.getComputedStyle(elem, null).getPropertyValue('background-color');
 
-
+    let hOffset = elem.clientHeight <= elem.clientWidth ? 
+        elem.clientHeight/elem.clientWidth
+    :
+        elem.clientWidth/elem.clientHeight
+    ;
     
 
 
@@ -21,8 +25,8 @@ function addHighlights(elem, prefix){
         inset 0 -4px 0 rgba(0,0,0,.3),
         inset 5px 8px 0 ${elemBackgroundColor}, 
         inset -5px 8px 0 ${elemBackgroundColor}, 
-        inset -5px -${elem.clientHeight - (elem.clientHeight * elem.clientHeight/elem.clientWidth)}px 0 ${elemBackgroundColor}, 
-        inset 5px -${elem.clientHeight - (elem.clientHeight * elem.clientHeight/elem.clientWidth)}px 0 ${elemBackgroundColor}, 
+        inset -5px -${elem.clientHeight - (elem.clientHeight * hOffset)}px 0 ${elemBackgroundColor}, 
+        inset 5px -${elem.clientHeight - (elem.clientHeight * hOffset)}px 0 ${elemBackgroundColor}, 
         inset 10px 10px 0 ${elem.clientHeight / 2}px rgba(255,255,255,.5)`;
     elem.style.justifyContent = 'center';
 
