@@ -1,5 +1,9 @@
 
 
+function scale(num, inMin, inMax, outMin, outMax){
+    return (num - inMin)*(outMax-outMin)/(inMax-inMin)+outMin;
+}
+
 
 function addHighlights(elem, prefix){
     // default
@@ -10,24 +14,19 @@ function addHighlights(elem, prefix){
     if(elem.style.borderRadius === '') elem.style.borderRadius = '7px';
     let elemBackgroundColor = window.getComputedStyle(elem, null).getPropertyValue('background-color');
 
-    let hOffset = elem.clientHeight <= elem.clientWidth ? 
-        elem.clientHeight/elem.clientWidth
-    :
-        elem.clientWidth/elem.clientHeight
-    ;
-    
-
-
-
+    let hOffset = (elem.clientWidth) - (.6 * elem.clientHeight);
+    console.log(hOffset);
+    console.log(elem.clientWidth);
+    console.log(elem.clientHeight);
 
     elem.style.boxShadow = 
         `inset 0 4px 0 rgba(255,255,255,.5), 
         inset 0 -4px 0 rgba(0,0,0,.3),
         inset 5px 8px 0 ${elemBackgroundColor}, 
         inset -5px 8px 0 ${elemBackgroundColor}, 
-        inset -5px -${elem.clientHeight - (elem.clientHeight * hOffset)}px 0 ${elemBackgroundColor}, 
-        inset 5px -${elem.clientHeight - (elem.clientHeight * hOffset)}px 0 ${elemBackgroundColor}, 
-        inset 10px 10px 0 ${elem.clientHeight / 2}px rgba(255,255,255,.5)`;
+        inset -5px -${hOffset}px 0 ${elemBackgroundColor}, 
+        inset 5px -${hOffset}px 0 ${elemBackgroundColor}, 
+        inset 10px 10px 0 ${elem.clientHeight / 2}px rgba(255,255,255,.4)`;
     elem.style.justifyContent = 'center';
 
     // let bubble = document.createElement(`${prefix}-bubble`);
@@ -51,3 +50,5 @@ function addHighlights(elem, prefix){
 
 
 addHighlights(document.querySelector('regeggs-card'));
+
+
