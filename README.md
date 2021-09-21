@@ -8,9 +8,9 @@ Adding functionality to the ctrl+f search function of google Chrome
     <li>ability to change highlight colors</li>
     <li>ability to drag search bar across a given html page</li>
 </ol>
-<ol>Future functionalities: </ol>
+<ol>Future functionalities: 
     <li>copy selection to clipboard</li>
-
+</ol>
 <div>Not deployed yet</div>
 <div>Want to test out the current state?</div>
 <div>Directions: </div>
