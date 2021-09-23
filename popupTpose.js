@@ -13,19 +13,19 @@ function addHighlights(elem, prefix){
     if(elem.style.position === '') elem.style.position = 'relative';
     if(elem.style.borderRadius === '') elem.style.borderRadius = '7px';
     let elemBackgroundColor = window.getComputedStyle(elem, null).getPropertyValue('background-color');
-
-    let hOffset = (elem.clientWidth) - (.6 * elem.clientHeight);
-    console.log(hOffset);
-    console.log(elem.clientWidth);
-    console.log(elem.clientHeight);
+    
+    
+    let hOffset = elem.clientHeight - elem.clientWidth + 50;
+    hOffset = hOffset<22?22:hOffset;
+    
 
     elem.style.boxShadow = 
         `inset 0 4px 0 rgba(255,255,255,.5), 
         inset 0 -4px 0 rgba(0,0,0,.3),
         inset 5px 8px 0 ${elemBackgroundColor}, 
         inset -5px 8px 0 ${elemBackgroundColor}, 
-        inset -5px -${hOffset}px 0 ${elemBackgroundColor}, 
-        inset 5px -${hOffset}px 0 ${elemBackgroundColor}, 
+        inset -5px -${elem.clientHeight - hOffset}px 0 ${elemBackgroundColor}, 
+        inset 5px -${elem.clientHeight - hOffset}px 0 ${elemBackgroundColor}, 
         inset 10px 10px 0 ${elem.clientHeight / 2}px rgba(255,255,255,.4)`;
     elem.style.justifyContent = 'center';
 
@@ -48,7 +48,9 @@ function addHighlights(elem, prefix){
     return elem;
 }
 
-
-addHighlights(document.querySelector('regeggs-card'));
+let resizeMe = new ResizeObserver((e) => {
+    addHighlights(e[0].target);
+});
+resizeMe.observe(document.querySelector('regeggs-card'))
 
 
