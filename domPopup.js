@@ -8,7 +8,7 @@ var DEF_REJECTS = ['\\', ''];
 
 
 var popup = createPopup();
-dragPopup(document.querySelector('div.chrome-regex-popup:not(div.chrome-regex-popup *)'));
+dragPopup(document.querySelector('regeggs-card.chrome-regeggs-popup:not(div.chrome-regex-popup *)'));
 
 chrome.runtime.onMessage.addListener((msg, sender, response) => {
     if((msg.from === 'background') && (msg.subject === 'open_popup')){
@@ -17,14 +17,14 @@ chrome.runtime.onMessage.addListener((msg, sender, response) => {
 });
 
 function createPopup() {
-    let div = document.createElement('div');
-    div.className = 'chrome-regex-popup';
-    div.style.display = 'none';
+    let regeggsCard = document.createElement('regeggs-card');
+    regeggsCard.className = 'chrome-regeggs-popup';
+    regeggsCard.style.display = 'none';
 
     let exitBtn = document.createElement('button');
     exitBtn.innerHTML = '&#9760;';
     exitBtn.style.float = 'right';
-    exitBtn = div.appendChild(exitBtn);
+    exitBtn = regeggsCard.appendChild(exitBtn);
 
     let form = document.createElement('form');
     form.style.display = 'flex';
@@ -38,15 +38,15 @@ function createPopup() {
     btn.id = 'create-input';
     btn.appendChild(document.createTextNode('+'));
     
-    btn = div.appendChild(btn);
-    div.appendChild(form);
-    div = document.body.appendChild(div);
+    btn = regeggsCard.appendChild(btn);
+    regeggsCard.appendChild(form);
+    regeggsCard = document.body.appendChild(regeggsCard);
     createInput();
     exitBtn.addEventListener('click', () => {
         showPopup();
     });
     btn.addEventListener('click', () => createInput());
-    return div;
+    return regeggsCard;
 }
 
 function createInput(key){

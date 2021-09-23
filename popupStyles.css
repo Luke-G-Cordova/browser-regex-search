@@ -14,7 +14,7 @@
     margin: 0;
     padding: 0 5px;
 }
-.chrome-regex-popup{
+.chrome-regeggs-popup{
     position: absolute;
     top: 1vh;
     left: 50vw;
@@ -27,9 +27,9 @@
     max-width: 400px;
     
 }
-.chrome-regex-popup:hover{
+.chrome-regeggs-popup:hover{
     /* cursor: pointer; */
 }
-.chrome-regex-popup:active{
+.chrome-regeggs-popup:active{
     cursor: -webkit-grabbing; cursor: grabbing;
 }
