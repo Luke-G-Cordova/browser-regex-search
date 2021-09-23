@@ -3,54 +3,43 @@
 function scale(num, inMin, inMax, outMin, outMax){
     return (num - inMin)*(outMax-outMin)/(inMax-inMin)+outMin;
 }
+function addHighlights(elem, options = {resizeable: false}){
 
 
-function addHighlights(elem, prefix){
-    // default
-    prefix || (prefix = elem.tagName.toLowerCase());
-    
-    if(elem.style.display === '') elem.style.display = 'flex';
-    if(elem.style.position === '') elem.style.position = 'relative';
-    if(elem.style.borderRadius === '') elem.style.borderRadius = '7px';
-    let elemBackgroundColor = window.getComputedStyle(elem, null).getPropertyValue('background-color');
-    
-    
-    let hOffset = elem.clientHeight - elem.clientWidth + 50;
-    hOffset = hOffset<22?22:hOffset;
-    
+    function reHighlight(){
+        let elemBackgroundColor = window.getComputedStyle(elem, null).getPropertyValue('background-color');
 
-    elem.style.boxShadow = 
-        `inset 0 4px 0 rgba(255,255,255,.5), 
-        inset 0 -4px 0 rgba(0,0,0,.3),
-        inset 5px 8px 0 ${elemBackgroundColor}, 
-        inset -5px 8px 0 ${elemBackgroundColor}, 
-        inset -5px -${elem.clientHeight - hOffset}px 0 ${elemBackgroundColor}, 
-        inset 5px -${elem.clientHeight - hOffset}px 0 ${elemBackgroundColor}, 
-        inset 10px 10px 0 ${elem.clientHeight / 2}px rgba(255,255,255,.4)`;
-    elem.style.justifyContent = 'center';
+        let minBubHeight = window.getComputedStyle(elem, null).getPropertyValue('border-radius');
+        minBubHeight = Number(minBubHeight.substr(0, minBubHeight.length - 2)) * 3;
 
-    // let bubble = document.createElement(`${prefix}-bubble`);
-    // bubble.className = `${prefix}-bubble`;
-    // bubble.style.display = 'block';
-    // bubble.style.borderRadius = 'inherit';
-    // bubble.style.width = elem.clientWidth - 8 + 'px';
+        let hOffset = elem.clientHeight - elem.clientWidth + 50;
+        hOffset = hOffset<minBubHeight?minBubHeight:hOffset;
+        
+        elem.style.minHeight = minBubHeight+10+'px';
+        elem.style.boxShadow = 
+            `inset 0 4px 0 rgba(255,255,255,.5), 
+            inset 0 -4px 0 rgba(0,0,0,.3),
+            inset 5px 8px 0 ${elemBackgroundColor}, 
+            inset -5px 8px 0 ${elemBackgroundColor}, 
+            inset -5px -${elem.clientHeight - hOffset}px 0 ${elemBackgroundColor}, 
+            inset 5px -${elem.clientHeight - hOffset}px 0 ${elemBackgroundColor}, 
+            inset 10px 10px 0 ${elem.clientHeight / 2}px rgba(255,255,255,.4)`;
+    }
 
-    
-    // bubble.style.height = (elem.clientHeight/(hOffset + 3)) * hOffset + 'px';
-    // bubble.style.marginTop = '7px';
-    // bubble.style.backgroundColor = 'rgba(255, 255, 255, .3)';
-    // bubble.style.boxShadow = `inset 0 0 10px rgba(255, 255, 255, .5)`;
+    reHighlight();
 
-    // elem.appendChild(bubble);
 
-    // elem.appendChild(topH);
-
+    if(options.resizeable){
+        let resizeMe = new ResizeObserver((e) => {
+            reHighlight(e[0].target);
+        });
+        resizeMe.observe(elem);
+    }
     return elem;
 }
 
-let resizeMe = new ResizeObserver((e) => {
-    addHighlights(e[0].target);
-});
-resizeMe.observe(document.querySelector('regeggs-card'))
+// addHighlights(document.querySelector('regeggs-card'), {resizeable: true});
+
+
 
 
