@@ -109,10 +109,11 @@ function createInput(key){
     colorInput.addEventListener('input', (e) => {
         changeColor(key, colorInput.value);
     });
-
+    let GI = ELEM_KEYS.indexOf(key);
     document
         .querySelector(`button.next[name="${next.name}"]`)
         .addEventListener('click', changeCurrent);
+        // CURRENT_INDEXES[GI] = nextMatch(MY_HIGHLIGHTS[GI].elements, CURRENT_INDEXES[GI], 1);
     document
         .querySelector(`button.prev[name="${prev.name}"]`)
         .addEventListener('click', changeCurrent)
@@ -175,8 +176,6 @@ function highlightMe(key, data, color){
             }
             highlightMe.style.backgroundColor = `${color}`;
             highlightMe.style.color = invertColor(color);
-            highlightMe.style.padding = '0';
-            highlightMe.style.margin = '0';
 
             highlightMe.id = `${CUR_INDEX}|${key}|${multiNodeMatchId}`;
 
@@ -209,7 +208,7 @@ function dragPopup(elem){
     var border = 10;
     
     elem.onmousedown = (e) => {
-        if(!document.querySelector('div.chrome-regex-popup input:not([type=color]):hover')){
+        if(!document.querySelector(`${elem.tagName} input:hover`)){
             wHalf = window.innerWidth/2;
             hHalf = window.innerHeight/2;
             startX = e.clientX;
@@ -229,7 +228,7 @@ function dragPopup(elem){
                 bShadowValueX = scale(bShadowValueX, -wHalf, wHalf, -5, 5);
                 bShadowValueY = elem.offsetTop - window.scrollY + (elem.clientHeight/2) - hHalf;
                 bShadowValueY = scale(bShadowValueY, -hHalf, hHalf, -5, 5);
-
+                
                 addNewBoxShadow(elem, `${bShadowValueX}px ${bShadowValueY}px 5px rgba(0,0,0, .5)`);
 
                 // right/left edge of the popup
@@ -258,4 +257,30 @@ function dragPopup(elem){
             ogWindow = window.scrollY;
         }
     }
+}
+function nextMatch(elements, cIndex, direction){
+    direction || (direction = 1);
+    const regCurrent = /(^|\s)current(\s|$)/;
+    const current = ' current';
+    for(let i in elements[cIndex]){
+        if(regCurrent.test(elements[cIndex][i].className)){
+            elements[cIndex][i].className = elements[cIndex][i].className.replace(regCurrent, '');
+        }
+    }
+    if(!elements[cIndex + direction]){
+        if(direction > 0){
+            cIndex = 0;
+        } else {
+            cIndex = elements.length - 1;
+        }
+    } else{
+        cIndex += direction;
+    }
+    for(let i in elements[cIndex]){
+        if(!regCurrent.test(elements[cIndex][i].className)){
+            elements[cIndex][i].className += current;
+        }
+    }
+    
+    return cIndex;
 }

@@ -113,7 +113,6 @@ function highlight(root, regex, callback, excludes){
             while(testIndex > nodeParts.length - 1){
                 j++;
                 
-                
                 nodeParts = nodeParts + groupedNodes[i][j].data;
             }
 

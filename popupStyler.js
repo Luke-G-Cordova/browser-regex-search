@@ -1,4 +1,5 @@
 
+// this file needs some maintnance
 let bShadow = '';
 
 function scale(num, inMin, inMax, outMin, outMax){
