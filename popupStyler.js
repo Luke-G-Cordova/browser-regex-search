@@ -1,4 +1,5 @@
 
+let bShadow = '';
 
 function scale(num, inMin, inMax, outMin, outMax){
     return (num - inMin)*(outMax-outMin)/(inMax-inMin)+outMin;
@@ -17,6 +18,7 @@ function addHighlights(elem, options = {resizeable: true}){
         elem.style.minHeight = minBubHeight+10+'px';
         elem.style.boxShadow = 
             `inset 0 4px 0 rgba(255,255,255,.5),inset 0 -4px 0 rgba(0,0,0,.3),inset 5px 8px 0 ${elemBackgroundColor},inset -5px 8px 0 ${elemBackgroundColor},inset -5px -${elem.clientHeight - hOffset}px 0 ${elemBackgroundColor},inset 5px -${elem.clientHeight - hOffset}px 0 ${elemBackgroundColor},inset 10px 10px 0 ${elem.clientHeight / 2}px rgba(255,255,255,.4)`;
+        bShadow = elem.style.boxShadow;
     }
 
     reHighlight();
@@ -31,10 +33,7 @@ function addHighlights(elem, options = {resizeable: true}){
     return elem;
 }
 function addNewBoxShadow(elem, shadow){
-    const bsFormat = /inset 0 4px 0 rgba\(255,255,255,\.5\),inset 0 -4px 0 rgba\(0,0,0,\.3\),inset 5px 8px 0 (rgba|rgb)\([0-9,.]+\),inset -5px 8px 0 (rgba|rgb)\([0-9,.]+\),inset -5px -\d+px 0 (rgba|rgb)\([0-9,.]+\),inset 5px -\d+px 0 (rgba|rgb)\([0-9,.]+\),inset 10px 10px 0 \d+px (rgba|rgb)\([0-9,.]+\)/;
-    let ogBoxShadow = bsFormat.exec(elem.style.boxShadow);
-    console.log(ogBoxShadow);
-    
+    elem.style.boxShadow = bShadow + ', ' + shadow;
 }
 
 // addHighlights(document.querySelector('regeggs-card'), {resizeable: true});

@@ -227,9 +227,8 @@ function dragPopup(elem){
                 bShadowValueX = scale(bShadowValueX, -wHalf, wHalf, -5, 5);
                 bShadowValueY = elem.offsetTop - window.scrollY + (elem.clientHeight/2) - hHalf;
                 bShadowValueY = scale(bShadowValueY, -hHalf, hHalf, -5, 5);
-                elem.style.boxShadow = `${elem.style.boxShadow}, ${bShadowValueX}px ${bShadowValueY}px 7px rgba(0,0,0, .4)`;
-                addNewBoxShadow(elem);
-                // box-shadow: 5px 5px 10px rgba(0,0,0, .3);
+                
+                addNewBoxShadow(elem, `${bShadowValueX}px ${bShadowValueY}px 5px rgba(0,0,0, .5)`);
 
                 // right/left edge of the popup
                 if(elem.offsetLeft + elem.clientWidth + border > window.innerWidth){
