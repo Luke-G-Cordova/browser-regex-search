@@ -20,17 +20,17 @@
     },
     "action": {
         "default_icon": {
-            "16": "regex.png",
-            "24": "regex.png",
-            "32": "regex.png"
+            "16": "/images/regex.png",
+            "24": "/images/regex.png",
+            "32": "/images/regex.png"
         },
         "default_title": "Regular Expressions",
         "default_popup": "popup.html"
     },
     "icons": {
-        "16": "regex.png",
-        "48": "regex.png",
-        "128": "regex.png"
+        "16": "/images/regex.png",
+        "48": "/images/regex.png",
+        "128": "/images/regex.png"
     },
     "commands":{
         "_execute_action":{

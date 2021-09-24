@@ -20,7 +20,6 @@ chrome.commands.onCommand.addListener((command) => {
             subject: command
         };
         sendData(sendObj);
-        console.log('back');
     }
 });
 chrome.runtime.onMessage.addListener((msg, sender, response) => {

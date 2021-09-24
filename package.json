@@ -1,10 +1,10 @@
 {
-  "name": "chrome-regex",
+  "name": "chrome-regeggs",
   "version": "1.0.0",
   "description": "Regular expression functionality for ctrl+f search",
   "main": "background.js",
   "scripts": {
-    "dev": "node test.js"
+    
   },
   "repository": {
     "type": "git",
