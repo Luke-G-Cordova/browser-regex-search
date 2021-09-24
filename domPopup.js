@@ -175,6 +175,8 @@ function highlightMe(key, data, color){
             }
             highlightMe.style.backgroundColor = `${color}`;
             highlightMe.style.color = invertColor(color);
+            highlightMe.style.padding = '0';
+            highlightMe.style.margin = '0';
 
             highlightMe.id = `${CUR_INDEX}|${key}|${multiNodeMatchId}`;
 
@@ -227,7 +229,7 @@ function dragPopup(elem){
                 bShadowValueX = scale(bShadowValueX, -wHalf, wHalf, -5, 5);
                 bShadowValueY = elem.offsetTop - window.scrollY + (elem.clientHeight/2) - hHalf;
                 bShadowValueY = scale(bShadowValueY, -hHalf, hHalf, -5, 5);
-                
+
                 addNewBoxShadow(elem, `${bShadowValueX}px ${bShadowValueY}px 5px rgba(0,0,0, .5)`);
 
                 // right/left edge of the popup
