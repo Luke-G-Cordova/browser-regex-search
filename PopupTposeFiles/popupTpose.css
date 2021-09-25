@@ -6,10 +6,10 @@ body{
     height: 90vh;
 }
 regeggs-card{
-    width: 80px;
-    height: 100px;
-    background-color: teal;
+    width: 30px;
+    height: 200px;
+    background-color: red;
     resize: both;
     overflow: auto;
-    border-radius: 10px;
+    border-radius: 5px;
 }

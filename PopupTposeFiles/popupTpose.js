@@ -3,12 +3,12 @@
 function scale(num, inMin, inMax, outMin, outMax){
     return (num - inMin)*(outMax-outMin)/(inMax-inMin)+outMin;
 }
-function addHighlights(elem, options = {resizeable: false}){
-
+function addHighlights(elem, options = {resizeable: true}){
+    
 
     function reHighlight(){
         let elemBackgroundColor = window.getComputedStyle(elem, null).getPropertyValue('background-color');
-
+        
         let minBubHeight = window.getComputedStyle(elem, null).getPropertyValue('border-radius');
         minBubHeight = Number(minBubHeight.substr(0, minBubHeight.length - 2)) * 3;
 
@@ -38,7 +38,7 @@ function addHighlights(elem, options = {resizeable: false}){
     return elem;
 }
 
-// addHighlights(document.querySelector('regeggs-card'), {resizeable: true});
+addHighlights(document.querySelector('regeggs-card'), {resizeable: true});
 
 
 

@@ -9,17 +9,17 @@ var popup;
 
 window.addEventListener('load', () => {
     popup = document.createElement('regeggs-card');
-    console.log(window.innerWidth);
+    
     popup.className = 'chrome-regeggs-popup';
     updateStyles(popup, {
         backgroundColor: 'teal',
         display: 'none',
         position: 'absolute', 
         top: '1vh', 
-        left: `${window.innerWidth - 450}px`, 
+        left: `${window.innerWidth - 440}px`, 
         zIndex: '1000', 
         borderRadius: '10px', 
-        padding: '25px', 
+        padding: '20px', 
         minWidth: '400px', 
         minHeight: '150px',
         height: '150px',
@@ -29,19 +29,30 @@ window.addEventListener('load', () => {
 
     let pContent = document.createElement('div');
     updateStyles(pContent, {
-        width: '90%', 
-        height: '95%', 
-        backgroundColor: 'gold'
+        width: '100%', 
+        height: '100%', 
+        backgroundColor: 'gold',
+        borderRadius: '7px'
     });
+    pContent = addHighlights(pContent, {bubble: false});
+
+
+    let exitBtn = document.createElement('div');
+    // exitBtn.innerHTML = '&#9760;';
+    updateStyles(exitBtn, {
+        float: 'right',
+        backgroundColor:'red',
+        borderRadius: '5px', 
+        width: '30px',
+        height: '30px'
+    });
+    
+    exitBtn = pContent.appendChild(exitBtn);
+
     popup.appendChild(pContent);
 
 
-    // let exitBtn = document.createElement('button');
-    // exitBtn.innerHTML = '&#9760;';
-    // updateStyles(exitBtn, {
-    //     float: 'right'
-    // });
-    // exitBtn = popup.appendChild(exitBtn);
+    
 
     // let form = document.createElement('form');
     // updateStyles(form, {
