@@ -16,7 +16,7 @@ function addHighlights(elem, options = {resizeable: true}){
         let hOffset = elem.clientHeight - elem.clientWidth + 50;
         hOffset = hOffset<minBubHeight?minBubHeight:hOffset;
         
-        elem.style.minHeight = minBubHeight+10+'px';
+        elem.style.minHeight || (elem.style.minHeight = minBubHeight+10+'px');
         elem.style.boxShadow = 
             `inset 0 4px 0 rgba(255,255,255,.5),inset 0 -4px 0 rgba(0,0,0,.3),inset 5px 8px 0 ${elemBackgroundColor},inset -5px 8px 0 ${elemBackgroundColor},inset -5px -${elem.clientHeight - hOffset}px 0 ${elemBackgroundColor},inset 5px -${elem.clientHeight - hOffset}px 0 ${elemBackgroundColor},inset 10px 10px 0 ${elem.clientHeight / 2}px rgba(255,255,255,.4)`;
         bShadow = elem.style.boxShadow;
@@ -37,6 +37,11 @@ function addNewBoxShadow(elem, shadow){
     elem.style.boxShadow = bShadow + ', ' + shadow;
 }
 
+function updateStyles(elem, styles){
+    for(sty in styles) {
+        elem.style[sty] = styles[sty]
+    }
+}
 // addHighlights(document.querySelector('regeggs-card'), {resizeable: true});
 
 

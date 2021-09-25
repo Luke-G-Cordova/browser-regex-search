@@ -5,51 +5,76 @@ var ELEM_KEYS = [];
 var CURRENT_INDEXES = [];
 var MY_HIGHLIGHTS = [];
 var DEF_REJECTS = ['\\', ''];
+var popup;
+
+window.addEventListener('load', () => {
+    popup = document.createElement('regeggs-card');
+    console.log(window.innerWidth);
+    popup.className = 'chrome-regeggs-popup';
+    updateStyles(popup, {
+        backgroundColor: 'teal',
+        display: 'none',
+        position: 'absolute', 
+        top: '1vh', 
+        left: `${window.innerWidth - 450}px`, 
+        zIndex: '1000', 
+        borderRadius: '10px', 
+        padding: '25px', 
+        minWidth: '400px', 
+        minHeight: '150px',
+        height: '150px',
+        justifyContent: 'center'
+    });
+    popup = addHighlights(popup);
+
+    let pContent = document.createElement('div');
+    updateStyles(pContent, {
+        width: '90%', 
+        height: '95%', 
+        backgroundColor: 'gold'
+    });
+    popup.appendChild(pContent);
 
 
-var popup = createPopup();
-dragPopup(document.querySelector('regeggs-card.chrome-regeggs-popup:not(div.chrome-regex-popup *)'));
+    // let exitBtn = document.createElement('button');
+    // exitBtn.innerHTML = '&#9760;';
+    // updateStyles(exitBtn, {
+    //     float: 'right'
+    // });
+    // exitBtn = popup.appendChild(exitBtn);
+
+    // let form = document.createElement('form');
+    // updateStyles(form, {
+    //     display: 'flex', 
+    //     justifyContent: 'center', 
+    //     alignItems: 'center', 
+    //     flexDirection: 'column'
+    // });
+    // form.className = 'mainForm';
+
+    
+    // let btn = document.createElement('button');
+    // btn.id = 'create-input';
+    // btn.appendChild(document.createTextNode('+'));
+    
+    // btn = popup.appendChild(btn);
+    // popup.appendChild(form);
+    popup = document.body.appendChild(popup);
+    // createInput();
+    // exitBtn.addEventListener('click', () => {
+    //     showPopup();
+    // });
+    // btn.addEventListener('click', () => createInput());
+
+});
+// var popup = createPopup();
+// dragPopup(document.querySelector('regeggs-card.chrome-regeggs-popup:not(div.chrome-regex-popup *)'));
 
 chrome.runtime.onMessage.addListener((msg, sender, response) => {
     if((msg.from === 'background') && (msg.subject === 'open_popup')){
         showPopup();
     }
 });
-
-function createPopup() {
-    let regeggsCard = document.createElement('regeggs-card');
-    regeggsCard.className = 'chrome-regeggs-popup';
-    regeggsCard.style.backgroundColor = 'teal';
-    regeggsCard.style.display = 'none';
-    regeggsCard = addHighlights(regeggsCard);
-
-    let exitBtn = document.createElement('button');
-    exitBtn.innerHTML = '&#9760;';
-    exitBtn.style.float = 'right';
-    exitBtn = regeggsCard.appendChild(exitBtn);
-
-    let form = document.createElement('form');
-    form.style.display = 'flex';
-    form.style.justifyContent = 'center';
-    form.style.alignItems = 'center';
-    form.style.flexDirection = 'column';
-    form.className = 'mainForm';
-
-    
-    let btn = document.createElement('button');
-    btn.id = 'create-input';
-    btn.appendChild(document.createTextNode('+'));
-    
-    btn = regeggsCard.appendChild(btn);
-    regeggsCard.appendChild(form);
-    regeggsCard = document.body.appendChild(regeggsCard);
-    createInput();
-    exitBtn.addEventListener('click', () => {
-        showPopup();
-    });
-    btn.addEventListener('click', () => createInput());
-    return regeggsCard;
-}
 
 function createInput(key){
     let form = document.querySelector('.mainForm');
@@ -190,7 +215,7 @@ function highlightMe(key, data, color){
 
 function showPopup(){
     if(popup.style.display === 'none'){
-        popup.style.display = 'block';
+        popup.style.display = 'flex';
         popup.style.top = popup.offsetTop + window.scrollY - ogWindow + 'px';
         ogWindow = window.scrollY;
     }else{

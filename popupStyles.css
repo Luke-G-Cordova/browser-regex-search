@@ -1,5 +1,5 @@
 
-.inputWrapper{
+/* .inputWrapper{
     margin: 15px;
 }
 .inputWrapper *{
@@ -27,8 +27,8 @@
     
 }
 .chrome-regeggs-popup:hover{
-    /* cursor: pointer; */
+     cursor: pointer; 
 }
 .chrome-regeggs-popup:active{
     cursor: -webkit-grabbing; cursor: grabbing;
-}
+} */
