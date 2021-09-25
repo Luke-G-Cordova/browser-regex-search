@@ -7,9 +7,9 @@ body{
 }
 regeggs-card{
     width: 30px;
-    height: 200px;
+    height: 30px;
     background-color: red;
-    resize: both;
-    overflow: auto;
-    border-radius: 5px;
+    /* resize: both;
+    overflow: auto; */
+    border-radius: 7px;
 }

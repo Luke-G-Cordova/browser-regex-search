@@ -19,7 +19,7 @@ window.addEventListener('load', () => {
         left: `${window.innerWidth - 440}px`, 
         zIndex: '1000', 
         borderRadius: '10px', 
-        padding: '20px', 
+        padding: '15px', 
         minWidth: '400px', 
         minHeight: '150px',
         height: '150px',
@@ -38,15 +38,22 @@ window.addEventListener('load', () => {
 
 
     let exitBtn = document.createElement('div');
-    // exitBtn.innerHTML = '&#9760;';
+    exitBtn.innerHTML = '&#10005;';
     updateStyles(exitBtn, {
         float: 'right',
         backgroundColor:'red',
         borderRadius: '5px', 
         width: '30px',
-        height: '30px'
+        height: '30px',
+        border: '1px solid black',
+        display: 'flex', 
+        justifyContent: 'center',
+        alignItems: 'center',
+        color: 'white',
+        textShadow: '1px 1px 1px black',
+        fontWeight: '900'
     });
-    
+    exitBtn = addHighlights(exitBtn, {overrideArgs: [2, 22, 3, 4]})
     exitBtn = pContent.appendChild(exitBtn);
 
     popup.appendChild(pContent);
