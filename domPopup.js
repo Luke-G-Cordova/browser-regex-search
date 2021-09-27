@@ -13,7 +13,8 @@ window.addEventListener('load', () => {
     
     popup.className = 'chrome-regeggs-popup';
     updateStyles(popup, {
-        backgroundColor: 'teal',
+        // backgroundColor: 'teal',
+        backgroundImage: 'linear-gradient(to bottom, #008080, #008080, #00c4c4)', 
         display: 'none',
         position: 'absolute', 
         top: '1vh', 
@@ -54,11 +55,13 @@ window.addEventListener('load', () => {
         textShadow: '2px 2px 0px black',
         fontWeight: '900',
         fontFamily: '"Chango", cursive', 
-        margin: '5px'
+        margin: '5px',
+        mouse: '',
+        userSelect: 'none'
     });
     exitBtn = addHighlights(exitBtn, {overrideArgs: [2, 22, 3, 4]})
     exitBtn = pContent.appendChild(exitBtn);
-
+    
     popup.appendChild(pContent);
 
 
@@ -82,9 +85,15 @@ window.addEventListener('load', () => {
     // popup.appendChild(form);
     popup = document.body.appendChild(popup);
     // createInput();
-    // exitBtn.addEventListener('click', () => {
-    //     showPopup();
-    // });
+    exitBtn.addEventListener('mousedown', () => {
+        addNewBoxShadow(exitBtn, 
+            og => `inset 1px 1px 3px rgba(0,0,0,.2), inset -1px -1px 3px rgba(0,0,0,.2), ${og}`
+        );
+        window.addEventListener('mouseup', () => addNewBoxShadow(exitBtn, og => `${og}`));
+    });
+    exitBtn.addEventListener('mouseup', () => {
+        showPopup();
+    });
     // btn.addEventListener('click', () => createInput());
 
 });
@@ -275,7 +284,9 @@ function dragPopup(elem){
                 bShadowValueY = elem.offsetTop - window.scrollY + (elem.clientHeight/2) - hHalf;
                 bShadowValueY = scale(bShadowValueY, -hHalf, hHalf, -5, 5);
                 
-                addNewBoxShadow(elem, `${bShadowValueX}px ${bShadowValueY}px 5px rgba(0,0,0, .5)`);
+                addNewBoxShadow(elem, 
+                    og => `${og}, ${bShadowValueX}px ${bShadowValueY}px 5px rgba(0,0,0, .5)`
+                );
 
                 // right/left edge of the popup
                 if(elem.offsetLeft + elem.clientWidth + border > window.innerWidth){

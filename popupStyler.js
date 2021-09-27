@@ -1,21 +1,21 @@
 
 // this file needs some maintnance
 window.addEventListener('load', () => {
-    // let link1 = document.createElement('link');
-    // link1.rel = 'preconnect';
-    // link1.href = 'https://fonts.googleapis.com';
+    let link1 = document.createElement('link');
+    link1.rel = 'preconnect';
+    link1.href = 'https://fonts.googleapis.com';
 
-    // let link2 = document.createElement('link');
-    // link2.rel = 'preconnect';
-    // link2.href = 'https://fonts.gstatic.com';
-    // link2.crossOrigin = true;
+    let link2 = document.createElement('link');
+    link2.rel = 'preconnect';
+    link2.href = 'https://fonts.gstatic.com';
+    link2.crossOrigin = true;
 
-    // let link3 = document.createElement('link');
-    // link3.rel = 'stylesheet';
-    // link3.href = 'https://fonts.googleapis.com/css2?family=Chango&display=swap';
-    // document.head.appendChild(link1);
-    // document.head.appendChild(link2);
-    // document.head.appendChild(link3);
+    let link3 = document.createElement('link');
+    link3.rel = 'stylesheet';
+    link3.href = 'https://fonts.googleapis.com/css2?family=Chango&display=swap';
+    document.head.appendChild(link1);
+    document.head.appendChild(link2);
+    document.head.appendChild(link3);
 //     <link rel="preconnect" href="https://fonts.googleapis.com">
 // <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 // <link href="https://fonts.googleapis.com/css2?family=Chango&display=swap" rel="stylesheet"></link>
@@ -41,7 +41,7 @@ function addHighlights(elem, options){
         ogo[op] = options[op];
     }
     let args = ogo.overrideArgs;
-    console.log(args);
+    
     function reHighlight(){
         let elemBackgroundColor = window.getComputedStyle(elem, null).getPropertyValue('background-color');
         
@@ -74,8 +74,10 @@ function addHighlights(elem, options){
     }
     return elem;
 }
-function addNewBoxShadow(elem, shadow){
-    elem.style.boxShadow = bShadow + ', ' + shadow;
+function addNewBoxShadow(elem, callback){
+    if(typeof arguments[1] !== 'undefined'){
+        elem.style.boxShadow = callback(bShadow);
+    }
 }
 
 function updateStyles(elem, styles){
