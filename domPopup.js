@@ -13,8 +13,7 @@ window.addEventListener('load', () => {
     
     popup.className = 'chrome-regeggs-popup';
     updateStyles(popup, {
-        // backgroundColor: 'teal',
-        backgroundImage: 'linear-gradient(to bottom, #008080, #008080, #00c4c4)', 
+        backgroundColor: 'teal',
         display: 'none',
         position: 'absolute', 
         top: '1vh', 
@@ -55,27 +54,32 @@ window.addEventListener('load', () => {
         textShadow: '2px 2px 0px black',
         fontWeight: '900',
         fontFamily: '"Chango", cursive', 
-        margin: '5px',
-        mouse: '',
+        margin: '10px',
+        // mouse: '',
         userSelect: 'none'
     });
-    exitBtn = addHighlights(exitBtn, {overrideArgs: [2, 22, 3, 4]})
-    exitBtn = pContent.appendChild(exitBtn);
+    exitBtn = addHighlights(exitBtn, {overrideArgs: [2, 22, 3, 4]});
+    let exitBtnWrapper = document.createElement('div');
+    updateStyles(exitBtnWrapper, {
+        display: 'inline-block',
+        width: '100%'
+        
+    });
+    exitBtn = exitBtnWrapper.appendChild(exitBtn);
+    exitBtnWrapper = pContent.appendChild(exitBtnWrapper);
     
-    popup.appendChild(pContent);
-
-
     
 
-    // let form = document.createElement('form');
-    // updateStyles(form, {
-    //     display: 'flex', 
-    //     justifyContent: 'center', 
-    //     alignItems: 'center', 
-    //     flexDirection: 'column'
-    // });
-    // form.className = 'mainForm';
 
+    let form = document.createElement('form');
+    updateStyles(form, {
+        display: 'flex', 
+        justifyContent: 'center', 
+        alignItems: 'center', 
+        flexDirection: 'column'
+    });
+    form.className = 'mainForm';
+    form = pContent.appendChild(form);
     
     // let btn = document.createElement('button');
     // btn.id = 'create-input';
@@ -83,8 +87,14 @@ window.addEventListener('load', () => {
     
     // btn = popup.appendChild(btn);
     // popup.appendChild(form);
+    popup.appendChild(pContent);
     popup = document.body.appendChild(popup);
-    // createInput();
+    createInput();
+    exitBtn.addEventListener('mouseover', () => {
+        updateStyles(exitBtn, {
+            cursor: 'pointer' 
+        });
+    });
     exitBtn.addEventListener('mousedown', () => {
         addNewBoxShadow(exitBtn, 
             og => `inset 1px 1px 3px rgba(0,0,0,.2), inset -1px -1px 3px rgba(0,0,0,.2), ${og}`
@@ -95,7 +105,7 @@ window.addEventListener('load', () => {
         showPopup();
     });
     // btn.addEventListener('click', () => createInput());
-
+    dragPopup(document.querySelector('regeggs-card.chrome-regeggs-popup:not(div.chrome-regex-popup *)'));
 });
 // var popup = createPopup();
 // dragPopup(document.querySelector('regeggs-card.chrome-regeggs-popup:not(div.chrome-regex-popup *)'));
@@ -285,7 +295,10 @@ function dragPopup(elem){
                 bShadowValueY = scale(bShadowValueY, -hHalf, hHalf, -5, 5);
                 
                 addNewBoxShadow(elem, 
-                    og => `${og}, ${bShadowValueX}px ${bShadowValueY}px 5px rgba(0,0,0, .5)`
+                    (og) => {
+                        console.log(og);
+                        return `${bShadowValueX}px ${bShadowValueY}px 5px rgba(0,0,0, .5), ${og}`;
+                    }
                 );
 
                 // right/left edge of the popup

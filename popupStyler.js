@@ -54,7 +54,7 @@ function addHighlights(elem, options){
         hOffset = hOffset < minBubHeight ? minBubHeight : hOffset;
         
         elem.style.minHeight || (elem.style.minHeight = minBubHeight+10+'px');
-
+        
         let bub = ogo.bubble?
             `,inset ${bSizeW}px ${bSizeH}px 0 ${elemBackgroundColor},inset -${bSizeW}px ${bSizeH}px 0 ${elemBackgroundColor},inset -${bSizeW}px -${elem.clientHeight - hOffset}px 0 ${elemBackgroundColor},inset ${bSizeW}px -${elem.clientHeight - hOffset}px 0 ${elemBackgroundColor},inset 10px 10px 0 ${elem.clientHeight / 2}px rgba(255,255,255,.4)`
             :
@@ -68,7 +68,7 @@ function addHighlights(elem, options){
     
     if(ogo.resizeable){
         let resizeMe = new ResizeObserver((e) => {
-            reHighlight(e[0].target);
+            reHighlight();
         });
         resizeMe.observe(elem);
     }
