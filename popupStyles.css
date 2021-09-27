@@ -32,3 +32,7 @@
 .chrome-regeggs-popup:active{
     cursor: -webkit-grabbing; cursor: grabbing;
 } */
+div.exit{
+    font-family: 'Chango', cursive;
+    /* display: none; */
+}

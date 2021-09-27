@@ -8,6 +8,7 @@ var DEF_REJECTS = ['\\', ''];
 var popup;
 
 window.addEventListener('load', () => {
+    
     popup = document.createElement('regeggs-card');
     
     popup.className = 'chrome-regeggs-popup';
@@ -38,7 +39,7 @@ window.addEventListener('load', () => {
 
 
     let exitBtn = document.createElement('div');
-    exitBtn.innerHTML = '&#10005;';
+    exitBtn.innerHTML = 'X';
     updateStyles(exitBtn, {
         float: 'right',
         backgroundColor:'red',
@@ -50,8 +51,10 @@ window.addEventListener('load', () => {
         justifyContent: 'center',
         alignItems: 'center',
         color: 'white',
-        textShadow: '1px 1px 1px black',
-        fontWeight: '900'
+        textShadow: '2px 2px 0px black',
+        fontWeight: '900',
+        fontFamily: '"Chango", cursive', 
+        margin: '5px'
     });
     exitBtn = addHighlights(exitBtn, {overrideArgs: [2, 22, 3, 4]})
     exitBtn = pContent.appendChild(exitBtn);
