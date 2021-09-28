@@ -1,5 +1,3 @@
-
-// this file needs some maintnance
 window.addEventListener('load', () => {
     let link1 = document.createElement('link');
     link1.rel = 'preconnect';
@@ -16,39 +14,37 @@ window.addEventListener('load', () => {
     document.head.appendChild(link1);
     document.head.appendChild(link2);
     document.head.appendChild(link3);
-//     <link rel="preconnect" href="https://fonts.googleapis.com">
-// <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-// <link href="https://fonts.googleapis.com/css2?family=Chango&display=swap" rel="stylesheet"></link>
 });
-let bShadow = '';
 
-function scale(num, inMin, inMax, outMin, outMax){
-    return (num - inMin)*(outMax-outMin)/(inMax-inMin)+outMin;
-}
-function addHighlights(elem, options){
-    var ogo = {
-        resizeable: true, 
-        bubble: true, 
-        tiny: false,
-        // overrideArgs is an integer array of length 4
-        // first value is the size of the top and bottom highlight
-        // second value is the min height of the bubble
-        // third value is the left and right padding of the bubble
-        // forth value is the top padding of the bubble
-        overrideArgs: null
+
+class Shine {
+    constructor(elem, options){
+        let ogo = {
+            resizeable: true, 
+            bubble: true, 
+            tiny: false,
+            overrideArgs: null
+        }
+        for(let op in options){
+            ogo[op] = options[op]
+        }
+        this.bShadow = '';
+        this.args = [elem, ogo];
+        if(ogo.resizeable){
+            let resizeMe = new ResizeObserver((e) => {
+                this.reHighlight();
+            });
+            resizeMe.observe(elem);
+        }
     }
-    for(op in options){
-        ogo[op] = options[op];
-    }
-    let args = ogo.overrideArgs;
-    
-    function reHighlight(){
+    reHighlight(){
+        let [elem, ogo] = this.args;
         let elemBackgroundColor = window.getComputedStyle(elem, null).getPropertyValue('background-color');
         
         let minBubHeight = window.getComputedStyle(elem, null).getPropertyValue('border-radius');
         minBubHeight = Number(minBubHeight.substr(0, minBubHeight.length - 2)) * 3;
 
-        let [highlightSize, minHeight, bSizeW, bSizeH] = (args) || (ogo.tiny?[2, 20, 1, 4]:[4, 50, 5, 8]);
+        let [highlightSize, minHeight, bSizeW, bSizeH] = (ogo.overrideArgs) || (ogo.tiny?[2, 20, 1, 4]:[4, 50, 5, 8]);
 
         let hOffset = elem.clientHeight - elem.clientWidth + minHeight;
         hOffset = hOffset < minBubHeight ? minBubHeight : hOffset;
@@ -56,37 +52,34 @@ function addHighlights(elem, options){
         elem.style.minHeight || (elem.style.minHeight = minBubHeight+10+'px');
         
         let bub = ogo.bubble?
-            `,inset ${bSizeW}px ${bSizeH}px 0 ${elemBackgroundColor},inset -${bSizeW}px ${bSizeH}px 0 ${elemBackgroundColor},inset -${bSizeW}px -${elem.clientHeight - hOffset}px 0 ${elemBackgroundColor},inset ${bSizeW}px -${elem.clientHeight - hOffset}px 0 ${elemBackgroundColor},inset 10px 10px 0 ${elem.clientHeight / 2}px rgba(255,255,255,.4)`
+            `,inset ${bSizeW}px ${bSizeH}px 0 ${elemBackgroundColor}`+
+            `,inset -${bSizeW}px ${bSizeH}px 0 ${elemBackgroundColor}`+
+            `,inset -${bSizeW}px -${elem.clientHeight - hOffset}px 0 ${elemBackgroundColor}`+
+            `,inset ${bSizeW}px -${elem.clientHeight - hOffset}px 0 ${elemBackgroundColor}`+
+            `,inset 10px 10px 0 ${elem.clientHeight / 2}px rgba(255,255,255,.4)`
             :
             ''
         ;
         elem.style.boxShadow = 
             `inset 0 ${highlightSize}px 0 rgba(255,255,255,.5),inset 0 -${highlightSize}px 0 rgba(0,0,0,.3)${bub}`;
-        bShadow = elem.style.boxShadow;
+        this.bShadow = elem.style.boxShadow;
+        return elem;
     }
-    reHighlight();
-    
-    if(ogo.resizeable){
-        let resizeMe = new ResizeObserver((e) => {
-            reHighlight();
-        });
-        resizeMe.observe(elem);
+    updateStyles(styles){
+        let [elem] = this.args;
+        for(let sty in styles) {
+            elem.style[sty] = styles[sty]
+        }
     }
-    return elem;
-}
-function addNewBoxShadow(elem, callback){
-    if(typeof arguments[1] !== 'undefined'){
-        elem.style.boxShadow = callback(bShadow);
+    static updateStyles(elem, styles){
+        for(let sty in styles) {
+            elem.style[sty] = styles[sty]
+        }
     }
-}
-
-function updateStyles(elem, styles){
-    for(sty in styles) {
-        elem.style[sty] = styles[sty]
+    addNewBoxShadow(callback){
+        let [elem] = this.args;
+        if(typeof arguments[0] !== 'undefined'){
+            elem.style.boxShadow = callback(this.bShadow);
+        }
     }
 }
-// addHighlights(document.querySelector('regeggs-card'), {resizeable: true});
-
-
-
-

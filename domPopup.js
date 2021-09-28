@@ -111,8 +111,6 @@ window.addEventListener('load', () => {
     // btn.addEventListener('click', () => createInput());
     dragPopup(document.querySelector('regeggs-card.chrome-regeggs-popup:not(div.chrome-regex-popup *)'));
 });
-// var popup = createPopup();
-// dragPopup(document.querySelector('regeggs-card.chrome-regeggs-popup:not(div.chrome-regex-popup *)'));
 
 chrome.runtime.onMessage.addListener((msg, sender, response) => {
     if((msg.from === 'background') && (msg.subject === 'open_popup')){
