@@ -6,13 +6,15 @@ var CURRENT_INDEXES = [];
 var MY_HIGHLIGHTS = [];
 var DEF_REJECTS = ['\\', ''];
 var popup;
+var popupShine;
 
 window.addEventListener('load', () => {
     
     popup = document.createElement('regeggs-card');
     
     popup.className = 'chrome-regeggs-popup';
-    updateStyles(popup, {
+    popupShine = new Shine(popup);
+    popupShine.updateStyles({
         backgroundColor: 'teal',
         display: 'none',
         position: 'absolute', 
@@ -26,21 +28,23 @@ window.addEventListener('load', () => {
         height: '150px',
         justifyContent: 'center'
     });
-    popup = addHighlights(popup);
+    // popup = addHighlights(popup);
 
     let pContent = document.createElement('div');
-    updateStyles(pContent, {
+    let pContentShine = new Shine(pContent, {bubble: false});
+    pContentShine.updateStyles({
         width: '100%', 
         height: '100%', 
         backgroundColor: 'gold',
         borderRadius: '7px'
     });
-    pContent = addHighlights(pContent, {bubble: false});
+    // pContent = addHighlights(pContent, {bubble: false});
 
 
     let exitBtn = document.createElement('div');
+    let exitBtnShine = new Shine(exitBtn, {overrideArgs: [2, 22, 3, 4]});
     exitBtn.innerHTML = 'X';
-    updateStyles(exitBtn, {
+    exitBtnShine.updateStyles({
         float: 'right',
         backgroundColor:'red',
         borderRadius: '5px', 
@@ -58,9 +62,9 @@ window.addEventListener('load', () => {
         // mouse: '',
         userSelect: 'none'
     });
-    exitBtn = addHighlights(exitBtn, {overrideArgs: [2, 22, 3, 4]});
+    // exitBtn = addHighlights(exitBtn, {overrideArgs: [2, 22, 3, 4]});
     let exitBtnWrapper = document.createElement('div');
-    updateStyles(exitBtnWrapper, {
+    Shine.updateStyles(exitBtnWrapper, {
         display: 'inline-block',
         width: '100%'
         
@@ -72,7 +76,7 @@ window.addEventListener('load', () => {
 
 
     let form = document.createElement('form');
-    updateStyles(form, {
+    Shine.updateStyles(form, {
         display: 'flex', 
         justifyContent: 'center', 
         alignItems: 'center', 
@@ -88,18 +92,18 @@ window.addEventListener('load', () => {
     // btn = popup.appendChild(btn);
     // popup.appendChild(form);
     popup.appendChild(pContent);
-    popup = document.body.appendChild(popup);
+    popup = document.body.insertBefore(popup, document.body.firstChild);
     createInput();
     exitBtn.addEventListener('mouseover', () => {
-        updateStyles(exitBtn, {
+        Shine.updateStyles(exitBtn, {
             cursor: 'pointer' 
         });
     });
     exitBtn.addEventListener('mousedown', () => {
-        addNewBoxShadow(exitBtn, 
+        exitBtnShine.addNewBoxShadow(
             og => `inset 1px 1px 3px rgba(0,0,0,.2), inset -1px -1px 3px rgba(0,0,0,.2), ${og}`
         );
-        window.addEventListener('mouseup', () => addNewBoxShadow(exitBtn, og => `${og}`));
+        window.addEventListener('mouseup', () => exitBtnShine.addNewBoxShadow(og => `${og}`));
     });
     exitBtn.addEventListener('mouseup', () => {
         showPopup();
@@ -294,10 +298,8 @@ function dragPopup(elem){
                 bShadowValueY = elem.offsetTop - window.scrollY + (elem.clientHeight/2) - hHalf;
                 bShadowValueY = scale(bShadowValueY, -hHalf, hHalf, -5, 5);
                 
-                addNewBoxShadow(elem, 
-                    (og) => {
-                        return `${bShadowValueX}px ${bShadowValueY}px 5px rgba(0,0,0, .5), ${og}`;
-                    }
+                popupShine.addNewBoxShadow(
+                    og => `${bShadowValueX}px ${bShadowValueY}px 5px rgba(0,0,0, .5), ${og}`
                 );
 
                 // right/left edge of the popup
