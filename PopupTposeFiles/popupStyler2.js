@@ -1,5 +1,4 @@
 
-
 class AHL {
     constructor(elem, options){
         let ogo = {
@@ -40,9 +39,25 @@ class AHL {
         elem.style.boxShadow = 
             `inset 0 ${highlightSize}px 0 rgba(255,255,255,.5),inset 0 -${highlightSize}px 0 rgba(0,0,0,.3)${bub}`;
         this.bShadow = elem.style.boxShadow;
+        return elem;
     }
-    scale(num, inMin, inMax, outMin, outMax){
-        return (num - inMin)*(outMax-outMin)/(inMax-inMin)+outMin;
+    static updateStyles(elem, styles){
+        for(sty in styles) {
+            elem.style[sty] = styles[sty]
+        }
+    }
+    updateStyles(styles){
+        let [elem] = this.args;
+        for(sty in styles) {
+            elem.style[sty] = styles[sty]
+        }
+    }
+    addNewBoxShadow(callback){
+        let [elem] = this.args;
+        if(typeof arguments[0] !== 'undefined'){
+            elem.style.boxShadow = callback(this.bShadow);
+            console.log(elem.style.boxShadow);
+        }
     }
 }
 
@@ -55,3 +70,5 @@ elem = document.body.insertBefore(elem, document.body.firstChild);
 
 let elemShine = new AHL(elem);
 elemShine.reHighlight();
+elemShine.addNewBoxShadow(ogShadow => `inset 0px 0px 10px rgba(0,0,0,.5), ${ogShadow}`);
+
