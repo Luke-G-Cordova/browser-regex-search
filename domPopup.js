@@ -296,7 +296,6 @@ function dragPopup(elem){
                 
                 addNewBoxShadow(elem, 
                     (og) => {
-                        console.log(og);
                         return `${bShadowValueX}px ${bShadowValueY}px 5px rgba(0,0,0, .5), ${og}`;
                     }
                 );
