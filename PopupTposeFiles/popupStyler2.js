@@ -12,6 +12,12 @@ class AHL {
         }
         this.bShadow = '';
         this.args = [elem, ogo];
+        if(ogo.resizeable){
+            let resizeMe = new ResizeObserver((e) => {
+                this.reHighlight();
+            });
+            resizeMe.observe(elem);
+        }
     }
     reHighlight(){
         let [elem, ogo] = this.args;
@@ -56,7 +62,6 @@ class AHL {
         let [elem] = this.args;
         if(typeof arguments[0] !== 'undefined'){
             elem.style.boxShadow = callback(this.bShadow);
-            console.log(elem.style.boxShadow);
         }
     }
 }
