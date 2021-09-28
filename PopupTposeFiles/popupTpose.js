@@ -55,8 +55,13 @@ function addHighlights(elem, options){
     }
     return elem;
 }
-
-window.addEventListener('load', addHighlights(document.querySelector('regeggs-card'), {tiny: true, bubble: true}));
+let elem = document.createElement('regeggs-card');
+elem.style.backgroundColor = 'teal';
+elem.style.width = '400px';
+elem.style.height = '150px';
+elem.style.borderRadius = '7px';
+elem = document.body.appendChild(elem);
+window.addEventListener('load', addHighlights(elem));
 
 
 

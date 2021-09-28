@@ -5,11 +5,11 @@ body{
     align-items: center;
     height: 90vh;
 }
-regeggs-card{
-    width: 30px;
-    height: 30px;
-    background-color: red;
-    /* resize: both;
-    overflow: auto; */
+/* regeggs-card{
+    width: 400px;
+    height: 150px;
+    background-color: teal;
+    resize: both;
+    overflow: auto; 
     border-radius: 7px;
-}
+} */
