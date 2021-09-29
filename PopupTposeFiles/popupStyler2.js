@@ -1,5 +1,5 @@
 
-class AHL {
+class Shine {
     constructor(elem, options){
         let ogo = {
             resizeable: true, 
@@ -7,7 +7,7 @@ class AHL {
             tiny: false,
             overrideArgs: null
         }
-        for(op in options){
+        for(let op in options){
             ogo[op] = options[op]
         }
         this.bShadow = '';
@@ -48,13 +48,13 @@ class AHL {
         return elem;
     }
     static updateStyles(elem, styles){
-        for(sty in styles) {
+        for(let sty in styles) {
             elem.style[sty] = styles[sty]
         }
     }
     updateStyles(styles){
         let [elem] = this.args;
-        for(sty in styles) {
+        for(let sty in styles) {
             elem.style[sty] = styles[sty]
         }
     }
@@ -65,15 +65,3 @@ class AHL {
         }
     }
 }
-
-let elem = document.createElement('regeggs-card');
-elem.style.backgroundColor = 'teal';
-elem.style.width = '400px';
-elem.style.height = '150px';
-elem.style.borderRadius = '7px';
-elem = document.body.insertBefore(elem, document.body.firstChild);
-
-let elemShine = new AHL(elem);
-elemShine.reHighlight();
-elemShine.addNewBoxShadow(ogShadow => `inset 0px 0px 10px rgba(0,0,0,.5), ${ogShadow}`);
-
