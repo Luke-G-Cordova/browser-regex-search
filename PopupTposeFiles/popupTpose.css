@@ -4,6 +4,9 @@ body{
     justify-content: center;
     align-items: center;
     height: 90vh; */
+    width: 500vw;
+    height: 500vh;
+    background-image: linear-gradient(to bottom, red, blue, green, yellow, orange, purple, pink, white, black);
 }
 /* regeggs-card{
     width: 400px;

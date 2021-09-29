@@ -9,11 +9,12 @@ elemShine.updateStyles({
     width: '400px', 
     height: '150px', 
     position: 'absolute', 
-    top:'1vh', 
-    left: `${window.innerWidth - 400}px`, 
+    top:`${20 + window.scrollY}px`, 
+    left: `${20 + window.scrollX}px`, 
     borderRadius: '10px', 
-
 });
+// ${window.innerHeight - (window.innerHeight - 20) + window.scrollY}
+// ${window.innerWidth - 420 + window.scrollX}
 let input = document.createElement('input');
 input = elem.appendChild(input);
 let p = document.createElement('p');
