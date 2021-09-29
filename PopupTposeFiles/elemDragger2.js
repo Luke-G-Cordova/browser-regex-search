@@ -45,7 +45,7 @@ function dragPopup(elem, options) {
                 elem.style.left = elem.offsetLeft + (endX - startX) + 'px';
                 elem.style.top = elem.offsetTop + (endY - startY) + 'px';
 
-                if(elem.offsetLeft + elem.clientWidth + border > window.innerWidth){
+                if(elem.offsetLeft + elem.clientWidth + border > window.innerWidth + window.scrollX){
                     elem.style.left = window.innerWidth - elem.clientWidth - border + 'px';
                 }else if(elem.offsetLeft < 0){
                     elem.style.left = 0 + 'px';
