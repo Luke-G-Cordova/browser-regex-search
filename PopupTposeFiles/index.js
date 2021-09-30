@@ -13,8 +13,6 @@ elemShine.updateStyles({
     left: `${20 + window.scrollX}px`, 
     borderRadius: '10px', 
 });
-// ${window.innerHeight - (window.innerHeight - 20) + window.scrollY}
-// ${window.innerWidth - 420 + window.scrollX}
 let input = document.createElement('input');
 input = elem.appendChild(input);
 let p = document.createElement('p');
@@ -23,4 +21,4 @@ p = elem.appendChild(p);
 
 elem = document.body.insertBefore(elem, document.body.firstChild);
 
-dragPopup(document.querySelector('regeggs-card'), {noDragElems: [input, p]});
+dragPopup(document.querySelector('regeggs-card'), {noDragElems: [input, p], Shine: elemShine});

@@ -33,7 +33,7 @@ function dragPopup(elem){
                 // popupShine.addNewBoxShadow(
                 //     og => `${bShadowValueX}px ${bShadowValueY}px 5px rgba(0,0,0, .5), ${og}`
                 // );
-                
+
                 // right/left edge of the popup
                 if(elem.offsetLeft + elem.clientWidth + border > window.innerWidth){
                     elem.style.left = window.innerWidth - elem.clientWidth - border + 'px';
