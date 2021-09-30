@@ -15,10 +15,15 @@ elemShine.updateStyles({
 });
 let input = document.createElement('input');
 input = elem.appendChild(input);
+let div = document.createElement('div');
+div.style.padding = '5px';
+div.style.backgroundColor = 'black';
 let p = document.createElement('p');
 p.innerHTML = 'hello';
-p = elem.appendChild(p);
+p.style.color = 'white';
+p = div.appendChild(p);
+div = elem.appendChild(div);
 
 elem = document.body.insertBefore(elem, document.body.firstChild);
 
-dragPopup(document.querySelector('regeggs-card'), {noDragElems: [input, p], Shine: elemShine});
+dragPopup(document.querySelector('regeggs-card'), {noDragElems: [input, div, p], Shine: elemShine});

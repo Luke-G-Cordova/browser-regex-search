@@ -30,7 +30,7 @@ function dragPopup(elem, options) {
         });
     }
     elem.onmousedown = (e) => {
-        if(draggable){
+        if(draggable!==0){
             wHalf = window.innerWidth/2;
             hHalf = window.innerWidth/2;
             startX = e.clientX;
@@ -78,15 +78,17 @@ function dragPopup(elem, options) {
     }
     function shadowRelativeToVisible(){
         var bShadowValueX, bShadowValueY;
-        if(ogo.Shine){
+        
             bShadowValueX = elem.offsetLeft + (elem.clientWidth/2) - wHalf;
             bShadowValueX = scale(bShadowValueX, -wHalf, wHalf, -5, 5);
             bShadowValueY = elem.offsetTop - window.scrollY + (elem.clientHeight/2) - hHalf;
             bShadowValueY = scale(bShadowValueY, -hHalf, hHalf, -5, 5);
-            
+        if(ogo.Shine){
             ogo.Shine.addNewBoxShadow(
                 og => `${bShadowValueX}px ${bShadowValueY}px 5px rgba(0,0,0, .5), ${og}`
             );
+        }else{
+
         }
         function scale(num, inMin, inMax, outMin, outMax){
             return (num - inMin)*(outMax-outMin)/(inMax-inMin)+outMin;
