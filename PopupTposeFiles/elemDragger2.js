@@ -13,7 +13,7 @@ function dragPopup(elem, options) {
     var hHalf = window.innerHeight/2;
     var prevWinY = window.scrollY;
     var prevWinX = window.scrollX;
-    var draggable = 1;
+    var notDraggable = 0;
     var noDragElems = [].slice.call(ogo.noDragElems);
     var border = window.getComputedStyle(elem, null).getPropertyValue('border-left-width'); 
     border = Number(border.substr(0, border.length - 2)) + 20;
@@ -22,15 +22,15 @@ function dragPopup(elem, options) {
     if(noDragElems.length !== 0){
         noDragElems.forEach((ndElem) =>{
             ndElem.onmouseover = (e) => {
-                draggable--;
+                notDraggable++;
             }
             ndElem.onmouseout = (e) => {
-                draggable++;
+                notDraggable--;
             }
         });
     }
     elem.onmousedown = (e) => {
-        if(draggable!==0){
+        if(!notDraggable){
             wHalf = window.innerWidth/2;
             hHalf = window.innerWidth/2;
             startX = e.clientX;
