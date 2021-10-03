@@ -16,7 +16,8 @@ window.addEventListener('load', () => {
     popupShine = new Shine(popup);
     popupShine.updateStyles({
         backgroundColor: 'teal',
-        display: 'none',
+        display: 'block',
+        visibility: 'hidden',
         position: 'absolute', 
         top:`${20 + window.scrollY}px`, 
         left: `${20 + window.scrollX}px`, 
@@ -263,13 +264,11 @@ function highlightMe(key, data, color){
 }
 
 function showPopup(){
-    if(popup.style.display === 'none'){
-        // popup.style.display = 'flex';
-        // popup.style.top = popup.offsetTop + window.scrollY - ogWindow + 'px';
-        popup.style.display = 'block';
+    if(popup.style.visibility === 'hidden'){
+        popup.style.visibility = 'visible';
         ogWindow = window.scrollY;
     }else{
-        popup.style.display = 'none';
+        popup.style.visibility = 'hidden';
     }
 }
 
