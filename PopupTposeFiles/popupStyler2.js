@@ -2,7 +2,6 @@
 class Shine {
     constructor(elem, options){
         let ogo = {
-            resizeable: true, 
             bubble: true, 
             tiny: false,
             overrideArgs: null
@@ -12,12 +11,10 @@ class Shine {
         }
         this.bShadow = '';
         this.args = [elem, ogo];
-        if(ogo.resizeable){
-            let resizeMe = new ResizeObserver((e) => {
-                this.reHighlight();
-            });
-            resizeMe.observe(elem);
-        }
+        let resizeMe = new ResizeObserver((e) => {
+            this.reHighlight();
+        });
+        resizeMe.observe(elem);
     }
     reHighlight(){
         let [elem, ogo] = this.args;

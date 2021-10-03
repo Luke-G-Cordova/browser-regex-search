@@ -12,18 +12,26 @@ elemShine.updateStyles({
     top:`${20 + window.scrollY}px`, 
     left: `${20 + window.scrollX}px`, 
     borderRadius: '10px', 
+    display: 'flex', 
+    flexDirection: 'column', 
+    padding: '25px'
 });
-let input = document.createElement('input');
-input = elem.appendChild(input);
-let div = document.createElement('div');
-div.style.padding = '5px';
-div.style.backgroundColor = 'black';
-let p = document.createElement('p');
-p.innerHTML = 'hello';
-p.style.color = 'white';
-p = div.appendChild(p);
-div = elem.appendChild(div);
 
+let addBtn = document.createElement('button');
+addBtn.innerHTML = '+';
+addBtn = elem.appendChild(addBtn);
 elem = document.body.insertBefore(elem, document.body.firstChild);
 
-dragPopup(document.querySelector('regeggs-card'), {noDragElems: [input, div, p], Shine: elemShine});
+let popupDragger = new Draggable(elem, {noDragElems: [addBtn], Shine: elemShine});
+popupDragger.drag();
+
+
+addBtn.addEventListener('click', () => {
+    let elem = document.querySelector('regeggs-card');
+    let input = document.createElement('input');
+    input.type = 'text';
+    elem = elem.appendChild(input);
+    popupDragger.addNoDragElems([input]);
+});
+
+// dragPopup(document.querySelector('regeggs-card'), {noDragElems: [input, div, p], Shine: elemShine});
