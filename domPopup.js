@@ -97,6 +97,11 @@ window.addEventListener('load', () => {
     popup.appendChild(pContent);
     popup = document.body.insertBefore(popup, document.body.firstChild);
     let inputParent = createInput();
+
+    let popupDragger = new Draggable(popup, {noDragElems: [inputParent, exitBtn], Shine: popupShine});
+    popupDragger.drag();
+
+
     exitBtn.addEventListener('mouseover', () => {
         Shine.updateStyles(exitBtn, {
             cursor: 'pointer' 
@@ -111,9 +116,7 @@ window.addEventListener('load', () => {
     exitBtn.addEventListener('mouseup', () => {
         showPopup();
     });
-    btn.addEventListener('click', () => createInput());
-    let noDragElems = [exitBtn].concat(inputParent);
-    dragPopup(document.querySelector('regeggs-card.chrome-regeggs-popup'), {noDragElems});
+    btn.addEventListener('click', () => popupDragger.addNoDragElems(createInput()));
 });
 
 chrome.runtime.onMessage.addListener((msg, sender, response) => {

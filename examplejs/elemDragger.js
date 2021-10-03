@@ -1,17 +1,38 @@
-function scale(num, inMin, inMax, outMin, outMax){
-    return (num - inMin)*(outMax-outMin)/(inMax-inMin)+outMin;
-}
-function dragPopup(elem){
+
+
+function dragPopup(elem, options) {
+    var ogo = {
+        noDragElems: [],
+        Shine: null
+    };
+    for(let op in options){
+        ogo[op] = options[op];
+    }
     var startX, startY, endX, endY;
     var wHalf = window.innerWidth/2;
     var hHalf = window.innerHeight/2;
-    var bShadowValueX, bShadowValueY;
-    var border = 10;
+    var prevWinY = window.scrollY;
+    var prevWinX = window.scrollX;
+    var notDraggable = 0;
+    var noDragElems = [].slice.call(ogo.noDragElems);
+    var border = window.getComputedStyle(elem, null).getPropertyValue('border-left-width'); 
+    border = Number(border.substr(0, border.length - 2)) + 20;
     
+    shadowRelativeToVisible();
+    if(noDragElems.length !== 0){
+        noDragElems.forEach((ndElem) =>{
+            ndElem.onmouseover = (e) => {
+                notDraggable++;
+            }
+            ndElem.onmouseout = (e) => {
+                notDraggable--;
+            }
+        });
+    }
     elem.onmousedown = (e) => {
-        if(!document.querySelector(`${elem.tagName} input:hover`)){
+        if(!notDraggable){
             wHalf = window.innerWidth/2;
-            hHalf = window.innerHeight/2;
+            hHalf = window.innerWidth/2;
             startX = e.clientX;
             startY = e.clientY;
             document.onmouseup = (ev) => {
@@ -25,17 +46,9 @@ function dragPopup(elem){
                 elem.style.left = elem.offsetLeft + (endX - startX) + 'px';
                 elem.style.top = elem.offsetTop + (endY - startY) + 'px';
 
-                bShadowValueX = elem.offsetLeft + (elem.clientWidth/2) - wHalf;
-                bShadowValueX = scale(bShadowValueX, -wHalf, wHalf, -5, 5);
-                bShadowValueY = elem.offsetTop - window.scrollY + (elem.clientHeight/2) - hHalf;
-                bShadowValueY = scale(bShadowValueY, -hHalf, hHalf, -5, 5);
-                
-                popupShine.addNewBoxShadow(
-                    og => `${bShadowValueX}px ${bShadowValueY}px 5px rgba(0,0,0, .5), ${og}`
-                );
+                shadowRelativeToVisible();
 
-                // right/left edge of the popup
-                if(elem.offsetLeft + elem.clientWidth + border > window.innerWidth){
+                if(elem.offsetLeft + elem.clientWidth + border > window.innerWidth + window.scrollX){
                     elem.style.left = window.innerWidth - elem.clientWidth - border + 'px';
                 }else if(elem.offsetLeft < 0){
                     elem.style.left = 0 + 'px';
@@ -43,7 +56,6 @@ function dragPopup(elem){
                     startX = ev.clientX;
                 }
 
-                // top/bottom edge of the popup
                 if(elem.offsetTop + elem.clientHeight + border > window.innerHeight + window.scrollY){
                     elem.style.top = window.innerHeight + window.scrollY - elem.clientHeight - border + 'px';
                 }else if(elem.offsetTop < 0 + window.scrollY){
@@ -54,10 +66,29 @@ function dragPopup(elem){
             };
         }
     }
+    
     document.onscroll = (e) => {
-        if(elem.style.display === 'block'){
-            elem.style.top = elem.offsetTop + window.scrollY - ogWindow + 'px';
-            ogWindow = window.scrollY;
+        elem.style.top = elem.offsetTop + window.scrollY - prevWinY + 'px';
+        elem.style.left = elem.offsetLeft + window.scrollX - prevWinX + 'px';
+        prevWinY = window.scrollY;
+        prevWinX = window.scrollX;
+    }
+    function shadowRelativeToVisible(){
+        var bShadowValueX, bShadowValueY;
+        
+            bShadowValueX = elem.offsetLeft + (elem.clientWidth/2) - wHalf;
+            bShadowValueX = scale(bShadowValueX, -wHalf, wHalf, -5, 5);
+            bShadowValueY = elem.offsetTop - window.scrollY + (elem.clientHeight/2) - hHalf;
+            bShadowValueY = scale(bShadowValueY, -hHalf, hHalf, -5, 5);
+        if(ogo.Shine){
+            ogo.Shine.addNewBoxShadow(
+                og => `${bShadowValueX}px ${bShadowValueY}px 5px rgba(0,0,0, .5), ${og}`
+            );
+        }else{
+
+        }
+        function scale(num, inMin, inMax, outMin, outMax){
+            return (num - inMin)*(outMax-outMin)/(inMax-inMin)+outMin;
         }
     }
 }
