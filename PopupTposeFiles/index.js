@@ -14,26 +14,23 @@ elemShine.updateStyles({
     borderRadius: '10px', 
     display: 'flex', 
     flexDirection: 'column', 
-    padding: '100px'
+    padding: '25px'
 });
 
-let btn = document.createElement('button');
-btn.innerHTML = '+';
-btn = elem.appendChild(btn);
-
+let addBtn = document.createElement('button');
+addBtn.innerHTML = '+';
+addBtn = elem.appendChild(addBtn);
 elem = document.body.insertBefore(elem, document.body.firstChild);
 
-let popupDragger = new Draggable(elem, { noDragElems: [btn], Shine: elemShine});
+let popupDragger = new Draggable(elem, { noDragElems: [addBtn], Shine: elemShine});
+popupDragger.drag();
 
-btn.addEventListener('click', createNewChild.bind(popupDragger));
-
-function createNewChild(e){
+addBtn.addEventListener('click', () => {
     let div = document.querySelector('regeggs-card');
     let input = document.createElement('input');
     input.className = 'myInput';
     input.type = 'text';
     input.placeholder = 'regular expression';
     input = div.appendChild(input);
-    this.addNoDragElems(input);
-
-}
+    popupDragger.addNoDragElems(input);
+});
