@@ -12,18 +12,28 @@ elemShine.updateStyles({
     top:`${20 + window.scrollY}px`, 
     left: `${200 + window.scrollX}px`, 
     borderRadius: '10px', 
+    display: 'flex', 
+    flexDirection: 'column', 
+    padding: '100px'
 });
-let input = document.createElement('input');
-input = elem.appendChild(input);
-let div = document.createElement('div');
-div.style.padding = '5px';
-div.style.backgroundColor = 'black';
-let p = document.createElement('p');
-p.innerHTML = 'hello';
-p.style.color = 'white';
-p = div.appendChild(p);
-div = elem.appendChild(div);
+
+let btn = document.createElement('button');
+btn.innerHTML = '+';
+btn = elem.appendChild(btn);
 
 elem = document.body.insertBefore(elem, document.body.firstChild);
 
-dragPopup(document.querySelector('regeggs-card'), {noDragElems: [input, div, p], Shine: elemShine});
+let popupDragger = new Draggable(elem, { noDragElems: [btn], Shine: elemShine});
+
+btn.addEventListener('click', createNewChild.bind(popupDragger));
+
+function createNewChild(e){
+    let div = document.querySelector('regeggs-card');
+    let input = document.createElement('input');
+    input.className = 'myInput';
+    input.type = 'text';
+    input.placeholder = 'regular expression';
+    input = div.appendChild(input);
+    this.addNoDragElems(input);
+
+}
