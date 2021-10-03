@@ -20,22 +20,19 @@ window.addEventListener('load', () => {
 class Shine {
     constructor(elem, options){
         let ogo = {
-            resizeable: true, 
             bubble: true, 
             tiny: false,
             overrideArgs: null
         }
         for(let op in options){
-            ogo[op] = options[op]
+            ogo[op] = options[op];
         }
         this.bShadow = '';
         this.args = [elem, ogo];
-        if(ogo.resizeable){
-            let resizeMe = new ResizeObserver((e) => {
-                this.reHighlight();
-            });
-            resizeMe.observe(elem);
-        }
+        let resizeMe = new ResizeObserver((e) => {
+            this.reHighlight();
+        });
+        resizeMe.observe(elem);
     }
     reHighlight(){
         let [elem, ogo] = this.args;
@@ -81,5 +78,6 @@ class Shine {
         if(typeof arguments[0] !== 'undefined'){
             elem.style.boxShadow = callback(this.bShadow);
         }
+        return elem.style.boxShadow;
     }
 }

@@ -2,27 +2,25 @@
 class Shine {
     constructor(elem, options){
         let ogo = {
-            resizeable: true, 
             bubble: true, 
             tiny: false,
             overrideArgs: null
         }
         for(let op in options){
-            ogo[op] = options[op]
+            ogo[op] = options[op];
         }
         this.bShadow = '';
         this.args = [elem, ogo];
-        if(ogo.resizeable){
-            let resizeMe = new ResizeObserver((e) => {
-                this.reHighlight();
-            });
-            resizeMe.observe(elem);
-        }
+        let resizeMe = new ResizeObserver((e) => {
+            this.reHighlight();
+        });
+        resizeMe.observe(elem);
     }
     reHighlight(){
         let [elem, ogo] = this.args;
         let elemBackgroundColor = window.getComputedStyle(elem, null).getPropertyValue('background-color');
-        
+
+
         let minBubHeight = window.getComputedStyle(elem, null).getPropertyValue('border-radius');
         minBubHeight = Number(minBubHeight.substr(0, minBubHeight.length - 2)) * 3;
 
@@ -34,16 +32,16 @@ class Shine {
         elem.style.minHeight || (elem.style.minHeight = minBubHeight+10+'px');
         
         let bub = ogo.bubble?
-            `,inset ${bSizeW}px ${bSizeH}px 0 ${elemBackgroundColor}`+
-            `,inset -${bSizeW}px ${bSizeH}px 0 ${elemBackgroundColor}`+
-            `,inset -${bSizeW}px -${elem.clientHeight - hOffset}px 0 ${elemBackgroundColor}`+
-            `,inset ${bSizeW}px -${elem.clientHeight - hOffset}px 0 ${elemBackgroundColor}`+
+            `, inset ${bSizeW}px ${bSizeH}px 0 ${elemBackgroundColor}`+
+            `,inset ${- bSizeW}px ${bSizeH}px 0 ${elemBackgroundColor}`+
+            `,inset ${- bSizeW}px ${- (elem.clientHeight - hOffset)}px 0 ${elemBackgroundColor}`+
+            `,inset ${bSizeW}px ${- (elem.clientHeight - hOffset)}px 0 ${elemBackgroundColor}`+
             `,inset 10px 10px 0 ${elem.clientHeight / 2}px rgba(255,255,255,.4)`
             :
             ''
         ;
         elem.style.boxShadow = 
-            `inset 0 ${highlightSize}px 0 rgba(255,255,255,.5),inset 0 -${highlightSize}px 0 rgba(0,0,0,.3)${bub}`;
+            `inset 0 ${highlightSize}px 0 rgba(255,255,255,.5), inset 0 -${highlightSize}px 0 rgba(0,0,0,.3)${bub}`;
         this.bShadow = elem.style.boxShadow;
         return elem;
     }
@@ -63,5 +61,6 @@ class Shine {
         if(typeof arguments[0] !== 'undefined'){
             elem.style.boxShadow = callback(this.bShadow);
         }
+        return elem.style.boxShadow;
     }
 }

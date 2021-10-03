@@ -18,8 +18,8 @@ window.addEventListener('load', () => {
         backgroundColor: 'teal',
         display: 'none',
         position: 'absolute', 
-        top: '1vh', 
-        left: `${window.innerWidth - 440}px`, 
+        top:`${20 + window.scrollY}px`, 
+        left: `${20 + window.scrollX}px`, 
         zIndex: '1000', 
         borderRadius: '10px', 
         padding: '15px', 
@@ -28,6 +28,7 @@ window.addEventListener('load', () => {
         height: '150px',
         justifyContent: 'center'
     });
+    console.log(popup.clientWidth);
     // popup = addHighlights(popup);
 
     let pContent = document.createElement('div');
@@ -39,7 +40,9 @@ window.addEventListener('load', () => {
         borderRadius: '7px'
     });
     // pContent = addHighlights(pContent, {bubble: false});
-
+    let btn = document.createElement('button');
+    btn.innerHTML = '+';
+    btn = pContent.appendChild(btn);
 
     let exitBtn = document.createElement('div');
     let exitBtnShine = new Shine(exitBtn, {overrideArgs: [2, 22, 3, 4]});
@@ -93,7 +96,7 @@ window.addEventListener('load', () => {
     // popup.appendChild(form);
     popup.appendChild(pContent);
     popup = document.body.insertBefore(popup, document.body.firstChild);
-    createInput();
+    let inputParent = createInput();
     exitBtn.addEventListener('mouseover', () => {
         Shine.updateStyles(exitBtn, {
             cursor: 'pointer' 
@@ -108,8 +111,9 @@ window.addEventListener('load', () => {
     exitBtn.addEventListener('mouseup', () => {
         showPopup();
     });
-    // btn.addEventListener('click', () => createInput());
-    dragPopup(document.querySelector('regeggs-card.chrome-regeggs-popup'));
+    btn.addEventListener('click', () => createInput());
+    let noDragElems = [exitBtn].concat(inputParent);
+    dragPopup(document.querySelector('regeggs-card.chrome-regeggs-popup'), {noDragElems});
 });
 
 chrome.runtime.onMessage.addListener((msg, sender, response) => {
@@ -257,8 +261,9 @@ function highlightMe(key, data, color){
 
 function showPopup(){
     if(popup.style.display === 'none'){
-        popup.style.display = 'flex';
-        popup.style.top = popup.offsetTop + window.scrollY - ogWindow + 'px';
+        // popup.style.display = 'flex';
+        // popup.style.top = popup.offsetTop + window.scrollY - ogWindow + 'px';
+        popup.style.display = 'block';
         ogWindow = window.scrollY;
     }else{
         popup.style.display = 'none';
