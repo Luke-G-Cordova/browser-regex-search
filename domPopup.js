@@ -126,7 +126,7 @@ window.addEventListener('load', () => {
         );
         window.addEventListener('mouseup', () => inputAdderShine.addNewBoxShadow(og => `${og}`));
     });
-    inputAdder.addEventListener('click', () => popupDragger.addNoDragElems(createInput()));
+    inputAdder.addEventListener('click', () => popupDragger.addNoDragElems(createInput().children));
 
     exitBtn.addEventListener('mouseover', () => {
         Shine.updateStyles(exitBtn, {
@@ -160,20 +160,22 @@ function createInput(key){
         display: 'flex', 
         justifyContent: 'center', 
         alignItems: 'center',
+        flexDirection: 'column',
+        width: '80%'
     });
     div.name = key;
     div.className = 'inputWrapper';
     
     let input = document.createElement('input');
-    let inputShine = new Shine(input, {overrideArgs: [2, 22, 3, 4]});
+    let inputShine = new Shine(input, {bubble: false, overrideArgs: [2, 0, 0, 0]});
     inputShine.updateStyles({
         borderRadius: '5px', 
         backgroundColor: '#36c21d', 
-        height: '15px', 
-        width: '25%',
+        boxSizing: 'border-box',
+        width: '100%',
         border: '1px solid black', 
-        // fontSize: '10px', 
-        padding: '2px'
+        padding: '2px',
+        margin: '2px'
     });
     input.className = 'myInput';
     input.type = 'text';
@@ -181,19 +183,15 @@ function createInput(key){
     input.name = key;
     input = div.appendChild(input);
 
-    let count = document.createElement('span');
-    count.innerHTML = '0/0';
-    count.className = 'matchCount';
-    div.appendChild(count);
-    
     let nextPrev = document.createElement('span');
     nextPrev.className = 'buttonWrapper';
-
     Shine.updateStyles(nextPrev, {
         display: 'flex', 
         justifyContent: 'center',
         alignItems: 'center'
     });
+
+    let count = document.createElement('span');
     let next = document.createElement('button');
     let prev = document.createElement('button');
     let colorInput = document.createElement('input');
@@ -201,23 +199,36 @@ function createInput(key){
 
     colorInput.type = 'color';
     colorInput.value = '#FFFF00';
+    colorInput.style.width = '25px';
+    colorInput.style.height = '25px';
     let color = '';
 
+    count.innerHTML = '0/0';
+    count.className = 'matchCount';
+
     minus.innerHTML = '-';
+    minus.style.width = '25px';
+    minus.style.height = '25px';
 
     next.innerHTML = '&#8620';
     next.className = 'next';
     next.name = color + '|' + key;
+    next.style.width = '25px';
+    next.style.height = '25px';
 
     prev.innerHTML = '&#8619;';
     prev.className = 'prev';
     prev.name = color + '|' + key;
+    prev.style.width = '25px';
+    prev.style.height = '25px';
 
+    count = nextPrev.appendChild(count);
 
     prev = nextPrev.appendChild(prev);
     next = nextPrev.appendChild(next);
     colorInput = nextPrev.appendChild(colorInput);
     minus = nextPrev.appendChild(minus);
+
 
     div.appendChild(nextPrev);
 

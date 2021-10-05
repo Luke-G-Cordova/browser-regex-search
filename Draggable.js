@@ -32,7 +32,6 @@ class Draggable {
             });
         }
         this.elem.onmousedown = (e) => {
-            console.log(this.notDraggable);
             if(!this.notDraggable){
                 this.wHalf = window.innerWidth/2;
                 this.hHalf = window.innerWidth/2;
