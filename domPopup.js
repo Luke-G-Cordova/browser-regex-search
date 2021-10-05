@@ -123,7 +123,7 @@ window.addEventListener('load', () => {
         inputAdderShine.addNewBoxShadow(
             og => `inset 0px 0px 3px rgba(0,0,0,0.5), ${og}`
         );
-        window.addEventListener('mouseup', () => inputAdder.addNewBoxShadow(og => `${og}`));
+        window.addEventListener('mouseup', () => inputAdderShine.addNewBoxShadow(og => `${og}`));
     });
     inputAdder.addEventListener('click', () => popupDragger.addNoDragElems(createInput()));
 
@@ -166,9 +166,7 @@ function createInput(key){
         height: '15px', 
         border: '1px solid black', 
         // fontSize: '10px', 
-        padding: '2px',
-
-
+        padding: '2px'
     });
     input.className = 'myInput';
     input.type = 'text';
@@ -186,6 +184,8 @@ function createInput(key){
     let next = document.createElement('button');
     let prev = document.createElement('button');
     let colorInput = document.createElement('input');
+    let minus = document.createElement('button');
+    minus.innerHTML = '-';
     colorInput.type = 'color';
     colorInput.value = '#FFFF00';
     let color = '';
@@ -205,12 +205,18 @@ function createInput(key){
     prev = nextPrev.appendChild(prev);
     next = nextPrev.appendChild(next);
     colorInput = nextPrev.appendChild(colorInput);
+    minus = nextPrev.appendChild(minus);
 
     div.appendChild(nextPrev);
 
 
     div = form.appendChild(div);
     
+    minus.addEventListener('click', (e) => {
+        e.preventDefault();
+        clearHighlight(key);
+        form.removeChild(div);
+    });
     input.addEventListener('input', (e) => {
         highlightMe(key, input.value, colorInput.value);
         input.focus();
@@ -228,8 +234,6 @@ function createInput(key){
         .querySelector(`button.prev[name="${prev.name}"]`)
         .addEventListener('click', changeCurrent)
     ;
-    let formPHS = document.querySelector('regeggs-card.chrome-regeggs-popup div form.mainForm div input').style;
-    console.log(formPHS);
     return div;
 }
 function changeCurrent(e){
