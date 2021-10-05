@@ -32,7 +32,10 @@
 .chrome-regeggs-popup:active{
     cursor: -webkit-grabbing; cursor: grabbing;
 } */
-div.exit{
+regeggs-card *{
     font-family: 'Chango', cursive;
     /* display: none; */
+}
+regeggs-card input::placeholder{
+    /* color: lightgoldenrodyellow; */
 }

@@ -17,7 +17,7 @@ window.addEventListener('load', () => {
     popupShine.updateStyles({
         backgroundColor: 'teal',
         display: 'block',
-        visibility: 'hidden',
+        visibility: 'visible',      // make this hidden
         position: 'absolute', 
         top:`${20 + window.scrollY}px`, 
         left: `${20 + window.scrollX}px`, 
@@ -25,24 +25,45 @@ window.addEventListener('load', () => {
         borderRadius: '10px', 
         padding: '15px', 
         minWidth: '400px', 
-        minHeight: '150px',
-        height: '150px',
+        // minHeight: '150px',
+        // height: '150px',
         justifyContent: 'center'
     });
-    console.log(popup.clientWidth);
-    // popup = addHighlights(popup);
 
     let pContent = document.createElement('div');
+    pContent.className = 'pContent';
     let pContentShine = new Shine(pContent, {bubble: false});
     pContentShine.updateStyles({
         width: '100%', 
         height: '100%', 
         backgroundColor: 'gold',
-        borderRadius: '7px'
+        borderRadius: '7px',
+        display: 'flex', 
+        flexDirection: 'column',
+        paddingBottom: '25px'
     });
-    // pContent = addHighlights(pContent, {bubble: false});
+
     let inputAdder = document.createElement('button');
+    let inputAdderShine = new Shine(inputAdder, {overrideArgs: [2, 22, 3, 4]});
     inputAdder.innerHTML = '+';
+    inputAdderShine.updateStyles({
+        float: 'left',
+        backgroundColor: '#d17300',
+        borderRadius: '5px', 
+        width: '32px',
+        height: '32px',
+        border: '1px solid black',
+        display: 'flex', 
+        justifyContent: 'center',
+        alignItems: 'center',
+        color: 'white',
+        textShadow: '2px 2px 0px black',
+        fontWeight: '900',
+        fontSize: '20px',
+        fontFamily: '"Chango", cursive', 
+        margin: '10px',
+        userSelect: 'none'
+    });
     
 
     let exitBtn = document.createElement('div');
@@ -63,15 +84,12 @@ window.addEventListener('load', () => {
         fontWeight: '900',
         fontFamily: '"Chango", cursive', 
         margin: '10px',
-        // mouse: '',
         userSelect: 'none'
     });
-    // exitBtn = addHighlights(exitBtn, {overrideArgs: [2, 22, 3, 4]});
     let exitBtnWrapper = document.createElement('div');
     Shine.updateStyles(exitBtnWrapper, {
         display: 'inline-block',
         width: '100%'
-        
     });
     exitBtn = exitBtnWrapper.appendChild(exitBtn);
     inputAdder = exitBtnWrapper.appendChild(inputAdder);
@@ -92,9 +110,22 @@ window.addEventListener('load', () => {
     popup = document.body.insertBefore(popup, document.body.firstChild);
     let inputParent = createInput();
 
-    let popupDragger = new Draggable(popup, {noDragElems: [inputParent, exitBtn], Shine: popupShine});
+    let popupDragger = new Draggable(popup, {noDragElems: [inputParent, inputAdder, exitBtn], Shine: popupShine});
     popupDragger.drag();
 
+
+    inputAdder.addEventListener('mouseover', () => {
+        Shine.updateStyles(inputAdder, {
+            cursor: 'pointer' 
+        });
+    });
+    inputAdder.addEventListener('mousedown', () => {
+        inputAdderShine.addNewBoxShadow(
+            og => `inset 0px 0px 3px rgba(0,0,0,0.5), ${og}`
+        );
+        window.addEventListener('mouseup', () => inputAdder.addNewBoxShadow(og => `${og}`));
+    });
+    inputAdder.addEventListener('click', () => popupDragger.addNoDragElems(createInput()));
 
     exitBtn.addEventListener('mouseover', () => {
         Shine.updateStyles(exitBtn, {
@@ -110,7 +141,6 @@ window.addEventListener('load', () => {
     exitBtn.addEventListener('mouseup', () => {
         showPopup();
     });
-    inputAdder.addEventListener('click', () => popupDragger.addNoDragElems(createInput()));
 });
 
 chrome.runtime.onMessage.addListener((msg, sender, response) => {
@@ -120,14 +150,26 @@ chrome.runtime.onMessage.addListener((msg, sender, response) => {
 });
 
 function createInput(key){
-    let form = document.querySelector('.mainForm');
+    let form = document.querySelector('regeggs-card.chrome-regeggs-popup div form.mainForm');
+    
     key || (key = `regeggs-key-${Math.random().toString(36).substr(2, 5)}`);
 
     let div = document.createElement('div');
     div.name = key;
     div.className = 'inputWrapper';
-
+    
     let input = document.createElement('input');
+    let inputShine = new Shine(input, {overrideArgs: [2, 22, 3, 4]});
+    inputShine.updateStyles({
+        borderRadius: '5px', 
+        backgroundColor: '#36c21d', 
+        height: '15px', 
+        border: '1px solid black', 
+        // fontSize: '10px', 
+        padding: '2px',
+
+
+    });
     input.className = 'myInput';
     input.type = 'text';
     input.placeholder = 'regular expression';
@@ -186,6 +228,8 @@ function createInput(key){
         .querySelector(`button.prev[name="${prev.name}"]`)
         .addEventListener('click', changeCurrent)
     ;
+    let formPHS = document.querySelector('regeggs-card.chrome-regeggs-popup div form.mainForm div input').style;
+    console.log(formPHS);
     return div;
 }
 function changeCurrent(e){
@@ -236,21 +280,21 @@ function highlightMe(key, data, color){
         MY_HIGHLIGHTS[GI] = highlight(document.body, new RegExp(data, 'ig'), function(match, sameMatchID){
 
             multiNodeMatchId = sameMatchID;
-            var highlightMe = document.createElement("highlight-me");
+            var highlightMeElem = document.createElement("highlight-me");
 
-            highlightMe.className = `chrome-regeggz-highlight-me ${key}`;
+            highlightMeElem.className = `chrome-regeggz-highlight-me ${key}`;
             if(CUR_INDEX === 0){
-                highlightMe.className += ' current';
+                highlightMeElem.className += ' current';
             }
-            highlightMe.style.backgroundColor = `${color}`;
-            highlightMe.style.color = invertColor(color);
+            highlightMeElem.style.backgroundColor = `${color}`;
+            highlightMeElem.style.color = invertColor(color);
 
-            highlightMe.id = `${CUR_INDEX}|${key}|${multiNodeMatchId}`;
+            // highlightMeElem.id = `${CUR_INDEX}|${key}|${multiNodeMatchId}`;
 
             CUR_INDEX = multiNodeMatchId > -1 ? CUR_INDEX : CUR_INDEX + 1;
 
-            highlightMe.textContent = match;
-            return highlightMe;
+            highlightMeElem.textContent = match;
+            return highlightMeElem;
         });
 
     }
