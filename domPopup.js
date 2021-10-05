@@ -7,6 +7,7 @@ var MY_HIGHLIGHTS = [];
 var DEF_REJECTS = ['\\', ''];
 var popup;
 var popupShine;
+var popupDragger;
 
 window.addEventListener('load', () => {
     
@@ -110,7 +111,7 @@ window.addEventListener('load', () => {
     popup = document.body.insertBefore(popup, document.body.firstChild);
     let inputParent = createInput();
 
-    let popupDragger = new Draggable(popup, {noDragElems: [inputParent, inputAdder, exitBtn], Shine: popupShine});
+    popupDragger = new Draggable(popup, {noDragElems: [inputParent, inputAdder, exitBtn], Shine: popupShine});
     popupDragger.drag();
 
 
@@ -226,6 +227,7 @@ function createInput(key){
     minus.addEventListener('click', (e) => {
         e.preventDefault();
         clearHighlight(key);
+        popupDragger.deleteNoDragElems(div);
         form.removeChild(div);
     });
     input.addEventListener('input', (e) => {

@@ -32,6 +32,7 @@ class Draggable {
             });
         }
         this.elem.onmousedown = (e) => {
+            console.log(this.notDraggable);
             if(!this.notDraggable){
                 this.wHalf = window.innerWidth/2;
                 this.hHalf = window.innerWidth/2;
@@ -106,6 +107,18 @@ class Draggable {
         });
     }
     deleteNoDragElems(elems){
-        console.log(elems);
+        elems = [].concat(elems);
+        elems.forEach(elem => {
+            delete this.noDragElems[this.noDragElems.indexOf(elem)]
+        });
+        this.notDraggable--;
+        this.noDragElems.forEach((ndElem) =>{
+            ndElem.onmouseover = (e) => {
+                this.notDraggable++;
+            }
+            ndElem.onmouseout = (e) => {
+                this.notDraggable--;
+            }
+        });
     }
 }
