@@ -1,4 +1,4 @@
-# chrome-regex
+# chrome-regeggs
 
 Adding functionality to the ctrl+f search function of google Chrome
 <div>Additional functionalities:</div>
