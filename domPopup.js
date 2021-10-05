@@ -155,6 +155,11 @@ function createInput(key){
     key || (key = `regeggs-key-${Math.random().toString(36).substr(2, 5)}`);
 
     let div = document.createElement('div');
+    Shine.updateStyles(div, {
+        display: 'flex', 
+        justifyContent: 'center', 
+        alignItems: 'center',
+    });
     div.name = key;
     div.className = 'inputWrapper';
     
@@ -164,6 +169,7 @@ function createInput(key){
         borderRadius: '5px', 
         backgroundColor: '#36c21d', 
         height: '15px', 
+        width: '25%',
         border: '1px solid black', 
         // fontSize: '10px', 
         padding: '2px'
@@ -180,16 +186,23 @@ function createInput(key){
     div.appendChild(count);
     
     let nextPrev = document.createElement('span');
+    nextPrev.className = 'buttonWrapper';
 
+    Shine.updateStyles(nextPrev, {
+        display: 'flex', 
+        justifyContent: 'center',
+        alignItems: 'center'
+    });
     let next = document.createElement('button');
     let prev = document.createElement('button');
     let colorInput = document.createElement('input');
     let minus = document.createElement('button');
-    minus.innerHTML = '-';
+
     colorInput.type = 'color';
     colorInput.value = '#FFFF00';
     let color = '';
 
+    minus.innerHTML = '-';
 
     next.innerHTML = '&#8620';
     next.className = 'next';
@@ -199,8 +212,6 @@ function createInput(key){
     prev.className = 'prev';
     prev.name = color + '|' + key;
 
-    nextPrev.className = 'buttonWrapper';
-    nextPrev.style.display = 'inline';
 
     prev = nextPrev.appendChild(prev);
     next = nextPrev.appendChild(next);

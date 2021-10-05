@@ -105,4 +105,7 @@ class Draggable {
             }
         });
     }
+    deleteNoDragElems(elems){
+        console.log(elems);
+    }
 }
