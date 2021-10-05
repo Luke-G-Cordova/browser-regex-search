@@ -1,5 +1,5 @@
 
-var ogWindow = window.scrollY;
+// var ogWindow = window.scrollY;
 var CUR_INDEX = 0;
 var ELEM_KEYS = [];
 var CURRENT_INDEXES = [];
@@ -41,9 +41,9 @@ window.addEventListener('load', () => {
         borderRadius: '7px'
     });
     // pContent = addHighlights(pContent, {bubble: false});
-    let btn = document.createElement('button');
-    btn.innerHTML = '+';
-    btn = pContent.appendChild(btn);
+    let inputAdder = document.createElement('button');
+    inputAdder.innerHTML = '+';
+    
 
     let exitBtn = document.createElement('div');
     let exitBtnShine = new Shine(exitBtn, {overrideArgs: [2, 22, 3, 4]});
@@ -74,11 +74,9 @@ window.addEventListener('load', () => {
         
     });
     exitBtn = exitBtnWrapper.appendChild(exitBtn);
+    inputAdder = exitBtnWrapper.appendChild(inputAdder);
+
     exitBtnWrapper = pContent.appendChild(exitBtnWrapper);
-    
-    
-
-
     let form = document.createElement('form');
     Shine.updateStyles(form, {
         display: 'flex', 
@@ -89,12 +87,7 @@ window.addEventListener('load', () => {
     form.className = 'mainForm';
     form = pContent.appendChild(form);
     
-    // let btn = document.createElement('button');
-    // btn.id = 'create-input';
-    // btn.appendChild(document.createTextNode('+'));
-    
-    // btn = popup.appendChild(btn);
-    // popup.appendChild(form);
+
     popup.appendChild(pContent);
     popup = document.body.insertBefore(popup, document.body.firstChild);
     let inputParent = createInput();
@@ -117,7 +110,7 @@ window.addEventListener('load', () => {
     exitBtn.addEventListener('mouseup', () => {
         showPopup();
     });
-    btn.addEventListener('click', () => popupDragger.addNoDragElems(createInput()));
+    inputAdder.addEventListener('click', () => popupDragger.addNoDragElems(createInput()));
 });
 
 chrome.runtime.onMessage.addListener((msg, sender, response) => {
