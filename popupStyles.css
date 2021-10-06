@@ -1,41 +1,32 @@
 
-/* .inputWrapper{
-    margin: 15px;
+regeggs-card *{
+    font-family: 'Chango', cursive;
 }
-.inputWrapper *{
-    margin: 5px;
+regeggs-card.chrome-regeggs-popup div form.mainForm div.inputWrapper{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    width: 80%;
 }
-.buttonWrapper {
-    display:flex;
+regeggs-card.chrome-regeggs-popup div form.mainForm div.inputWrapper input.myInput{
+    border-radius: 5px;
+    background-color: lightgrey;
+    box-sizing: border-box;
+    width: 100%;
+    border: 1px solid black;
+    padding: 2px;
+    margin: 2px;
+}
+regeggs-card.chrome-regeggs-popup div form.mainForm div.inputWrapper span.buttonWrapper{
+    display: flex;
     justify-content: center;
     align-items: center;
 }
-.buttonWrapper *{
-    margin: 0;
-    padding: 0 5px;
-}
-.chrome-regeggs-popup{
-    position: absolute;
-    top: 1vh;
-    left: 50vw;
-    z-index: 1000;
-    background-color: teal;
-    border-radius: 10px;
-    padding: 25px;
-    min-width: 400px;
-    max-width: 400px;
-    
-}
-.chrome-regeggs-popup:hover{
-     cursor: pointer; 
-}
-.chrome-regeggs-popup:active{
-    cursor: -webkit-grabbing; cursor: grabbing;
-} */
-regeggs-card *{
-    font-family: 'Chango', cursive;
-    /* display: none; */
-}
-regeggs-card input::placeholder{
-    /* color: lightgoldenrodyellow; */
+regeggs-card.chrome-regeggs-popup div form.mainForm div.inputWrapper input.colorInput, 
+regeggs-card.chrome-regeggs-popup div form.mainForm div.inputWrapper button{
+    width: 25px;
+    height: 25px;
+    border-radius: 15px;
+    border: 1px solid black;
 }

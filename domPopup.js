@@ -26,6 +26,7 @@ window.addEventListener('load', () => {
         borderRadius: '10px', 
         padding: '15px', 
         minWidth: '400px', 
+        maxHeight: '430px',
         // minHeight: '150px',
         // height: '150px',
         justifyContent: 'center'
@@ -37,6 +38,7 @@ window.addEventListener('load', () => {
     pContentShine.updateStyles({
         width: '100%', 
         height: '100%', 
+        maxHeight: 'inherit',
         backgroundColor: 'gold',
         borderRadius: '7px',
         display: 'flex', 
@@ -96,6 +98,17 @@ window.addEventListener('load', () => {
     inputAdder = exitBtnWrapper.appendChild(inputAdder);
 
     exitBtnWrapper = pContent.appendChild(exitBtnWrapper);
+    
+    let formWrapper = document.createElement('div');
+    Shine.updateStyles(formWrapper, {
+        overflow: 'auto', 
+        maxHeight: '350px',
+        margin: '0 10px',  
+        boxShadow: 'inset 0 0 5px rgba(0,0,0,.2)', 
+        padding: '5px',
+        borderRadius: '10px'
+    });
+
     let form = document.createElement('form');
     Shine.updateStyles(form, {
         display: 'flex', 
@@ -104,8 +117,8 @@ window.addEventListener('load', () => {
         flexDirection: 'column'
     });
     form.className = 'mainForm';
-    form = pContent.appendChild(form);
-    
+    form = formWrapper.appendChild(form);
+    formWrapper = pContent.appendChild(formWrapper);
 
     popup.appendChild(pContent);
     popup = document.body.insertBefore(popup, document.body.firstChild);
@@ -126,7 +139,7 @@ window.addEventListener('load', () => {
         );
         window.addEventListener('mouseup', () => inputAdderShine.addNewBoxShadow(og => `${og}`));
     });
-    inputAdder.addEventListener('click', () => popupDragger.addNoDragElems(createInput().children));
+    inputAdder.addEventListener('click', () => popupDragger.addNoDragElems(createInput()));
 
     exitBtn.addEventListener('mouseover', () => {
         Shine.updateStyles(exitBtn, {
