@@ -18,7 +18,7 @@ window.addEventListener('load', () => {
     popupShine.updateStyles({
         backgroundColor: 'teal',
         display: 'block',
-        visibility: 'visible',      // make this hidden
+        visibility: 'hidden',      // make this hidden
         position: 'absolute', 
         top:`${20 + window.scrollY}px`, 
         left: `${20 + window.scrollX}px`, 
@@ -167,10 +167,10 @@ function createInput(key){
     div.className = 'inputWrapper';
     
     let input = document.createElement('input');
-    let inputShine = new Shine(input, {bubble: false, overrideArgs: [2, 0, 0, 0]});
+    let inputShine = new Shine(input, {bubble: false, overrideArgs: [0, 0, 0, 0]});
     inputShine.updateStyles({
         borderRadius: '5px', 
-        backgroundColor: '#36c21d', 
+        backgroundColor: 'lightgrey', 
         boxSizing: 'border-box',
         width: '100%',
         border: '1px solid black', 
@@ -193,34 +193,54 @@ function createInput(key){
 
     let count = document.createElement('span');
     let next = document.createElement('button');
+    let nextShine = new Shine(next, {bubble: false, overrideArgs:[2, 0, 0, 0]});
     let prev = document.createElement('button');
+    let prevShine = new Shine(prev, {bubble: false, overrideArgs:[2, 0, 0, 0]});
     let colorInput = document.createElement('input');
+    let colorInputShine = new Shine(colorInput, {bubble: false, overrideArgs:[2, 0, 0, 0]});
     let minus = document.createElement('button');
+    let minusShine = new Shine(minus, {bubble: false, overrideArgs:[2, 0, 0, 0]});
 
     colorInput.type = 'color';
     colorInput.value = '#FFFF00';
-    colorInput.style.width = '25px';
-    colorInput.style.height = '25px';
+    colorInputShine.updateStyles({
+        width: '25px', 
+        height: '25px', 
+        borderRadius: '15px', 
+        border: '1px solid black'
+    });
     let color = '';
 
     count.innerHTML = '0/0';
     count.className = 'matchCount';
 
     minus.innerHTML = '-';
-    minus.style.width = '25px';
-    minus.style.height = '25px';
+    minusShine.updateStyles({
+        width: '25px', 
+        height: '25px', 
+        borderRadius: '15px', 
+        border: '1px solid black'
+    });
 
-    next.innerHTML = '&#8620';
+    next.innerHTML = '&#8658;';
     next.className = 'next';
     next.name = color + '|' + key;
-    next.style.width = '25px';
-    next.style.height = '25px';
-
-    prev.innerHTML = '&#8619;';
+    nextShine.updateStyles({
+        width: '25px', 
+        height: '25px', 
+        borderRadius: '15px', 
+        border: '1px solid black'
+    });
+    
+    prev.innerHTML = '&#8656;';
     prev.className = 'prev';
     prev.name = color + '|' + key;
-    prev.style.width = '25px';
-    prev.style.height = '25px';
+    prevShine.updateStyles({
+        width: '25px', 
+        height: '25px', 
+        borderRadius: '15px', 
+        border: '1px solid black'
+    });
 
     count = nextPrev.appendChild(count);
 

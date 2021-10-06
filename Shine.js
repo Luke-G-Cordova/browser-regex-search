@@ -39,14 +39,15 @@ class Shine {
         let elemBackgroundColor = window.getComputedStyle(elem, null).getPropertyValue('background-color');
         
         let minBubHeight = window.getComputedStyle(elem, null).getPropertyValue('border-radius');
+        
         minBubHeight = Number(minBubHeight.substr(0, minBubHeight.length - 2)) * 3;
-
+        
         let [highlightSize, minHeight, bSizeW, bSizeH] = (ogo.overrideArgs) || (ogo.tiny?[2, 20, 1, 4]:[4, 50, 5, 8]);
 
         let hOffset = elem.clientHeight - elem.clientWidth + minHeight;
         hOffset = hOffset < minBubHeight ? minBubHeight : hOffset;
         
-        elem.style.minHeight || (elem.style.minHeight = minBubHeight+10+'px');
+        // elem.style.minHeight || (elem.style.minHeight = minBubHeight+10+'px');
         
         let bub = ogo.bubble?
             `,inset ${bSizeW}px ${bSizeH}px 0 ${elemBackgroundColor}`+
