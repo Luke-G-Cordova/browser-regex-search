@@ -2,6 +2,28 @@
 regeggs-card *{
     font-family: 'Chango', cursive;
 }
+regeggs-card.chrome-regeggs-popup div.pContent div.formWrapper{
+    /* overflow-y: scroll; */
+    overflow: auto;
+    max-height: 200px;
+    margin: 0 10px;
+    box-shadow: inset 0 0 5px rgba(0,0,0,.2);
+    padding: 5px;
+    border-radius: 10px;
+}
+
+regeggs-card.chrome-regeggs-popup div.pContent div.formWrapper::-webkit-scrollbar {
+    border-radius: 10px;
+    background-color: gold;
+    width: 10px;
+    box-shadow: inset 0 0 2px rgba(0,0,0,.2);
+}
+regeggs-card.chrome-regeggs-popup div.pContent div.formWrapper::-webkit-scrollbar-thumb {
+    background-color: #6f03fc;
+    border-radius: 10px;
+    border: 1px solid black;
+}
+
 regeggs-card.chrome-regeggs-popup div form.mainForm div.inputWrapper{
     display: flex;
     justify-content: center;
@@ -11,7 +33,7 @@ regeggs-card.chrome-regeggs-popup div form.mainForm div.inputWrapper{
 }
 regeggs-card.chrome-regeggs-popup div form.mainForm div.inputWrapper input.myInput{
     border-radius: 5px;
-    background-color: lightgrey;
+    background-color: white;
     box-sizing: border-box;
     width: 100%;
     border: 1px solid black;
@@ -28,5 +50,15 @@ regeggs-card.chrome-regeggs-popup div form.mainForm div.inputWrapper button{
     width: 25px;
     height: 25px;
     border-radius: 15px;
+    background-color: gold;
     border: 1px solid black;
+}
+regeggs-card.chrome-regeggs-popup div form.mainForm div.inputWrapper input.colorInput:hover, 
+regeggs-card.chrome-regeggs-popup div form.mainForm div.inputWrapper button:hover{
+    cursor: pointer;
+    background-color: #ffde26;
+}
+regeggs-card.chrome-regeggs-popup div form.mainForm div.inputWrapper input.colorInput:active, 
+regeggs-card.chrome-regeggs-popup div form.mainForm div.inputWrapper button:active{
+    background-color: #dbba00;
 }

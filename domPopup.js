@@ -16,7 +16,7 @@ window.addEventListener('load', () => {
     popup.className = 'chrome-regeggs-popup';
     popupShine = new Shine(popup);
     popupShine.updateStyles({
-        backgroundColor: 'teal',
+        backgroundColor: '#6f03fc',
         display: 'block',
         visibility: 'visible',      // make this hidden
         position: 'absolute', 
@@ -39,7 +39,7 @@ window.addEventListener('load', () => {
         width: '100%', 
         height: '100%', 
         maxHeight: 'inherit',
-        backgroundColor: 'gold',
+        backgroundColor: '#ababab',
         borderRadius: '7px',
         display: 'flex', 
         flexDirection: 'column',
@@ -51,7 +51,7 @@ window.addEventListener('load', () => {
     inputAdder.innerHTML = '+';
     inputAdderShine.updateStyles({
         float: 'left',
-        backgroundColor: '#d17300',
+        backgroundColor: '#0a9c00',
         borderRadius: '5px', 
         width: '32px',
         height: '32px',
@@ -100,14 +100,15 @@ window.addEventListener('load', () => {
     exitBtnWrapper = pContent.appendChild(exitBtnWrapper);
     
     let formWrapper = document.createElement('div');
-    Shine.updateStyles(formWrapper, {
-        overflow: 'auto', 
-        maxHeight: '350px',
-        margin: '0 10px',  
-        boxShadow: 'inset 0 0 5px rgba(0,0,0,.2)', 
-        padding: '5px',
-        borderRadius: '10px'
-    });
+    formWrapper.className = 'formWrapper';
+    // Shine.updateStyles(formWrapper, {
+    //     overflow: 'auto', 
+    //     maxHeight: '350px',
+    //     margin: '0 10px',  
+    //     boxShadow: 'inset 0 0 5px rgba(0,0,0,.2)', 
+    //     padding: '5px',
+    //     borderRadius: '10px'
+    // });
 
     let form = document.createElement('form');
     Shine.updateStyles(form, {
