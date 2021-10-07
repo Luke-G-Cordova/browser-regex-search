@@ -7,38 +7,55 @@ function createInput(key){
     div.name = key;
     div.className = 'inputWrapper';
     
+    let icWrapper = document.createElement('div');
+    icWrapper.style.width = '100%';
     let input = document.createElement('input');
-
     input.className = 'myInput';
     input.type = 'text';
     input.placeholder = 'regular expression';
     input.name = key;
-    input = div.appendChild(input);
-
-    let nextPrev = document.createElement('span');
-    nextPrev.className = 'buttonWrapper';
 
     let count = document.createElement('span');
+    count.innerHTML = '0/0';
+    count.className = 'matchCount';
+    count.style.float = 'right';
+    input = icWrapper.appendChild(input);
+    count = icWrapper.appendChild(count);
+    icWrapper = div.appendChild(icWrapper);
 
+    let buttonWrapper = document.createElement('div');
+    buttonWrapper.className = 'buttonWrapper';
+
+    let npWrapper = document.createElement('div');
+    npWrapper.style.float = 'left';
+    npWrapper.style.display = 'flex';
+    npWrapper.style.alignItems = 'center';
+
+    let cWrapper = document.createElement('div');
+    cWrapper.className = 'cWrapper';
     let next = document.createElement('button');
     new Shine(next, {bubble: false, overrideArgs:[2, 0, 0, 0]});
     
     let prev = document.createElement('button');
     new Shine(prev, {bubble: false, overrideArgs:[2, 0, 0, 0]});
-    
-    let colorInput = document.createElement('input');
-    new Shine(colorInput, {bubble: false, overrideArgs:[2, 0, 0, 0]});
-    
+
     let minus = document.createElement('button');
     new Shine(minus, {bubble: false, overrideArgs:[2, 0, 0, 0]});
+    
 
+    let colorInput = document.createElement('input');
+    new Shine(colorInput, {bubble: false, overrideArgs:[2, 0, 0, 0]});
+    let colorFacts = document.createElement('p');
+    colorFacts.style.padding = '0';
+    colorFacts.style.margin = '0 5px';
+
+    
+    
     colorInput.type = 'color';
     colorInput.value = '#FFFF00';
     colorInput.className = 'colorInput';
+    colorFacts.innerHTML = colorInput.value;
     let color = '';
-
-    count.innerHTML = '0/0';
-    count.className = 'matchCount';
 
     minus.innerHTML = '-';
     minus.className = 'minus';
@@ -51,16 +68,18 @@ function createInput(key){
     prev.className = 'prev';
     prev.name = color + '|' + key;
 
-    count = nextPrev.appendChild(count);
 
-    prev = nextPrev.appendChild(prev);
-    next = nextPrev.appendChild(next);
-    colorInput = nextPrev.appendChild(colorInput);
-    minus = nextPrev.appendChild(minus);
+    prev = npWrapper.appendChild(prev);
+    next = npWrapper.appendChild(next);
+    minus = npWrapper.appendChild(minus);
+    npWrapper = buttonWrapper.appendChild(npWrapper);
+
+    colorFacts = cWrapper.appendChild(colorFacts);
+    colorInput = cWrapper.appendChild(colorInput);
+    cWrapper = buttonWrapper.appendChild(cWrapper);
 
 
-    nextPrev = div.appendChild(nextPrev);
-
+    buttonWrapper = div.appendChild(buttonWrapper);
 
     div = form.appendChild(div);
     
@@ -77,6 +96,7 @@ function createInput(key){
 
     colorInput.addEventListener('input', (e) => {
         changeColor(key, colorInput.value);
+        colorFacts.innerHTML = colorInput.value;
     });
     let GI = ELEM_KEYS.indexOf(key);
     document

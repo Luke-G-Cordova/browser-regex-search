@@ -11,7 +11,6 @@ regeggs-card.chrome-regeggs-popup div.pContent div.formWrapper{
     padding: 5px;
     border-radius: 10px;
 }
-
 regeggs-card.chrome-regeggs-popup div.pContent div.formWrapper::-webkit-scrollbar {
     border-radius: 10px;
     background-color: gold;
@@ -29,22 +28,30 @@ regeggs-card.chrome-regeggs-popup div form.mainForm div.inputWrapper{
     justify-content: center;
     align-items: center;
     flex-direction: column;
-    width: 80%;
+    width: 100%;
 }
 regeggs-card.chrome-regeggs-popup div form.mainForm div.inputWrapper input.myInput{
     border-radius: 5px;
     background-color: white;
     box-sizing: border-box;
-    width: 100%;
+    width: 75%;
     border: 1px solid black;
     padding: 2px;
     margin: 2px;
 }
-regeggs-card.chrome-regeggs-popup div form.mainForm div.inputWrapper span.buttonWrapper{
+regeggs-card.chrome-regeggs-popup div form.mainForm div.inputWrapper div.buttonWrapper{
+    width: 100%;
+}
+regeggs-card.chrome-regeggs-popup div form.mainForm div.inputWrapper div.buttonWrapper div.cWrapper {
+    float: right;
     display: flex;
-    justify-content: center;
     align-items: center;
 }
+/* 
+    cWrapper.style.float = 'right';
+    cWrapper.style.display = 'flex';
+    cWrapper.style.alignItems = 'center'; */
+
 regeggs-card.chrome-regeggs-popup div form.mainForm div.inputWrapper input.colorInput, 
 regeggs-card.chrome-regeggs-popup div form.mainForm div.inputWrapper button{
     width: 25px;

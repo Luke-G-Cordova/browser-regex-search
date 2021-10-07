@@ -101,14 +101,6 @@ window.addEventListener('load', () => {
     
     let formWrapper = document.createElement('div');
     formWrapper.className = 'formWrapper';
-    // Shine.updateStyles(formWrapper, {
-    //     overflow: 'auto', 
-    //     maxHeight: '350px',
-    //     margin: '0 10px',  
-    //     boxShadow: 'inset 0 0 5px rgba(0,0,0,.2)', 
-    //     padding: '5px',
-    //     borderRadius: '10px'
-    // });
 
     let form = document.createElement('form');
     Shine.updateStyles(form, {
