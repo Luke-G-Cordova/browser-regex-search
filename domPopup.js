@@ -27,8 +27,6 @@ window.addEventListener('load', () => {
         padding: '15px', 
         minWidth: '400px', 
         maxHeight: '430px',
-        // minHeight: '150px',
-        // height: '150px',
         justifyContent: 'center'
     });
 

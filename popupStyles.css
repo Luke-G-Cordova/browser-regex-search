@@ -1,6 +1,11 @@
 
 regeggs-card *{
     font-family: 'Chango', cursive;
+    color: black;
+}
+regeggs-card input, regeggs-card p, regeggs-card button, regeggs-card div{
+    font-family: 'Chango', cursive;
+    color: black;
 }
 regeggs-card.chrome-regeggs-popup div.pContent div.formWrapper{
     /* overflow-y: scroll; */
