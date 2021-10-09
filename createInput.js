@@ -59,13 +59,16 @@ function createInput(key){
 
     minus.innerHTML = '-';
     minus.className = 'minus';
+    minus.type = 'button';
 
     next.innerHTML = '&#8658;';
     next.className = 'next';
+    next.type = 'button';
     next.name = color + '|' + key;
     
     prev.innerHTML = '&#8656;';
     prev.className = 'prev';
+    prev.type = 'button';
     prev.name = color + '|' + key;
 
 
@@ -83,12 +86,8 @@ function createInput(key){
 
     div = form.appendChild(div);
     
-    minus.addEventListener('click', (e) => {
-        e.preventDefault();
-        clearHighlight(key);
-        popupDragger.deleteNoDragElems(div);
-        form.removeChild(div);
-    });
+    
+    
     input.addEventListener('input', (e) => {
         highlightMe(key, input.value, colorInput.value);
         input.focus();
@@ -99,13 +98,13 @@ function createInput(key){
         colorFacts.innerHTML = colorInput.value;
     });
     let GI = ELEM_KEYS.indexOf(key);
-    document
-        .querySelector(`button.next[name="${next.name}"]`)
-        .addEventListener('click', changeCurrent);
-        // CURRENT_INDEXES[GI] = nextMatch(MY_HIGHLIGHTS[GI].elements, CURRENT_INDEXES[GI], 1);
-    document
-        .querySelector(`button.prev[name="${prev.name}"]`)
-        .addEventListener('click', changeCurrent)
-    ;
+    next.addEventListener('click', nextMatch);
+    prev.addEventListener('click', nextMatch);
+    minus.addEventListener('click', (e) => {
+        e.preventDefault();
+        clearHighlight(key);
+        popupDragger.deleteNoDragElems(div);
+        form.removeChild(div);
+    });
     return div;
 }
