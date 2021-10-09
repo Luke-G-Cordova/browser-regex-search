@@ -97,9 +97,16 @@ function createInput(key){
         changeColor(key, colorInput.value);
         colorFacts.innerHTML = colorInput.value;
     });
-    let GI = ELEM_KEYS.indexOf(key);
-    next.addEventListener('click', nextMatch);
-    prev.addEventListener('click', nextMatch);
+    next.addEventListener('click', (e) => {
+        e.preventDefault();
+        let GI = ELEM_KEYS.indexOf(key);
+        CURRENT_INDEXES[GI] = nextMatch(MY_HIGHLIGHTS[GI].elements, CURRENT_INDEXES[GI], 1);
+    });
+    prev.addEventListener('click', (e) => {
+        e.preventDefault();
+        let GI = ELEM_KEYS.indexOf(key);
+        CURRENT_INDEXES[GI] = nextMatch(MY_HIGHLIGHTS[GI].elements, CURRENT_INDEXES[GI], -1);
+    });
     minus.addEventListener('click', (e) => {
         e.preventDefault();
         clearHighlight(key);
