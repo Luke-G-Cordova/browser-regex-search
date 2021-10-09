@@ -21,18 +21,27 @@ function clearHighlight(keys){
     }
 }
 
+
 function highlight(root, regex, callback, excludes){
-    excludes || (excludes = ['script', 'style', 'iframe', 'canvas', 'noscript']);
+    excludes = ['script', 'style', 'iframe', 'canvas', 'noscript'].concat(excludes);
     var tw = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, function(node) {
         if(
             node.data.trim() === '' || 
-            excludes.indexOf(node.parentNode.tagName.toLowerCase()) > -1 ||
+            isDescendant(excludes, node)||
+            // excludes.indexOf(node.parentNode.tagName.toLowerCase()) > -1 ||
             !node.parentElement.offsetParent
         ){
             return NodeFilter.FILTER_REJECT;
         }
         return NodeFilter.FILTER_ACCEPT;
     });
+    
+    function isDescendant(tags, node){
+        if(node !== document.body && tags.indexOf(node.parentNode.tagName.toLowerCase()) === -1){
+            return isDescendant(tags, node.parentNode);
+        }
+        return node !== document.body;
+    }
 
     function trimBadHtmlNodes(node){
         if(node.data.indexOf('\n') !== -1){
@@ -92,7 +101,6 @@ function highlight(root, regex, callback, excludes){
     var newNode;
     var count = 0;
     var nodeList = [];
-
 
     var groupedNodesLength = groupedNodes.length;
     for(i = 0;i<groupedNodesLength;i++){

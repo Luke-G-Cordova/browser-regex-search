@@ -18,7 +18,7 @@ window.addEventListener('load', () => {
     popupShine.updateStyles({
         backgroundColor: '#6f03fc',
         display: 'block',
-        visibility: 'visible',      // make this hidden
+        visibility: 'hidden',      // make this hidden
         position: 'absolute', 
         top:`${20 + window.scrollY}px`, 
         left: `${20 + window.scrollX}px`, 
@@ -218,7 +218,7 @@ function highlightMe(key, data, color){
 
             highlightMeElem.textContent = match;
             return highlightMeElem;
-        });
+        }, 'regeggs-card');
 
     }
 }
