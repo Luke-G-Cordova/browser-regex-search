@@ -100,12 +100,12 @@ function createInput(key){
     next.addEventListener('click', (e) => {
         e.preventDefault();
         let GI = ELEM_KEYS.indexOf(key);
-        CURRENT_INDEXES[GI] = nextMatch(MY_HIGHLIGHTS[GI].elements, CURRENT_INDEXES[GI], 1);
+        CURRENT_INDEXES[GI] = nextMatch(MY_HIGHLIGHTS[GI].elements, CURRENT_INDEXES[GI], 1, {ns: {backgroundColor: 'orange'}, os: {backgroundColor: colorInput.value}});
     });
     prev.addEventListener('click', (e) => {
         e.preventDefault();
         let GI = ELEM_KEYS.indexOf(key);
-        CURRENT_INDEXES[GI] = nextMatch(MY_HIGHLIGHTS[GI].elements, CURRENT_INDEXES[GI], -1);
+        CURRENT_INDEXES[GI] = nextMatch(MY_HIGHLIGHTS[GI].elements, CURRENT_INDEXES[GI], -1, {ns: {backgroundColor: 'orange'}, os: {backgroundColor: colorInput.value}});
     });
     minus.addEventListener('click', (e) => {
         e.preventDefault();

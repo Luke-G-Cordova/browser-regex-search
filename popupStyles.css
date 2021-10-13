@@ -33,6 +33,7 @@ regeggs-card.chrome-regeggs-popup div form.mainForm div.inputWrapper{
     align-items: center;
     flex-direction: column;
     width: 100%;
+    font-size: initial;
 }
 regeggs-card.chrome-regeggs-popup div form.mainForm div.inputWrapper input.myInput{
     border-radius: 5px;
@@ -50,6 +51,7 @@ regeggs-card.chrome-regeggs-popup div form.mainForm div.inputWrapper div.buttonW
     float: right;
     display: flex;
     align-items: center;
+    font-size: initial;
 }
 /* 
     cWrapper.style.float = 'right';

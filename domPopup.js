@@ -85,6 +85,7 @@ window.addEventListener('load', () => {
         fontWeight: '900',
         fontFamily: '"Chango", cursive', 
         margin: '10px',
+        fontSize: 'initial',
         userSelect: 'none'
     });
     let exitBtnWrapper = document.createElement('div');
