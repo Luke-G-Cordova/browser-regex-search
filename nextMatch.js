@@ -31,8 +31,21 @@ function nextMatch(elements, cIndex, direction, styles){
                     elements[cIndex][i].style[sty] = styles.ns[sty];
                 }
             }
+            goto(elements[cIndex][i]);
         }
     }
-    
     return cIndex;
+}
+
+function goto(elem){
+    let scy = window.scrollY;
+    let eos = elem.offsetTop;
+    let sh = screen.height;
+    if(eos>sh-scy){
+        window.scroll({
+            top: eos,
+            behavior: 'smooth'
+        });
+    }
+    
 }
