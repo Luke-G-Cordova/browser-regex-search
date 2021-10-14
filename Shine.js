@@ -24,9 +24,7 @@ class Shine {
             tiny: false,
             overrideArgs: null
         }
-        for(let op in options){
-            ogo[op] = options[op];
-        }
+        Object.assign(ogo, options);
         this.bShadow = '';
         this.args = [elem, ogo];
         let resizeMe = new ResizeObserver((e) => {

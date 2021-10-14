@@ -5,9 +5,9 @@ class Draggable {
             Shine: null
         }
         this.elem = elem;
-        for(let op in options){
-            this.ogo[op] = options[op];
-        }
+        
+        Object.assign(this.ogo, options);
+
         this.noDragElems = this.ogo.noDragElems;
         this.wHalf = window.innerWidth/2;
         this.hHalf = window.innerHeight/2;

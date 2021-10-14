@@ -1,5 +1,7 @@
 
 
+
+
 function nextMatch(elements, cIndex, direction, styles){
     direction || (direction = 1);
     const regCurrent = /(^|\s)current(\s|$)/;

@@ -160,13 +160,29 @@ chrome.runtime.onMessage.addListener((msg, sender, response) => {
 function changeCurrent(e){
     e.preventDefault();
 }
-function changeColor(key, color){
-    let matches = document.querySelectorAll(`highlight-me.${key}`);
+
+// function changeColor(key, color){
+//     let matches = document.querySelectorAll(`highlight-me.${key}`);
+//     matches.forEach((elem) => {
+//         elem.style.backgroundColor = color;
+//         elem.style.color = invertColor(color);
+//     });
+// }
+function changeColor(options){
+    let ogo = {
+        key: '',
+        elements: null,
+        color: ''
+    }
+    Object.assign(ogo, options);
+    let matches = document.querySelectorAll(`highlight-me.${ogo.key}`);
     matches.forEach((elem) => {
-        elem.style.backgroundColor = color;
-        elem.style.color = invertColor(color);
+        elem.style.backgroundColor = ogo.color;
+        elem.style.color = invertColor(ogo.color);
     });
 }
+
+
 // I should find a more eye pleasing soloution than this
 function invertColor(hex) {
     if (hex.indexOf('#') === 0) {

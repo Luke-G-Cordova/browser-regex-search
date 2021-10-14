@@ -94,7 +94,8 @@ function createInput(key){
     });
 
     colorInput.addEventListener('input', (e) => {
-        changeColor(key, colorInput.value);
+        // changeColor(key, colorInput.value);
+        changeColor({key:key, color: colorInput.value});
         colorFacts.innerHTML = colorInput.value;
     });
     next.addEventListener('click', (e) => {
