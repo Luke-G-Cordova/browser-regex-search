@@ -55,37 +55,35 @@ function goto(elem, options){
         if(scbs.indexOf(options.scrollBehavior) === -1)options.scrollBehavior = 'smooth'
         Object.assign(ogo, options);
     }
-    var eos = elem.getBoundingClientRect(),
-        dos = document.body.getBoundingClientRect(),
-        wh = window.innerHeight,
-        scPar = scrollable(elem);
-    ;
+    var scPar = scrollable(elem);
+    var dos = document.body.getBoundingClientRect();
+    var eos = elem.getBoundingClientRect();
+    var eos2;
+    var wh;
     if(!!scPar){
-        let eos2 = eos;
-        eos = scPar.getBoundingClientRect();
-        let wh2 = window.getComputedStyle(scPar, null).getPropertyValue('height');
-        wh2 = Number(wh2.substr(0, wh2.length-2));
-        
-        if(eos2.top + scPar.scrollTop < 0 || eos2.bottom + scPar.scrollTop > wh2){
-            scPar.scroll({
-                top:  (eos2.top - eos.top + scPar.scrollTop) - (wh2/2),
-                behavior: ogo.scrollBehavior
-            });
-        }
-        
+        eos = scPar.getBoundingClientRect()
+        eos2 = elem.getBoundingClientRect();
+        wh = window.getComputedStyle(scPar, null).getPropertyValue('height');
+        wh = wh === '' ? wh : Number(wh.substr(0, wh.length-2));
     }
-    if(eos.top < 0|| eos.bottom > wh){
+    if(eos.top < 0|| eos.bottom > window.innerHeight){
         window.scroll({
-            top:  (eos.top - dos.top) - (wh/2.5),
+            top:  (eos.top - dos.top) - (window.innerHeight/2.5),
             behavior: ogo.scrollBehavior
         });
     }
+    if(!!scPar && (eos2.top < 0 || eos2.bottom > wh + eos.top)){
+        scPar.scroll({
+            top:  (eos2.top - eos.top + scPar.scrollTop) - (wh/2),
+            behavior: ogo.scrollBehavior
+        });
+    }
+    
 }
 
 function scrollable(elem){
     const noScroll = ['hidden', 'visible', ''];
     while(elem!==document.body){
-        console.log(elem);
         if(
             (
                 noScroll.indexOf(window.getComputedStyle(elem, null).getPropertyValue('overflow')) === -1 ||
