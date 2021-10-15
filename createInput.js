@@ -92,12 +92,11 @@ function createInput(key){
         highlightMe(key, input.value, colorInput.value);
         input.focus();
     });
-
     colorInput.addEventListener('input', (e) => {
-        // changeColor(key, colorInput.value);
-        changeColor({key:key, color: colorInput.value});
+        changeColor(key, colorInput.value);
         colorFacts.innerHTML = colorInput.value;
     });
+    
     next.addEventListener('click', (e) => {
         e.preventDefault();
         let GI = ELEM_KEYS.indexOf(key);

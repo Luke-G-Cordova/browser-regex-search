@@ -38,16 +38,20 @@ function nextMatch(elements, cIndex, direction, styles){
     }
     return cIndex;
 }
-
-function goto(elem){
-    let scy = window.scrollY;
-    let eos = elem.offsetTop;
-    let sh = screen.height;
-    if(eos>sh-scy){
+function goto(elem, options){
+    var ogo = {
+        scrollBehavior: 'smooth'
+    }
+    if(options)Object.assign(ogo, options);
+    var eos = elem.getBoundingClientRect(),
+        dos = document.body.getBoundingClientRect(),
+        wh = window.innerHeight,
+        buffer = 20
+    ;
+    if(eos.top < 0 + buffer || eos.top > wh - buffer){
         window.scroll({
-            top: eos,
-            behavior: 'smooth'
+            top:  (eos.top - dos.top) - (wh/2.5),
+            behavior: ogo.scrollBehavior
         });
     }
-    
 }
