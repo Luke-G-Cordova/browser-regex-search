@@ -7,13 +7,20 @@ regeggs-card input, regeggs-card p, regeggs-card button, regeggs-card div{
     font-family: 'Chango', cursive;
     color: black;
 }
-regeggs-card.chrome-regeggs-popup div.pContent div.formWrapper{
+regeggs-card.chrome-regeggs-popup div.pContent,
+regeggs-card.chrome-regeggs-popup div.pContent div.controllWrapper,
+regeggs-card.chrome-regeggs-popup div.pContent div.formWrapper div.icWrapper,
+regeggs-card.chrome-regeggs-popup div.pContent div.formWrapper div.npWrapper{ 
+    border: none;
+}
+regeggs-card.chrome-regeggs-popup div.pContent div.formWrapper{ 
     overflow: auto;
     max-height: 200px;
     margin: 0 10px;
     box-shadow: inset 0 0 5px rgba(0,0,0,.2);
     padding: 5px;
     border-radius: 10px;
+    border: none;
 }
 regeggs-card.chrome-regeggs-popup div.pContent div.formWrapper::-webkit-scrollbar {
     border-radius: 10px;
@@ -34,6 +41,7 @@ regeggs-card.chrome-regeggs-popup div form.mainForm div.inputWrapper{
     flex-direction: column;
     width: 100%;
     font-size: initial;
+    border: none;
 }
 regeggs-card.chrome-regeggs-popup div form.mainForm div.inputWrapper input.myInput{
     border-radius: 5px;
@@ -46,12 +54,16 @@ regeggs-card.chrome-regeggs-popup div form.mainForm div.inputWrapper input.myInp
 }
 regeggs-card.chrome-regeggs-popup div form.mainForm div.inputWrapper div.buttonWrapper{
     width: 100%;
+    border: none;
+
 }
 regeggs-card.chrome-regeggs-popup div form.mainForm div.inputWrapper div.buttonWrapper div.cWrapper {
     float: right;
     display: flex;
     align-items: center;
     font-size: initial;
+    border: none;
+
 }
 /* 
     cWrapper.style.float = 'right';

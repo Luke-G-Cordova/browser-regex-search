@@ -25,14 +25,24 @@
             color: white;
         }
 
-        div.scrollableDiv {
+        div.scrollableDivY {
             overflow: scroll;
             height: 100vh;
             display: flex;
             flex-direction: column;
-            width: 100px
+            width: 100px;
         }
-
+        div.scrollableDivX {
+            overflow: scroll;
+            height: 100px;
+            display: flex;
+            flex-direction: row;
+            width: 100vw;
+        }
+        div.scrollableDivX p{
+            margin: 20px;
+        }
+        
         div.ex1 {
             height: 100px;
             width: 200px;
@@ -60,7 +70,25 @@
 </head>
 
 <body style="padding: 0px;margin: 0px;background-color: #0D1117;color: white;">
-    <div class='scrollableDiv'>
+    <!-- <div class='scrollableDivY'>
+        <p>thle</p>
+        <p>the</p>
+        <p>the</p>
+        <p>the</p>
+        <p>the</p>
+        <p>the</p>
+        <p>the</p>
+        <p>the</p>
+        <p>the</p>
+        <p>the</p>
+        <p>the</p>
+        <p>the</p>
+        <p>the</p>
+        <p>the</p>
+        <p>the</p>
+        <p>the</p>
+    </div> -->
+    <div class='scrollableDivX'>
         <p>thle</p>
         <p>the</p>
         <p>the</p>

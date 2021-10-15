@@ -89,6 +89,7 @@ window.addEventListener('load', () => {
         userSelect: 'none'
     });
     let exitBtnWrapper = document.createElement('div');
+    exitBtnWrapper.className = 'controllWrapper';
     Shine.updateStyles(exitBtnWrapper, {
         display: 'inline-block',
         width: '100%'

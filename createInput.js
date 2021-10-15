@@ -9,6 +9,7 @@ function createInput(key){
     
     let icWrapper = document.createElement('div');
     icWrapper.style.width = '100%';
+    icWrapper.className = 'icWrapper';
     let input = document.createElement('input');
     input.className = 'myInput';
     input.type = 'text';
@@ -30,6 +31,7 @@ function createInput(key){
     npWrapper.style.float = 'left';
     npWrapper.style.display = 'flex';
     npWrapper.style.alignItems = 'center';
+    npWrapper.className = 'npWrapper';
 
     let cWrapper = document.createElement('div');
     cWrapper.className = 'cWrapper';
