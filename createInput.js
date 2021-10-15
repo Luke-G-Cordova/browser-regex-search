@@ -96,16 +96,32 @@ function createInput(key){
         changeColor(key, colorInput.value);
         colorFacts.innerHTML = colorInput.value;
     });
-    
+
     next.addEventListener('click', (e) => {
         e.preventDefault();
         let GI = ELEM_KEYS.indexOf(key);
-        CURRENT_INDEXES[GI] = nextMatch(MY_HIGHLIGHTS[GI].elements, CURRENT_INDEXES[GI], 1, {ns: {backgroundColor: 'orange'}, os: {backgroundColor: colorInput.value}});
+        CURRENT_INDEXES[GI] = nextMatch(MY_HIGHLIGHTS[GI].elements, CURRENT_INDEXES[GI], {
+            direction: 1, 
+            newStyles: {
+                backgroundColor: 'orange'
+            }, 
+            oldStyles: {
+                backgroundColor: colorInput.value
+            }
+        });
     });
     prev.addEventListener('click', (e) => {
         e.preventDefault();
         let GI = ELEM_KEYS.indexOf(key);
-        CURRENT_INDEXES[GI] = nextMatch(MY_HIGHLIGHTS[GI].elements, CURRENT_INDEXES[GI], -1, {ns: {backgroundColor: 'orange'}, os: {backgroundColor: colorInput.value}});
+        CURRENT_INDEXES[GI] = nextMatch(MY_HIGHLIGHTS[GI].elements, CURRENT_INDEXES[GI], {
+            direction: -1, 
+            newStyles: {
+                backgroundColor: 'orange'
+            }, 
+            oldStyles: {
+                backgroundColor: colorInput.value
+            }
+        });
     });
     minus.addEventListener('click', (e) => {
         e.preventDefault();

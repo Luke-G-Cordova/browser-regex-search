@@ -2,38 +2,46 @@
 
 
 
-function nextMatch(elements, cIndex, direction, styles){
-    direction || (direction = 1);
+function nextMatch(elements, cIndex, options){
+    var ogo = {
+        direction: 1,
+        newStyles: {},
+        oldStyles:{},
+        scrollBehavior: ''
+    }
+    if(options){
+        Object.assign(ogo, options);
+    }
     const regCurrent = /(^|\s)current(\s|$)/;
     const current = ' current';
     for(let i in elements[cIndex]){
         if(regCurrent.test(elements[cIndex][i].className)){
             elements[cIndex][i].className = elements[cIndex][i].className.replace(regCurrent, '');
-            if(!!styles.os){
-                for(let sty in styles.os){
-                    elements[cIndex][i].style[sty] = styles.os[sty];
+            if(!!ogo.oldStyles){
+                for(let sty in ogo.oldStyles){
+                    elements[cIndex][i].style[sty] = ogo.oldStyles[sty];
                 }
             }
         }
     }
-    if(!elements[cIndex + direction]){
-        if(direction > 0){
+    if(!elements[cIndex + ogo.direction]){
+        if(ogo.direction > 0){
             cIndex = 0;
         } else {
             cIndex = elements.length - 1;
         }
     } else{
-        cIndex += direction;
+        cIndex += ogo.direction;
     }
     for(let i in elements[cIndex]){
         if(!regCurrent.test(elements[cIndex][i].className)){
             elements[cIndex][i].className += current;
-            if(!!styles.ns){
-                for(let sty in styles.ns){
-                    elements[cIndex][i].style[sty] = styles.ns[sty];
+            if(!!ogo.newStyles){
+                for(let sty in ogo.newStyles){
+                    elements[cIndex][i].style[sty] = ogo.newStyles[sty];
                 }
             }
-            goto(elements[cIndex][i]);
+            goto(elements[cIndex][i], {scrollBehavior: ogo.scrollBehavior});
         }
     }
     return cIndex;
@@ -42,7 +50,11 @@ function goto(elem, options){
     var ogo = {
         scrollBehavior: 'smooth'
     }
-    if(options)Object.assign(ogo, options);
+    if(options){
+        let scbs = ['smooth', 'auto'];
+        if(scbs.indexOf(options.scrollBehavior) === -1)options.scrollBehavior = 'smooth'
+        Object.assign(ogo, options);
+    }
     var eos = elem.getBoundingClientRect(),
         dos = document.body.getBoundingClientRect(),
         wh = window.innerHeight,
