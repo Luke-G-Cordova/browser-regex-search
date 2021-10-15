@@ -58,12 +58,47 @@ function goto(elem, options){
     var eos = elem.getBoundingClientRect(),
         dos = document.body.getBoundingClientRect(),
         wh = window.innerHeight,
-        buffer = 20
+        scPar = scrollable(elem);
     ;
-    if(eos.top < 0 + buffer || eos.top > wh - buffer){
+    if(!!scPar){
+        let eos2 = eos;
+        eos = scPar.getBoundingClientRect();
+        let wh2 = window.getComputedStyle(scPar, null).getPropertyValue('height');
+        wh2 = Number(wh2.substr(0, wh2.length-2));
+        
+        if(eos2.top + scPar.scrollTop < 0 || eos2.bottom + scPar.scrollTop > wh2){
+            scPar.scroll({
+                top:  (eos2.top - eos.top + scPar.scrollTop) - (wh2/2),
+                behavior: ogo.scrollBehavior
+            });
+        }
+        
+    }
+    if(eos.top < 0|| eos.bottom > wh){
         window.scroll({
             top:  (eos.top - dos.top) - (wh/2.5),
             behavior: ogo.scrollBehavior
         });
     }
+}
+
+function scrollable(elem){
+    const noScroll = ['hidden', 'visible', ''];
+    while(elem!==document.body){
+        console.log(elem);
+        if(
+            (
+                noScroll.indexOf(window.getComputedStyle(elem, null).getPropertyValue('overflow')) === -1 ||
+                noScroll.indexOf(window.getComputedStyle(elem, null).getPropertyValue('overflow-y')) === -1 /*|| 
+                noScroll.indexOf(window.getComputedStyle(elem, null).getPropertyValue('overflow-x')) !== -1 */
+            )/*&&(
+                elem.scrollHeight > elem.clientHeight || 
+                elem.scrollWidth > elem.clientWidth 
+            )*/
+        ){
+            return elem;
+        }
+        elem = elem.parentElement;
+    }
+    return null;
 }

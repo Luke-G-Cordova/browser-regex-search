@@ -1,37 +1,112 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <style>
-        .main{
+        .main {
             height: 150vh;
         }
-        .notMain{
+
+        .notMain {
             height: 100vh;
         }
-        body{
+
+        body {
             font-size: 50px;
         }
-        div p.p{
-            color: black;
+        div{
+            border: 3px solid red;
+        }
+        div p.p {
+            color: white;
+        }
+
+        div.scrollableDiv {
+            overflow: scroll;
+            height: 400px;
+            display: flex;
+            flex-direction: column;
+            width: 100px
+        }
+
+        div.ex1 {
+            height: 100px;
+            width: 200px;
+            overflow-y: scroll;
+        }
+
+        div.ex2 {
+            height: 100px;
+            width: 200px;
+            overflow-y: hidden;
+        }
+
+        div.ex3 {
+            height: 100px;
+            width: 200px;
+            overflow-y: auto;
+        }
+
+        div.ex4 {
+            height: 100px;
+            width: 200px;
+            overflow-y: visible;
         }
     </style>
 </head>
-<body style="padding: 0px;margin: 0px;background-image: linear-gradient(to bottom, red, blue, green, orange, yellow, black, white);color: grey;">
+
+<body style="padding: 0px;margin: 0px;background-color: #0D1117;color: white;">
+    <div class='scrollableDiv'>
+        <p>the</p>
+        <p>the</p>
+        <p>the</p>
+        <p>the</p>
+        <p>the</p>
+        <p>the</p>
+        <p>the</p>
+        <p>the</p>
+        <p>the</p>
+        <p>the</p>
+        <p>the</p>
+        <p>the</p>
+        <p>the</p>
+        <p>the</p>
+        <p>the</p>
+        <p>the</p>
+    </div>
     <div class="main">
         <div style="float: left;">
             <p class="p">the</p>
         </div>
     </div>
+    <div class='ex1'>
+        <p>scroll</p>
+        <p>the</p>
+    </div>
+    <div class='ex2'>
+        <p>hidden</p>
+        <p>the</p>
+    </div>
+    <div class='ex3'>
+        <p>auto</p>
+        <p>the</p>
+    </div>
+    <div class='ex4'>
+        <p>visible</p>
+        <p>the</p>
+    </div>
     <div class="notMain">
-        <p class="p">the</p>
+        <!-- <p class="p">the</p> -->
     </div>
     <!-- <script src="../jsTestFiles/test.js"></script> -->
-    <script>
+    <!-- <script>
         let hello = 'hello';
-    </script>
+    </script> -->
+
 </body>
+
 </html>
