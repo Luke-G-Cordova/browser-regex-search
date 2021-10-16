@@ -117,12 +117,18 @@ function createInput(key){
     var preserveRegex = true;
 
     input.addEventListener('input', (e) => {
-        highlightMe(key, {
-            match: input.value,
-            color: colorInput.value,
-            mods: preserveCase, 
-            litReg: preserveRegex
-        });
+        if(
+            highlightMe(key, {
+                match: input.value,
+                color: colorInput.value,
+                mods: preserveCase, 
+                litReg: preserveRegex
+            })
+        ){
+            next.click();
+            prev.click();
+        }
+        
         input.focus();
     });
     colorInput.addEventListener('input', (e) => {
@@ -133,22 +139,32 @@ function createInput(key){
     caseSensitive.addEventListener('click', (e) => {
         e.preventDefault();
         preserveCase = preserveCase === 'i' ? '' : 'i';
-        highlightMe(key, {
-            match: input.value,
-            color: colorInput.value,
-            mods: preserveCase, 
-            litReg: preserveRegex
-        });
+        if(
+            highlightMe(key, {
+                match: input.value,
+                color: colorInput.value,
+                mods: preserveCase, 
+                litReg: preserveRegex
+            })
+        ){
+            next.click();
+            prev.click();
+        }
     });
     isRegex.addEventListener('click', (e) => {
         e.preventDefault();
         preserveRegex = !preserveRegex;
-        highlightMe(key, {
-            match: input.value,
-            color: colorInput.value,
-            mods: preserveCase, 
-            litReg: preserveRegex
-        });
+        if(
+            highlightMe(key, {
+                match: input.value,
+                color: colorInput.value,
+                mods: preserveCase, 
+                litReg: preserveRegex
+            })
+        ){
+            next.click();
+            prev.click();
+        }
     });
 
     next.addEventListener('click', (e) => {
@@ -242,8 +258,9 @@ function highlightMe(key, options){
             highlightMeElem.textContent = match;
             return highlightMeElem;
         }, 'regeggs-card');
-
+        return true;
     }
+    return false;
 }
 function escapeRegExp(text) {
     return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
