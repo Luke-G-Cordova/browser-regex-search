@@ -1,19 +1,37 @@
 
 
+// This file contains functions for: 
+//     - selecting new current matches, 
+//     - styling new current matches, 
+//     - styling old current matches, 
+//     - scrolling to new current matches on the y axis
+//     - scrolling to new current matches on the x axis
 
-
+/**
+ * 
+ * @param {Array} elements an array of selected elements
+ * @param {Number} cIndex a number indicating the current index
+ * @param {Object} options an optional object that allows for options
+ * @param {options} direction either 1 or -1 to indicate direction. Default: 1
+ * @param {options} newStyles styles to add to the new current selection. Default: {}
+ * @param {options} oldStyles styles to add to the old current selection. Default: {}
+ * @param {options} scrollBehavior values are 'smooth', 'auto' to indicate scrolling behavior. Default: 'smooth'
+ * @returns the index of the new current selection within the array
+ */
 function nextMatch(elements, cIndex, options){
+
+    const regCurrent = /(^|\s)current(\s|$)/;
+    const current = ' current';
+
     var ogo = {
         direction: 1,
         newStyles: {},
         oldStyles:{},
         scrollBehavior: ''
-    }
-    if(options){
-        Object.assign(ogo, options);
-    }
-    const regCurrent = /(^|\s)current(\s|$)/;
-    const current = ' current';
+    };
+    if(options){Object.assign(ogo, options);}
+
+    //loop through the old current selection of elements and apply the old styles
     for(let i in elements[cIndex]){
         if(regCurrent.test(elements[cIndex][i].className)){
             elements[cIndex][i].className = elements[cIndex][i].className.replace(regCurrent, '');
@@ -24,6 +42,8 @@ function nextMatch(elements, cIndex, options){
             }
         }
     }
+
+    //edge detection, wrap if we hit an edge
     if(!elements[cIndex + ogo.direction]){
         if(ogo.direction > 0){
             cIndex = 0;
@@ -33,6 +53,7 @@ function nextMatch(elements, cIndex, options){
     } else{
         cIndex += ogo.direction;
     }
+    // loop through the new current selection of elements and apply the new styles
     for(let i in elements[cIndex]){
         if(!regCurrent.test(elements[cIndex][i].className)){
             elements[cIndex][i].className += current;
@@ -41,11 +62,19 @@ function nextMatch(elements, cIndex, options){
                     elements[cIndex][i].style[sty] = ogo.newStyles[sty];
                 }
             }
+            // scroll to the new current selection so that it is in view
             goto(elements[cIndex][i], {scrollBehavior: ogo.scrollBehavior});
         }
     }
     return cIndex;
 }
+
+/**
+ * 
+ * @param {dom element} elem a dom element that should be scrolled to view
+ * @param {Object} options an optional options object
+ * @param {options} scrollBehavior the scroll behavior. Default: 'smooth'
+ */
 function goto(elem, options){
     var ogo = {
         scrollBehavior: 'smooth'
@@ -55,57 +84,102 @@ function goto(elem, options){
         if(scbs.indexOf(options.scrollBehavior) === -1)options.scrollBehavior = 'smooth'
         Object.assign(ogo, options);
     }
-    var scParAll = scrollable(elem);
-    var dos = document.body.getBoundingClientRect();
-    var eos = elem.getBoundingClientRect();
-    var scParElem;
-    var eos2;
-    var sHeight;
-    var sWidth;
-    if(!!scParAll){
-        scParElem = scParAll.element;
-        eos = scParElem.getBoundingClientRect()
-        eos2 = elem.getBoundingClientRect();
 
-        sHeight = window.getComputedStyle(scParElem, null).getPropertyValue('height');
-        sHeight = sHeight === '' ? sHeight : Number(sHeight.substr(0, sHeight.length-2));
+    // scObj is either null or an Object that looks like
+    // {
+    //      element: dom element - the closest ancestor of elem that can scroll in some direction , 
+    //      bScroll: boolean - true if there is only one word for the overflow css style of 
+    //                  element and it is not 'hidden', 'visible', or '', 
+    //      xScroll: boolean - true if the overflow-x css style of element is not 
+    //                  'hidden', 'visible', or '',
+    //      yScroll: boolean - true if the overflow-y css style of element is not
+    //                  'hidden', 'visible', or ''
+    // }
+    var scObj = scrollable(elem);
 
-        sWidth = window.getComputedStyle(scParElem, null).getPropertyValue('width');
-        sWidth = sWidth === '' ? sWidth : Number(sWidth.substr(0, sWidth.length-2));
+    var bodyCoords = document.body.getBoundingClientRect();
+    var elemCoords = !!scObj ? scObj.element.getBoundingClientRect() : elem.getBoundingClientRect();
+
+    // scElem is for if scObj is not null and stores scObj.element
+    var scElem;
+
+    // scCoords = elem.getBoundingClientRect() if elemCoords isnt already
+    var scCoords;
+
+    // scElemH = height of scElem
+    var scElemH;
+    // scElemW = width of scElem
+    var scElemW;
+
+    // if there is an ancestor to elem that is scrollable 
+    // and is not the body, then set relevant variables
+    if(!!scObj){
+        scElem = scObj.element;
+        scCoords = elem.getBoundingClientRect();
+
+        scElemH = window.getComputedStyle(scElem, null).getPropertyValue('height');
+        scElemH = scElemH === '' ? scElemH : Number(scElemH.substr(0, scElemH.length-2));
+
+        scElemW = window.getComputedStyle(scElem, null).getPropertyValue('width');
+        scElemW = scElemW === '' ? scElemW : Number(scElemW.substr(0, scElemW.length-2));
     }
-    if(eos.top < 0|| eos.bottom > window.innerHeight){
+
+    // if the element that should be in view  
+    // is out of view, scroll to the element
+    // --- TODO --- this statement does not account for if 
+    // --- TODO ---     the body can scroll on the x axis yet
+    if(elemCoords.top < 0|| elemCoords.bottom > window.innerHeight){
         window.scroll({
-            top:  (eos.top - dos.top) - (window.innerHeight/2.5),
+            top:  (elemCoords.top - bodyCoords.top) - (window.innerHeight/2.5),
             behavior: ogo.scrollBehavior
         });
     }
+
+    // if the element is not in view of its scrollable parent element 
+    // scroll the parent element so that it is in view.
+    // Keep in mind this statement checks if both axises are scrollable
+    // according to the scObj.bScroll first and if they are not it then
+    // scrolls individually.
     if(
-        !!scParAll && !!scParAll.bScroll && (
-            (eos2.top < 0 || eos2.bottom > sHeight + eos.top)||
-            (eos2.left < 0 || eos2.right > sWidth + eos.left)
+        !!scObj && !!scObj.bScroll && (
+            (scCoords.top < 0 || scCoords.bottom > scElemH + elemCoords.top)||
+            (scCoords.left < 0 || scCoords.right > scElemW + elemCoords.left)
         )
     ){
-        scParElem.scroll({
-            top:  (eos2.top - eos.top + scParElem.scrollTop) - (sHeight/2),
-            left: (eos2.left - eos.left + scParElem.scrollLeft) - (sWidth/2),
+        scElem.scroll({
+            top:  (scCoords.top - elemCoords.top + scElem.scrollTop) - (scElemH/2),
+            left: (scCoords.left - elemCoords.left + scElem.scrollLeft) - (scElemW/2),
             behavior: ogo.scrollBehavior
         });
     }else{
-        if(!!scParAll && !!scParAll.yScroll && (eos2.top < 0 || eos2.bottom > sHeight + eos.top)){
-            scParElem.scroll({
-                top:  (eos2.top - eos.top + scParElem.scrollTop) - (sHeight/2),
+        if(!!scObj && !!scObj.yScroll && (scCoords.top < 0 || scCoords.bottom > scElemH + elemCoords.top)){
+            scElem.scroll({
+                top:  (scCoords.top - elemCoords.top + scElem.scrollTop) - (scElemH/2),
                 behavior: ogo.scrollBehavior
             });
         }
-        if(!!scParAll && !!scParAll.xScroll && (eos2.left < 0 || eos2.right > sWidth + eos.left)){
-            scParElem.scroll({
-                left: (eos2.left - eos.left + scParElem.scrollLeft) - (sWidth/2),
+        if(!!scObj && !!scObj.xScroll && (scCoords.left < 0 || scCoords.right > scElemW + elemCoords.left)){
+            scElem.scroll({
+                left: (scCoords.left - elemCoords.left + scElem.scrollLeft) - (scElemW/2),
                 behavior: ogo.scrollBehavior
             });
         }
     } 
 }
 
+/**
+ * 
+ * @param {dom element} elem a dom element that could be the child of a scrollable element
+ * @returns {Object} {
+ *       element: dom element - the closest ancestor of elem that can scroll in some direction , 
+ *       bScroll: boolean - true if there is only one word for the overflow css style of 
+ *                   element and it is not 'hidden', 'visible', or '', 
+ *       xScroll: boolean - true if the overflow-x css style of element is not 
+ *                   'hidden', 'visible', or '',
+ *       yScroll: boolean - true if the overflow-y css style of element is not
+ *                   'hidden', 'visible', or ''
+ *   }
+ */
 function scrollable(elem){
     const noScroll = ['hidden', 'visible', ''];
     while(elem!==document.body){
@@ -121,29 +195,6 @@ function scrollable(elem){
                 xScroll, 
                 yScroll
             };
-        }
-        elem = elem.parentElement;
-    }
-    return null;
-}
-
-
-function scrollablexxx(elem){
-    const noScroll = ['hidden', 'visible', ''];
-    while(elem!==document.body){
-        if(
-            (
-                noScroll.indexOf(window.getComputedStyle(elem, null).getPropertyValue('overflow')) === -1 ||
-                noScroll.indexOf(window.getComputedStyle(elem, null).getPropertyValue('overflow-y')) === -1 /*|| 
-                noScroll.indexOf(window.getComputedStyle(elem, null).getPropertyValue('overflow-x')) !== -1*/ 
-            )/*&&(
-                elem.scrollHeight > elem.clientHeight || 
-                elem.scrollWidth > elem.clientWidth 
-            )*/
-        ){
-            console.log(window.getComputedStyle(elem, null).getPropertyValue('overflow').split(' '));
-            console.log(window.getComputedStyle(elem, null).getPropertyValue('overflow-y'));
-            return elem;
         }
         elem = elem.parentElement;
     }
