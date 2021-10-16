@@ -23,23 +23,23 @@ window.addEventListener('load', () => {
         left: `${20 + window.scrollX}px`
     });
 
-    let pContent = document.createElement('div');
+    let pContent = document.createElement('regeggs-div');
     pContent.className = 'pContent';
     pContent.id = 'chrepo-pCont-id';
     let pContentShine = new Shine(pContent, {bubble: false});
 
-    let controllWrapper = document.createElement('div');
+    let controllWrapper = document.createElement('regeggs-div');
     controllWrapper.className = 'controllWrapper';
     controllWrapper.id = 'chrepo-conWrapper-id';
 
-    let inputAdder = document.createElement('div');
+    let inputAdder = document.createElement('regeggs-div');
     inputAdder.className = 'controllButton';
     inputAdder.id = 'chrepo-inputAdder-id';
     
     let inputAdderShine = new Shine(inputAdder, {overrideArgs: [2, 22, 3, 4]});
     inputAdder.innerHTML = '+';
     
-    let exitBtn = document.createElement('div');
+    let exitBtn = document.createElement('regeggs-div');
     exitBtn.className = 'controllButton';
     exitBtn.id = 'chrepo-exitBtn-id';
     
@@ -51,7 +51,7 @@ window.addEventListener('load', () => {
 
     controllWrapper = pContent.appendChild(controllWrapper);
     
-    let formWrapper = document.createElement('div');
+    let formWrapper = document.createElement('regeggs-div');
     formWrapper.className = 'formWrapper';
     formWrapper.id = 'chrepo-formWrapper-id';
 

@@ -1,19 +1,19 @@
 function createInput(key){
-    let form = document.querySelector('regeggs-card.chrome-regeggs-popup div form.mainForm');
+    let form = document.querySelector('regeggs-card.chrome-regeggs-popup regeggs-div.formWrapper form.mainForm');
     
     key || (key = `regeggs-key-${Math.random().toString(36).substr(2, 5)}`);
 
-    let div = document.createElement('div');
+    let div = document.createElement('regeggs-div');
     div.name = key;
     div.className = 'inputWrapper';
     div.id = 'chrepo-inputWrapper-id';
     
-    let icWrapper = document.createElement('div');
+    let icWrapper = document.createElement('regeggs-div');
     icWrapper.style.width = '100%';
     icWrapper.className = 'icWrapper';
     icWrapper.id = 'chrepo-icWrapper-id';
 
-    let modifiers = document.createElement('span');
+    let modifiers = document.createElement('regeggs-span');
     modifiers.className = 'modifiersWrapper';
     modifiers.id = 'chrepo-modifiersWrapper-id';
 
@@ -24,15 +24,15 @@ function createInput(key){
     input.placeholder = 'regular expression';
     input.name = key;
 
-    let count = document.createElement('span');
+    let count = document.createElement('regeggs-span');
     count.className = 'matchCount';
     count.style.float = 'right';
 
-    let countNum = document.createElement('span');
+    let countNum = document.createElement('regeggs-span');
     countNum.innerHTML = '0';
-    let countSep = document.createElement('span');
+    let countSep = document.createElement('regeggs-span');
     countSep.innerHTML = '/';
-    let countDen = document.createElement('span');
+    let countDen = document.createElement('regeggs-span');
     countDen.innerHTML = '0';
     
     countNum = count.appendChild(countNum);
@@ -56,17 +56,17 @@ function createInput(key){
     count = icWrapper.appendChild(count);
     icWrapper = div.appendChild(icWrapper);
 
-    let buttonWrapper = document.createElement('div');
+    let buttonWrapper = document.createElement('regeggs-div');
     buttonWrapper.className = 'buttonWrapper';
     buttonWrapper.id = 'chrepo-buttonWrapper-id';
 
-    let npWrapper = document.createElement('div');
+    let npWrapper = document.createElement('regeggs-div');
     npWrapper.style.float = 'left';
     npWrapper.style.display = 'flex';
     npWrapper.style.alignItems = 'center';
     npWrapper.className = 'npWrapper';
 
-    let cWrapper = document.createElement('div');
+    let cWrapper = document.createElement('regeggs-div');
     cWrapper.className = 'cWrapper';
     cWrapper.id = 'chrepo-cWrapper-id';
 

@@ -12,7 +12,7 @@
         {
             "matches": ["*://*/*", "https://*/"],
             "js": ["Shine.js", "Draggable.js", "nextMatch.js", "createInput.js", "domPopup.js", "highlight.js", "picManip.js"],
-            "css": ["popupStyles2.css"]
+            "css": ["popupStyles.css"]
         }
     ],
     "background":{

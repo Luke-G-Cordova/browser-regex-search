@@ -12,6 +12,9 @@
 */
 
 /* all children of the regeggs-card */
+regeggs-div{
+    display: block;
+}
 regeggs-card#chrepo-id.chrome-regeggs-popup *{
     font-family: 'Chango', cursive;
     color: black;
@@ -31,7 +34,7 @@ regeggs-card#chrepo-id.chrome-regeggs-popup{
 }
 
 /* the content area of the regeggs card */
-regeggs-card#chrepo-id.chrome-regeggs-popup div#chrepo-pCont-id.pContent{
+regeggs-card#chrepo-id.chrome-regeggs-popup regeggs-div#chrepo-pCont-id.pContent{
     width: 100%;
     height: 100%;
     max-height: inherit;
@@ -43,13 +46,13 @@ regeggs-card#chrepo-id.chrome-regeggs-popup div#chrepo-pCont-id.pContent{
 }
 
 /* the wrapper of the input adder and the exit buttons */
-div#chrepo-pCont-id.pContent div#chrepo-conWrapper-id.controllWrapper{
+regeggs-div#chrepo-pCont-id.pContent regeggs-div#chrepo-conWrapper-id.controllWrapper{
     display: inline-block;
     width: 100%;
 }
 
 /* the input adder and the exit buttons */
-div#chrepo-conWrapper-id.controllWrapper div.controllButton{
+regeggs-div#chrepo-conWrapper-id.controllWrapper regeggs-div.controllButton{
     border-radius: 5px;
     width: 30px;
     height: 30px;
@@ -64,20 +67,20 @@ div#chrepo-conWrapper-id.controllWrapper div.controllButton{
     user-select: none;
 }
 /* the exit button */
-div#chrepo-conWrapper-id.controllWrapper div#chrepo-exitBtn-id.controllButton{
+regeggs-div#chrepo-conWrapper-id.controllWrapper regeggs-div#chrepo-exitBtn-id.controllButton{
     float: right;
     background-color: red;
     font-size: initial;
 }
 /* the input adder button */
-div#chrepo-conWrapper-id.controllWrapper div#chrepo-inputAdder-id.controllButton{
+regeggs-div#chrepo-conWrapper-id.controllWrapper regeggs-div#chrepo-inputAdder-id.controllButton{
     font-size: 20px;
     float: left;
     background-color: #0a9c00;
 }
 
 /* the main form wrapper */
-div#chrepo-pCont-id.pContent div#chrepo-formWrapper-id.formWrapper{
+regeggs-div#chrepo-pCont-id.pContent regeggs-div#chrepo-formWrapper-id.formWrapper{
     overflow: auto;
     max-height: 200px;
     margin: 0 10px;
@@ -87,20 +90,20 @@ div#chrepo-pCont-id.pContent div#chrepo-formWrapper-id.formWrapper{
 }
 
 /* the scrollbar of the form wrapper for when too many inputs get added */
-div#chrepo-pCont-id.pContent div#chrepo-formWrapper-id.formWrapper::-webkit-scrollbar{
+regeggs-div#chrepo-pCont-id.pContent regeggs-div#chrepo-formWrapper-id.formWrapper::-webkit-scrollbar{
     border-radius: 10px;
     background-color: gold;
     width: 10px;
     box-shadow: inset 0 0 2px rgba(0,0,0,.2);
 }
-div#chrepo-pCont-id.pContent div#chrepo-formWrapper-id.formWrapper::-webkit-scrollbar-thumb{
+regeggs-div#chrepo-pCont-id.pContent regeggs-div#chrepo-formWrapper-id.formWrapper::-webkit-scrollbar-thumb{
     background-color: #6f03fc;
     border-radius: 10px;
     border: 1px solid black;
 }
 
 /* the main form */
-div#chrepo-formWrapper-id.formWrapper form#chrepo-form-id.mainForm{
+regeggs-div#chrepo-formWrapper-id.formWrapper form#chrepo-form-id.mainForm{
     display: flex;
     justify-content: center;
     align-items: center;
@@ -108,7 +111,7 @@ div#chrepo-formWrapper-id.formWrapper form#chrepo-form-id.mainForm{
 }
 
 /* the wrapper for the input bar, the modifier buttons (/i /r) and the count */
-form#chrepo-form-id.mainForm div#chrepo-inputWrapper-id.inputWrapper{
+form#chrepo-form-id.mainForm regeggs-div#chrepo-inputWrapper-id.inputWrapper{
     display: flex;
     justify-content: center;
     align-items: center;
@@ -118,7 +121,7 @@ form#chrepo-form-id.mainForm div#chrepo-inputWrapper-id.inputWrapper{
 }
 
 /*styles for the input bar*/
-div#chrepo-icWrapper-id.icWrapper input#chrepo-myInput-id.myInput{
+regeggs-div#chrepo-icWrapper-id.icWrapper input#chrepo-myInput-id.myInput{
     border-radius: 5px;
     background-color: white;
     box-sizing: border-box;
@@ -129,7 +132,7 @@ div#chrepo-icWrapper-id.icWrapper input#chrepo-myInput-id.myInput{
 }
 
 /* styles for the /i /r buttons*/
-div#chrepo-icWrapper-id.icWrapper span#chrepo-modifiersWrapper-id.modifiersWrapper button{
+regeggs-div#chrepo-icWrapper-id.icWrapper regeggs-span#chrepo-modifiersWrapper-id.modifiersWrapper button{
     border-radius: 0px;
     background-color: lightgray;
     border: 1px solid black;
@@ -137,38 +140,38 @@ div#chrepo-icWrapper-id.icWrapper span#chrepo-modifiersWrapper-id.modifiersWrapp
     width: 20px;
     height: 20px;
 }
-div#chrepo-icWrapper-id.icWrapper span#chrepo-modifiersWrapper-id.modifiersWrapper button:active{
+regeggs-div#chrepo-icWrapper-id.icWrapper regeggs-span#chrepo-modifiersWrapper-id.modifiersWrapper button:active{
     background-color: gray;
 }
 
 
 /* wrapper for next/prev/minus/copy inputs and buttons*/
-div#chrepo-inputWrapper-id.inputWrapper div#chrepo-buttonWrapper-id.buttonWrapper{
+regeggs-div#chrepo-inputWrapper-id.inputWrapper regeggs-div#chrepo-buttonWrapper-id.buttonWrapper{
     width: 100%;
 }
 
 /* wrapper for color facts and input*/
-div#chrepo-buttonWrapper-id.buttonWrapper div#chrepo-cWrapper-id.cWrapper{
+regeggs-div#chrepo-buttonWrapper-id.buttonWrapper regeggs-div#chrepo-cWrapper-id.cWrapper{
     float: right;
     display: flex;
     align-items: center;
     font-size: initial;
 }
 /* next/prev/minus/copy/color inputs and buttons */
-div#chrepo-buttonWrapper-id.buttonWrapper input.colorInput,
-div#chrepo-buttonWrapper-id.buttonWrapper button{
+regeggs-div#chrepo-buttonWrapper-id.buttonWrapper input.colorInput,
+regeggs-div#chrepo-buttonWrapper-id.buttonWrapper button{
     width: 25px;
     height: 25px;
     border-radius: 15px;
     background-color: gold;
     border: 1px solid black;
 }
-div#chrepo-buttonWrapper-id.buttonWrapper input.colorInput:hover,
-div#chrepo-buttonWrapper-id.buttonWrapper button:hover{
+regeggs-div#chrepo-buttonWrapper-id.buttonWrapper input.colorInput:hover,
+regeggs-div#chrepo-buttonWrapper-id.buttonWrapper button:hover{
     cursor: pointer;
     background-color: #ffde26;
 }
-div#chrepo-buttonWrapper-id.buttonWrapper input.colorInput:active,
-div#chrepo-buttonWrapper-id.buttonWrapper button:active{
+regeggs-div#chrepo-buttonWrapper-id.buttonWrapper input.colorInput:active,
+regeggs-div#chrepo-buttonWrapper-id.buttonWrapper button:active{
     background-color: #dbba00;
 }
