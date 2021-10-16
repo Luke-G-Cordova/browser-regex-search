@@ -18,9 +18,21 @@ function createInput(key){
     input.name = key;
 
     let count = document.createElement('span');
-    count.innerHTML = '0/0';
     count.className = 'matchCount';
     count.style.float = 'right';
+    
+    let countNum = document.createElement('span');
+    countNum.innerHTML = '0';
+    let countSep = document.createElement('span');
+    countSep.innerHTML = '/';
+    let countDen = document.createElement('span');
+    countDen.innerHTML = '0';
+    
+    countNum = count.appendChild(countNum);
+    countSep = count.appendChild(countSep);
+    countDen = count.appendChild(countDen);
+
+    
 
     let modifiers = document.createElement('span');
     modifiers.className = 'modifiersWrapper';
@@ -49,6 +61,7 @@ function createInput(key){
 
     let cWrapper = document.createElement('div');
     cWrapper.className = 'cWrapper';
+
     let next = document.createElement('button');
     new Shine(next, {bubble: false, overrideArgs:[2, 0, 0, 0]});
     
@@ -125,6 +138,8 @@ function createInput(key){
                 litReg: preserveRegex
             })
         ){
+            let GI = ELEM_KEYS.indexOf(key);
+            
             next.click();
             prev.click();
         }
@@ -179,6 +194,8 @@ function createInput(key){
                 backgroundColor: colorInput.value
             }
         });
+        countNum.innerHTML = CURRENT_INDEXES[GI];
+        countDen.innerHTML = MY_HIGHLIGHTS[GI].elements.length - 1;
     });
     prev.addEventListener('click', (e) => {
         e.preventDefault();
@@ -192,6 +209,8 @@ function createInput(key){
                 backgroundColor: colorInput.value
             }
         });
+        countNum.innerHTML = CURRENT_INDEXES[GI];
+        countDen.innerHTML = MY_HIGHLIGHTS[GI].elements.length - 1;
     });
     minus.addEventListener('click', (e) => {
         e.preventDefault();
