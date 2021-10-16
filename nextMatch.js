@@ -55,16 +55,23 @@ function goto(elem, options){
         if(scbs.indexOf(options.scrollBehavior) === -1)options.scrollBehavior = 'smooth'
         Object.assign(ogo, options);
     }
-    var scPar = scrollable(elem);
+    var scParAll = scrollable(elem);
     var dos = document.body.getBoundingClientRect();
     var eos = elem.getBoundingClientRect();
+    var scParElem;
     var eos2;
-    var wh;
-    if(!!scPar){
-        eos = scPar.getBoundingClientRect()
+    var sHeight;
+    var sWidth;
+    if(!!scParAll){
+        scParElem = scParAll.element;
+        eos = scParElem.getBoundingClientRect()
         eos2 = elem.getBoundingClientRect();
-        wh = window.getComputedStyle(scPar, null).getPropertyValue('height');
-        wh = wh === '' ? wh : Number(wh.substr(0, wh.length-2));
+
+        sHeight = window.getComputedStyle(scParElem, null).getPropertyValue('height');
+        sHeight = sHeight === '' ? sHeight : Number(sHeight.substr(0, sHeight.length-2));
+
+        sWidth = window.getComputedStyle(scParElem, null).getPropertyValue('width');
+        sWidth = sWidth === '' ? sWidth : Number(sWidth.substr(0, sWidth.length-2));
     }
     if(eos.top < 0|| eos.bottom > window.innerHeight){
         window.scroll({
@@ -72,28 +79,70 @@ function goto(elem, options){
             behavior: ogo.scrollBehavior
         });
     }
-    if(!!scPar && (eos2.top < 0 || eos2.bottom > wh + eos.top)){
-        scPar.scroll({
-            top:  (eos2.top - eos.top + scPar.scrollTop) - (wh/2),
+    if(
+        !!scParAll && !!scParAll.bScroll && (
+            (eos2.top < 0 || eos2.bottom > sHeight + eos.top)||
+            (eos2.left < 0 || eos2.right > sWidth + eos.left)
+        )
+    ){
+        scParElem.scroll({
+            top:  (eos2.top - eos.top + scParElem.scrollTop) - (sHeight/2),
+            left: (eos2.left - eos.left + scParElem.scrollLeft) - (sWidth/2),
             behavior: ogo.scrollBehavior
         });
-    }
-    
+    }else{
+        if(!!scParAll && !!scParAll.yScroll && (eos2.top < 0 || eos2.bottom > sHeight + eos.top)){
+            scParElem.scroll({
+                top:  (eos2.top - eos.top + scParElem.scrollTop) - (sHeight/2),
+                behavior: ogo.scrollBehavior
+            });
+        }
+        if(!!scParAll && !!scParAll.xScroll && (eos2.left < 0 || eos2.right > sWidth + eos.left)){
+            scParElem.scroll({
+                left: (eos2.left - eos.left + scParElem.scrollLeft) - (sWidth/2),
+                behavior: ogo.scrollBehavior
+            });
+        }
+    } 
 }
 
 function scrollable(elem){
+    const noScroll = ['hidden', 'visible', ''];
+    while(elem!==document.body){
+        let [xScroll, yScroll] = window.getComputedStyle(elem, null).getPropertyValue('overflow').split(' ');
+        let bScroll = (!!xScroll && noScroll.indexOf(xScroll) === -1) && !yScroll;
+        if(
+            (xScroll = (!!xScroll && noScroll.indexOf(xScroll) === -1))||
+            (yScroll = (!!yScroll && noScroll.indexOf(yScroll) === -1))
+        ){
+            return {
+                element: elem, 
+                bScroll, 
+                xScroll, 
+                yScroll
+            };
+        }
+        elem = elem.parentElement;
+    }
+    return null;
+}
+
+
+function scrollablexxx(elem){
     const noScroll = ['hidden', 'visible', ''];
     while(elem!==document.body){
         if(
             (
                 noScroll.indexOf(window.getComputedStyle(elem, null).getPropertyValue('overflow')) === -1 ||
                 noScroll.indexOf(window.getComputedStyle(elem, null).getPropertyValue('overflow-y')) === -1 /*|| 
-                noScroll.indexOf(window.getComputedStyle(elem, null).getPropertyValue('overflow-x')) !== -1 */
+                noScroll.indexOf(window.getComputedStyle(elem, null).getPropertyValue('overflow-x')) !== -1*/ 
             )/*&&(
                 elem.scrollHeight > elem.clientHeight || 
                 elem.scrollWidth > elem.clientWidth 
             )*/
         ){
+            console.log(window.getComputedStyle(elem, null).getPropertyValue('overflow').split(' '));
+            console.log(window.getComputedStyle(elem, null).getPropertyValue('overflow-y'));
             return elem;
         }
         elem = elem.parentElement;
