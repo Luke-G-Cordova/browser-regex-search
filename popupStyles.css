@@ -1,53 +1,124 @@
 
-regeggs-card *{
+
+/*
+    I am overdoing the specificity to prevent
+    against inherited styles from any given 
+    page the user visits
+    I am aiming for Selector specificity of (2,2,2)
+    This means:
+        2 elements 1 parent and 1 child
+        2 id 1 for parent 1 for child
+        2 class names 1 for parent 1 for child
+*/
+
+/* all children of the regeggs-card */
+regeggs-card#chrepo-id.chrome-regeggs-popup *{
     font-family: 'Chango', cursive;
     color: black;
 }
-regeggs-card input, regeggs-card p, regeggs-card button, regeggs-card div{
-    font-family: 'Chango', cursive;
-    color: black;
+/* the regeggs card oldest ancestor */
+regeggs-card#chrepo-id.chrome-regeggs-popup{
+    background-color: #6f03fc;
+    display: block;
+    visibility: hidden;
+    position: absolute;
+    z-index: 99999;
+    border-radius: 10px;
+    padding: 15px;
+    min-width: 400px;
+    max-height: 430px;
+    justify-content: center;
 }
-regeggs-card.chrome-regeggs-popup div.pContent,
-regeggs-card.chrome-regeggs-popup div.pContent div.controllWrapper,
-regeggs-card.chrome-regeggs-popup div.pContent div.formWrapper div.icWrapper,
-regeggs-card.chrome-regeggs-popup div.pContent div.formWrapper div.npWrapper{ 
-    border: none;
+
+/* the content area of the regeggs card */
+regeggs-card#chrepo-id.chrome-regeggs-popup div#chrepo-pCont-id.pContent{
+    width: 100%;
+    height: 100%;
+    max-height: inherit;
+    background-color: #ababab;
+    border-radius: 7px;
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 25px;
 }
-regeggs-card.chrome-regeggs-popup div.pContent div.formWrapper{ 
+
+/* the wrapper of the input adder and the exit buttons */
+div#chrepo-pCont-id.pContent div#chrepo-conWrapper-id.controllWrapper{
+    display: inline-block;
+    width: 100%;
+}
+
+/* the input adder and the exit buttons */
+div#chrepo-conWrapper-id.controllWrapper div.controllButton{
+    border-radius: 5px;
+    width: 30px;
+    height: 30px;
+    border: 1px solid black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    text-shadow: 2px 2px 0px black;
+    font-weight: 900;
+    margin: 10px;
+    user-select: none;
+}
+/* the exit button */
+div#chrepo-conWrapper-id.controllWrapper div#chrepo-exitBtn-id.controllButton{
+    float: right;
+    background-color: red;
+    font-size: initial;
+}
+/* the input adder button */
+div#chrepo-conWrapper-id.controllWrapper div#chrepo-inputAdder-id.controllButton{
+    font-size: 20px;
+    float: left;
+    background-color: #0a9c00;
+}
+
+/* the main form wrapper */
+div#chrepo-pCont-id.pContent div#chrepo-formWrapper-id.formWrapper{
     overflow: auto;
     max-height: 200px;
     margin: 0 10px;
     box-shadow: inset 0 0 5px rgba(0,0,0,.2);
     padding: 5px;
     border-radius: 10px;
-    border: none;
 }
-regeggs-card.chrome-regeggs-popup div.pContent div.formWrapper::-webkit-scrollbar {
+
+/* the scrollbar of the form wrapper for when too many inputs get added */
+div#chrepo-pCont-id.pContent div#chrepo-formWrapper-id.formWrapper::-webkit-scrollbar{
     border-radius: 10px;
     background-color: gold;
     width: 10px;
     box-shadow: inset 0 0 2px rgba(0,0,0,.2);
 }
-regeggs-card.chrome-regeggs-popup div.pContent div.formWrapper::-webkit-scrollbar-thumb {
+div#chrepo-pCont-id.pContent div#chrepo-formWrapper-id.formWrapper::-webkit-scrollbar-thumb{
     background-color: #6f03fc;
     border-radius: 10px;
     border: 1px solid black;
 }
 
-regeggs-card.chrome-regeggs-popup div form.mainForm div.inputWrapper{
+/* the main form */
+div#chrepo-formWrapper-id.formWrapper form#chrepo-form-id.mainForm{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+/* the wrapper for the input bar, the modifier buttons (/i /r) and the count */
+form#chrepo-form-id.mainForm div#chrepo-inputWrapper-id.inputWrapper{
     display: flex;
     justify-content: center;
     align-items: center;
     flex-direction: column;
     width: 100%;
     font-size: initial;
-    border: none;
 }
-regeggs-card.chrome-regeggs-popup div form.mainForm div.inputWrapper div.icWrapper span.matchCount {
-    max-width: 20%;
-    overflow: hidden;
-}
-regeggs-card.chrome-regeggs-popup div form.mainForm div.inputWrapper input.myInput{
+
+/*styles for the input bar*/
+div#chrepo-icWrapper-id.icWrapper input#chrepo-myInput-id.myInput{
     border-radius: 5px;
     background-color: white;
     box-sizing: border-box;
@@ -56,25 +127,9 @@ regeggs-card.chrome-regeggs-popup div form.mainForm div.inputWrapper input.myInp
     padding: 2px;
     margin: 2px;
 }
-regeggs-card.chrome-regeggs-popup div form.mainForm div.inputWrapper div.buttonWrapper{
-    width: 100%;
-    border: none;
 
-}
-regeggs-card.chrome-regeggs-popup div form.mainForm div.inputWrapper div.buttonWrapper div.cWrapper {
-    float: right;
-    display: flex;
-    align-items: center;
-    font-size: initial;
-    border: none;
-
-}
-
-regeggs-card.chrome-regeggs-popup div form.mainForm div.inputWrapper div.icWrapper span.modifiersWrapper button:active{
-    background-color: gray;
-
-}
-regeggs-card.chrome-regeggs-popup div form.mainForm div.inputWrapper div.icWrapper span.modifiersWrapper button{
+/* styles for the /i /r buttons*/
+div#chrepo-icWrapper-id.icWrapper span#chrepo-modifiersWrapper-id.modifiersWrapper button{
     border-radius: 0px;
     background-color: lightgray;
     border: 1px solid black;
@@ -82,22 +137,38 @@ regeggs-card.chrome-regeggs-popup div form.mainForm div.inputWrapper div.icWrapp
     width: 20px;
     height: 20px;
 }
+div#chrepo-icWrapper-id.icWrapper span#chrepo-modifiersWrapper-id.modifiersWrapper button:active{
+    background-color: gray;
+}
 
 
-regeggs-card.chrome-regeggs-popup div form.mainForm div.inputWrapper input.colorInput, 
-regeggs-card.chrome-regeggs-popup div form.mainForm div.inputWrapper button{
+/* wrapper for next/prev/minus/copy inputs and buttons*/
+div#chrepo-inputWrapper-id.inputWrapper div#chrepo-buttonWrapper-id.buttonWrapper{
+    width: 100%;
+}
+
+/* wrapper for color facts and input*/
+div#chrepo-buttonWrapper-id.buttonWrapper div#chrepo-cWrapper-id.cWrapper{
+    float: right;
+    display: flex;
+    align-items: center;
+    font-size: initial;
+}
+/* next/prev/minus/copy/color inputs and buttons */
+div#chrepo-buttonWrapper-id.buttonWrapper input.colorInput,
+div#chrepo-buttonWrapper-id.buttonWrapper button{
     width: 25px;
     height: 25px;
     border-radius: 15px;
     background-color: gold;
     border: 1px solid black;
 }
-regeggs-card.chrome-regeggs-popup div form.mainForm div.inputWrapper input.colorInput:hover, 
-regeggs-card.chrome-regeggs-popup div form.mainForm div.inputWrapper button:hover{
+div#chrepo-buttonWrapper-id.buttonWrapper input.colorInput:hover,
+div#chrepo-buttonWrapper-id.buttonWrapper button:hover{
     cursor: pointer;
     background-color: #ffde26;
 }
-regeggs-card.chrome-regeggs-popup div form.mainForm div.inputWrapper input.colorInput:active, 
-regeggs-card.chrome-regeggs-popup div form.mainForm div.inputWrapper button:active{
+div#chrepo-buttonWrapper-id.buttonWrapper input.colorInput:active,
+div#chrepo-buttonWrapper-id.buttonWrapper button:active{
     background-color: #dbba00;
 }

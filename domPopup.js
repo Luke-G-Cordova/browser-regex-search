@@ -14,103 +14,51 @@ window.addEventListener('load', () => {
     popup = document.createElement('regeggs-card');
     
     popup.className = 'chrome-regeggs-popup';
+    popup.id = 'chrepo-id'; //ch(chrome)re(regeggs)po(popup)-id
+
     popupShine = new Shine(popup);
     popupShine.updateStyles({
-        backgroundColor: '#6f03fc',
-        display: 'block',
-        visibility: 'hidden',      // make this hidden
-        position: 'absolute', 
+        visibility: 'hidden',
         top:`${20 + window.scrollY}px`, 
-        left: `${20 + window.scrollX}px`, 
-        zIndex: '1000', 
-        borderRadius: '10px', 
-        padding: '15px', 
-        minWidth: '400px', 
-        maxHeight: '430px',
-        justifyContent: 'center'
+        left: `${20 + window.scrollX}px`
     });
 
     let pContent = document.createElement('div');
     pContent.className = 'pContent';
+    pContent.id = 'chrepo-pCont-id';
     let pContentShine = new Shine(pContent, {bubble: false});
-    pContentShine.updateStyles({
-        width: '100%', 
-        height: '100%', 
-        maxHeight: 'inherit',
-        backgroundColor: '#ababab',
-        borderRadius: '7px',
-        display: 'flex', 
-        flexDirection: 'column',
-        paddingBottom: '25px'
-    });
 
-    let inputAdder = document.createElement('button');
+    let controllWrapper = document.createElement('div');
+    controllWrapper.className = 'controllWrapper';
+    controllWrapper.id = 'chrepo-conWrapper-id';
+
+    let inputAdder = document.createElement('div');
+    inputAdder.className = 'controllButton';
+    inputAdder.id = 'chrepo-inputAdder-id';
+    
     let inputAdderShine = new Shine(inputAdder, {overrideArgs: [2, 22, 3, 4]});
     inputAdder.innerHTML = '+';
-    inputAdderShine.updateStyles({
-        float: 'left',
-        backgroundColor: '#0a9c00',
-        borderRadius: '5px', 
-        width: '32px',
-        height: '32px',
-        border: '1px solid black',
-        display: 'flex', 
-        justifyContent: 'center',
-        alignItems: 'center',
-        color: 'white',
-        textShadow: '2px 2px 0px black',
-        fontWeight: '900',
-        fontSize: '20px',
-        fontFamily: '"Chango", cursive', 
-        margin: '10px',
-        userSelect: 'none'
-    });
     
-
     let exitBtn = document.createElement('div');
+    exitBtn.className = 'controllButton';
+    exitBtn.id = 'chrepo-exitBtn-id';
+    
     let exitBtnShine = new Shine(exitBtn, {overrideArgs: [2, 22, 3, 4]});
     exitBtn.innerHTML = 'X';
-    exitBtnShine.updateStyles({
-        float: 'right',
-        backgroundColor:'red',
-        borderRadius: '5px', 
-        width: '30px',
-        height: '30px',
-        border: '1px solid black',
-        display: 'flex', 
-        justifyContent: 'center',
-        alignItems: 'center',
-        color: 'white',
-        textShadow: '2px 2px 0px black',
-        fontWeight: '900',
-        fontFamily: '"Chango", cursive', 
-        margin: '10px',
-        fontSize: 'initial',
-        userSelect: 'none'
-    });
-    let exitBtnWrapper = document.createElement('div');
-    exitBtnWrapper.className = 'controllWrapper';
-    Shine.updateStyles(exitBtnWrapper, {
-        display: 'inline-block',
-        width: '100%'
-    });
-    exitBtn = exitBtnWrapper.appendChild(exitBtn);
-    inputAdder = exitBtnWrapper.appendChild(inputAdder);
+    
+    exitBtn = controllWrapper.appendChild(exitBtn);
+    inputAdder = controllWrapper.appendChild(inputAdder);
 
-    exitBtnWrapper = pContent.appendChild(exitBtnWrapper);
+    controllWrapper = pContent.appendChild(controllWrapper);
     
     let formWrapper = document.createElement('div');
     formWrapper.className = 'formWrapper';
+    formWrapper.id = 'chrepo-formWrapper-id';
 
     let form = document.createElement('form');
-    Shine.updateStyles(form, {
-        display: 'flex', 
-        justifyContent: 'center', 
-        alignItems: 'center', 
-        flexDirection: 'column'
-    });
     form.onsubmit = () => false;
     form.className = 'mainForm';
+    form.id = 'chrepo-form-id';
     form = formWrapper.appendChild(form);
     formWrapper = pContent.appendChild(formWrapper);
 

@@ -6,13 +6,20 @@ function createInput(key){
     let div = document.createElement('div');
     div.name = key;
     div.className = 'inputWrapper';
+    div.id = 'chrepo-inputWrapper-id';
     
     let icWrapper = document.createElement('div');
     icWrapper.style.width = '100%';
     icWrapper.className = 'icWrapper';
+    icWrapper.id = 'chrepo-icWrapper-id';
+
+    let modifiers = document.createElement('span');
+    modifiers.className = 'modifiersWrapper';
+    modifiers.id = 'chrepo-modifiersWrapper-id';
 
     let input = document.createElement('input');
     input.className = 'myInput';
+    input.id = 'chrepo-myInput-id';
     input.type = 'text';
     input.placeholder = 'regular expression';
     input.name = key;
@@ -20,7 +27,7 @@ function createInput(key){
     let count = document.createElement('span');
     count.className = 'matchCount';
     count.style.float = 'right';
-    
+
     let countNum = document.createElement('span');
     countNum.innerHTML = '0';
     let countSep = document.createElement('span');
@@ -34,8 +41,7 @@ function createInput(key){
 
     
 
-    let modifiers = document.createElement('span');
-    modifiers.className = 'modifiersWrapper';
+    
 
     let caseSensitive = document.createElement('button');
     caseSensitive.innerHTML = '/i';
@@ -52,6 +58,7 @@ function createInput(key){
 
     let buttonWrapper = document.createElement('div');
     buttonWrapper.className = 'buttonWrapper';
+    buttonWrapper.id = 'chrepo-buttonWrapper-id';
 
     let npWrapper = document.createElement('div');
     npWrapper.style.float = 'left';
@@ -61,6 +68,7 @@ function createInput(key){
 
     let cWrapper = document.createElement('div');
     cWrapper.className = 'cWrapper';
+    cWrapper.id = 'chrepo-cWrapper-id';
 
     let next = document.createElement('button');
     new Shine(next, {bubble: false, overrideArgs:[2, 0, 0, 0]});
