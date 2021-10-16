@@ -43,6 +43,9 @@ function createInput(key){
 
     let minus = document.createElement('button');
     new Shine(minus, {bubble: false, overrideArgs:[2, 0, 0, 0]});
+
+    let copy = document.createElement('button');
+    new Shine(copy, {bubble: false, overrideArgs:[2, 0, 0, 0]});
     
 
     let colorInput = document.createElement('input');
@@ -58,7 +61,7 @@ function createInput(key){
     colorInput.className = 'colorInput';
     colorFacts.innerHTML = colorInput.value;
     let color = '';
-
+    
     minus.innerHTML = '-';
     minus.className = 'minus';
     minus.type = 'button';
@@ -73,10 +76,14 @@ function createInput(key){
     prev.type = 'button';
     prev.name = color + '|' + key;
 
+    copy.innerHTML = '&#9974;';
+    copy.title = 'Copy This Selection';
+    copy.className = 'copySelection';
 
     prev = npWrapper.appendChild(prev);
     next = npWrapper.appendChild(next);
     minus = npWrapper.appendChild(minus);
+    copy = npWrapper.appendChild(copy);
     npWrapper = buttonWrapper.appendChild(npWrapper);
 
     colorFacts = cWrapper.appendChild(colorFacts);
@@ -97,6 +104,19 @@ function createInput(key){
     colorInput.addEventListener('input', (e) => {
         changeColor(key, colorInput.value);
         colorFacts.innerHTML = colorInput.value;
+    });
+    
+    copy.addEventListener('click', (e) =>{
+        e.preventDefault();
+        let GI = ELEM_KEYS.indexOf(key);
+        let selection = '';
+        MY_HIGHLIGHTS[GI].elements.forEach(elem => {
+            for(let i = 0;i<elem.length;i++){
+                selection += elem[i].innerText;
+            }
+            selection += '\n';
+        });
+        navigator.clipboard.writeText(selection);
     });
 
     next.addEventListener('click', (e) => {
