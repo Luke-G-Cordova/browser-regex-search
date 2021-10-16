@@ -172,62 +172,7 @@ function changeColor(key, color){
 
 
 // I should find a more eye pleasing soloution than this
-function invertColor(hex) {
-    if (hex.indexOf('#') === 0) {
-        hex = hex.slice(1);
-    }
-    if (hex.length === 3) {
-        hex = hex[0] + hex[0] + hex[1] + hex[1] + hex[2] + hex[2];
-    }
-    if (hex.length !== 6) {
-        throw new Error('Invalid HEX color.');
-    }
-    var r = (255 - parseInt(hex.slice(0, 2), 16)).toString(16),
-        g = (255 - parseInt(hex.slice(2, 4), 16)).toString(16),
-        b = (255 - parseInt(hex.slice(4, 6), 16)).toString(16);
-    return '#' + padZero(r) + padZero(g) + padZero(b);
-}
-function padZero(str, len) {
-    len = len || 2;
-    var zeros = new Array(len).join('0');
-    return (zeros + str).slice(-len);
-}
-function highlightMe(key, data, color){
-    let GI = ELEM_KEYS.indexOf(key);
-    CUR_INDEX = 0;
-    if(GI === -1) {
-        ELEM_KEYS.push(key);
-        GI = ELEM_KEYS.indexOf(key);
 
-        CURRENT_INDEXES.push(CUR_INDEX);
-    }else{
-        CURRENT_INDEXES[GI] = CUR_INDEX;
-    }
-    clearHighlight(key);
-    if(data !== '' && DEF_REJECTS.indexOf(data) === -1){
-        let multiNodeMatchId;
-        MY_HIGHLIGHTS[GI] = highlight(document.body, new RegExp(data, 'ig'), function(match, sameMatchID){
-
-            multiNodeMatchId = sameMatchID;
-            var highlightMeElem = document.createElement("highlight-me");
-
-            highlightMeElem.className = `chrome-regeggz-highlight-me ${key}`;
-            if(CUR_INDEX === 0){
-                highlightMeElem.className += ' current';
-            }
-            highlightMeElem.style.backgroundColor = `${color}`;
-            highlightMeElem.style.color = invertColor(color);
-
-            // highlightMeElem.id = `${CUR_INDEX}|${key}|${multiNodeMatchId}`;
-
-            CUR_INDEX = multiNodeMatchId > -1 ? CUR_INDEX : CUR_INDEX + 1;
-
-            highlightMeElem.textContent = match;
-            return highlightMeElem;
-        }, 'regeggs-card');
-
-    }
-}
 
 function showPopup(){
     if(popup.style.visibility === 'hidden'){
