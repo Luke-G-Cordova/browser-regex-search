@@ -1,4 +1,5 @@
 window.addEventListener('load', () => {
+
     let link1 = document.createElement('link');
     link1.rel = 'preconnect';
     link1.href = 'https://fonts.googleapis.com';
@@ -11,9 +12,11 @@ window.addEventListener('load', () => {
     let link3 = document.createElement('link');
     link3.rel = 'stylesheet';
     link3.href = 'https://fonts.googleapis.com/css2?family=Chango&display=swap';
+    document.head.appendChild(meta);
     document.head.appendChild(link1);
     document.head.appendChild(link2);
     document.head.appendChild(link3);
+    // <meta http-equiv="Content-Security-Policy" content="default-src 'self'; font-src 'self' data: fonts.gstatic.com;"></meta>
 });
 
 
