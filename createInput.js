@@ -136,7 +136,7 @@ function createInput(key){
 
     var preserveCase = 'i';
     var preserveRegex = true;
-
+    var nextOrPrev = next;
     input.addEventListener('input', (e) => {
         if(
             highlightMe(key, {
@@ -147,13 +147,21 @@ function createInput(key){
             })
         ){
             let GI = ELEM_KEYS.indexOf(key);
-            
-            next.click();
             prev.click();
+            next.click();
         }
-        
         input.focus();
     });
+    input.addEventListener('focus', (e) => {
+        document.onkeydown = (e) => {
+            if(e.key.toLocaleLowerCase() === 'enter'){
+                e.preventDefault();
+                nextOrPrev.click();
+            }
+        }
+    });
+    input.addEventListener('blur', (e) => document.onkeydown = null);
+
     colorInput.addEventListener('input', (e) => {
         changeColor(key, colorInput.value);
         colorFacts.innerHTML = colorInput.value;
@@ -170,8 +178,8 @@ function createInput(key){
                 litReg: preserveRegex
             })
         ){
-            next.click();
             prev.click();
+            next.click();
         }
     });
     isRegex.addEventListener('click', (e) => {
@@ -185,13 +193,14 @@ function createInput(key){
                 litReg: preserveRegex
             })
         ){
-            next.click();
             prev.click();
+            next.click();
         }
     });
 
     next.addEventListener('click', (e) => {
         e.preventDefault();
+        nextOrPrev = next;
         let GI = ELEM_KEYS.indexOf(key);
         CURRENT_INDEXES[GI] = nextMatch(MY_HIGHLIGHTS[GI].elements, CURRENT_INDEXES[GI], {
             direction: 1, 
@@ -202,11 +211,12 @@ function createInput(key){
                 backgroundColor: colorInput.value
             }
         });
-        countNum.innerHTML = CURRENT_INDEXES[GI];
-        countDen.innerHTML = MY_HIGHLIGHTS[GI].elements.length - 1;
+        countNum.innerHTML = CURRENT_INDEXES[GI] + 1;
+        countDen.innerHTML = MY_HIGHLIGHTS[GI].elements.length;
     });
     prev.addEventListener('click', (e) => {
         e.preventDefault();
+        nextOrPrev = prev;
         let GI = ELEM_KEYS.indexOf(key);
         CURRENT_INDEXES[GI] = nextMatch(MY_HIGHLIGHTS[GI].elements, CURRENT_INDEXES[GI], {
             direction: -1, 
@@ -217,8 +227,8 @@ function createInput(key){
                 backgroundColor: colorInput.value
             }
         });
-        countNum.innerHTML = CURRENT_INDEXES[GI];
-        countDen.innerHTML = MY_HIGHLIGHTS[GI].elements.length - 1;
+        countNum.innerHTML = CURRENT_INDEXES[GI] + 1;
+        countDen.innerHTML = MY_HIGHLIGHTS[GI].elements.length;
     });
     minus.addEventListener('click', (e) => {
         e.preventDefault();

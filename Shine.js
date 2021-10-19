@@ -12,7 +12,6 @@ window.addEventListener('load', () => {
     let link3 = document.createElement('link');
     link3.rel = 'stylesheet';
     link3.href = 'https://fonts.googleapis.com/css2?family=Chango&display=swap';
-    document.head.appendChild(meta);
     document.head.appendChild(link1);
     document.head.appendChild(link2);
     document.head.appendChild(link3);
