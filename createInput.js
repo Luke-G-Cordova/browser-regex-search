@@ -146,9 +146,9 @@ function createInput(key){
                 litReg: preserveRegex
             })
         ){
-            let GI = ELEM_KEYS.indexOf(key);
-            prev.click();
             next.click();
+            prev.click();
+            nextOrPrev = next;
         }
         input.focus();
     });
@@ -178,8 +178,9 @@ function createInput(key){
                 litReg: preserveRegex
             })
         ){
-            prev.click();
             next.click();
+            prev.click();
+            nextOrPrev = next;
         }
     });
     isRegex.addEventListener('click', (e) => {
@@ -193,8 +194,9 @@ function createInput(key){
                 litReg: preserveRegex
             })
         ){
-            prev.click();
             next.click();
+            prev.click();
+            nextOrPrev = next;
         }
     });
 
