@@ -27,7 +27,8 @@ function nextMatch(elements, cIndex, options){
         direction: 1,
         newStyles: {},
         oldStyles:{},
-        scrollBehavior: ''
+        scrollBehavior: '',
+        scrollable: true
     };
     if(options){Object.assign(ogo, options);}
 
@@ -63,7 +64,7 @@ function nextMatch(elements, cIndex, options){
                 }
             }
             // scroll to the new current selection so that it is in view
-            goto(elements[cIndex][i], {scrollBehavior: ogo.scrollBehavior});
+            if(ogo.scrollable) goto(elements[cIndex][i], {scrollBehavior: ogo.scrollBehavior});
         }
     }
     return cIndex;

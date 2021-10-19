@@ -47,9 +47,12 @@ function createInput(key){
     caseSensitive.innerHTML = '/i';
     let isRegex = document.createElement('button');
     isRegex.innerHTML = '/r';
+    let scrollable = document.createElement('button');
+    scrollable.innerHTML = '/s';
 
     caseSensitive = modifiers.appendChild(caseSensitive);
     isRegex = modifiers.appendChild(isRegex);
+    scrollable = modifiers.appendChild(scrollable);
 
     input = icWrapper.appendChild(input);
     modifiers = icWrapper.appendChild(modifiers);
@@ -135,6 +138,7 @@ function createInput(key){
     // --- custom event listeners ---
 
     var preserveCase = 'i';
+    var preserveScroll = true;
     var preserveRegex = true;
     var nextOrPrev = next;
     function handleHighlighting(){
@@ -183,6 +187,10 @@ function createInput(key){
         preserveRegex = !preserveRegex;
         handleHighlighting();
     });
+    scrollable.addEventListener('click', (e) => {
+        e.preventDefault();
+        preserveScroll = !preserveScroll;
+    });
 
     next.addEventListener('click', (e) => {
         e.preventDefault();
@@ -195,7 +203,8 @@ function createInput(key){
             }, 
             oldStyles: {
                 backgroundColor: colorInput.value
-            }
+            },
+            scrollable: preserveScroll
         });
         countNum.innerHTML = CURRENT_INDEXES[GI] + 1;
         countDen.innerHTML = MY_HIGHLIGHTS[GI].elements.length;
@@ -211,7 +220,8 @@ function createInput(key){
             }, 
             oldStyles: {
                 backgroundColor: colorInput.value
-            }
+            },
+            scrollable: preserveScroll
         });
         countNum.innerHTML = CURRENT_INDEXES[GI] + 1;
         countDen.innerHTML = MY_HIGHLIGHTS[GI].elements.length;
