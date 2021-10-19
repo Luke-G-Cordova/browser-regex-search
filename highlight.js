@@ -24,6 +24,10 @@ function clearHighlight(keys){
 
 function highlight(root, regex, callback, excludes){
     excludes = ['script', 'style', 'iframe', 'canvas', 'noscript'].concat(excludes);
+    const regexChecks = ['?=', '?!', '<=', '?<!'];
+    function validRegex(){
+
+    }
     var tw = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, function(node) {
         if(
             node.data.trim() === '' || 
@@ -101,26 +105,23 @@ function highlight(root, regex, callback, excludes){
     var newNode;
     var count = 0;
     var nodeList = [];
-
+    
     var groupedNodesLength = groupedNodes.length;
     for(i = 0;i<groupedNodesLength;i++){
 
         masterStr = groupedNodes[i].map(elem => elem.data).join('');
 
-        while(test = regex.exec(masterStr)){
-            
+        while((test = regex.exec(masterStr)) && test[0] !== ''){
             var lastRegIndex = regex.lastIndex;
             
             count++;
 
             var j = 0;
-            
             var nodeParts = '' + groupedNodes[i][j].data;
 
             var testIndex = test.index;
             while(testIndex > nodeParts.length - 1){
                 j++;
-                
                 nodeParts = nodeParts + groupedNodes[i][j].data;
             }
 
@@ -144,7 +145,7 @@ function highlight(root, regex, callback, excludes){
 
             var sameMatchID = 0;
             nodeList.push([]);
-            for(k = 0 ; helpArr.join('').length < test[0].length ; k++){
+            for(let k = 0 ; helpArr.join('').length < test[0].length ; k++){
 
                 newNode = groupedNodes[i][j].splitText(groupedNodes[i][j].length - helpArr[k].length);
                 tag = callback(helpArr[k], sameMatchID);

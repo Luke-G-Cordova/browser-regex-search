@@ -15,7 +15,7 @@ window.addEventListener('load', () => {
     document.head.appendChild(link1);
     document.head.appendChild(link2);
     document.head.appendChild(link3);
-    // <meta http-equiv="Content-Security-Policy" content="default-src 'self'; font-src 'self' data: fonts.gstatic.com;"></meta>
+    
 });
 
 

@@ -271,15 +271,20 @@ function highlightMe(key, options){
     if(GI === -1) {
         ELEM_KEYS.push(key);
         GI = ELEM_KEYS.indexOf(key);
-
         CURRENT_INDEXES.push(CUR_INDEX);
     }else{
         CURRENT_INDEXES[GI] = CUR_INDEX;
     }
+    let finalRegex;
+    try{
+        finalRegex = new RegExp(ogo.match, `${ogo.mods}g`);
+    }catch(e) {
+        finalRegex = false;
+    }
     clearHighlight(key);
-    if(ogo.match !== '' && DEF_REJECTS.indexOf(ogo.match) === -1){
+    if(ogo.match !== '' && DEF_REJECTS.indexOf(ogo.match) === -1 && !!finalRegex){
         let multiNodeMatchId;
-        MY_HIGHLIGHTS[GI] = highlight(document.body, new RegExp(ogo.match, `${ogo.mods}g`), function(match, sameMatchID){
+        MY_HIGHLIGHTS[GI] = highlight(document.body, finalRegex, function(match, sameMatchID){
 
             multiNodeMatchId = sameMatchID;
             var highlightMeElem = document.createElement("highlight-me");
