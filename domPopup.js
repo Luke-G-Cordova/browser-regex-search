@@ -1,5 +1,4 @@
 
-// var ogWindow = window.scrollY;
 var CUR_INDEX = 0;
 var ELEM_KEYS = [];
 var CURRENT_INDEXES = [];
@@ -8,6 +7,8 @@ var DEF_REJECTS = ['\\', ''];
 var popup;
 var popupShine;
 var popupDragger;
+
+
 
 window.addEventListener('load', () => {
     
@@ -99,28 +100,12 @@ window.addEventListener('load', () => {
     });
 });
 
+
 chrome.runtime.onMessage.addListener((msg, sender, response) => {
     if((msg.from === 'background') && (msg.subject === 'open_popup')){
         showPopup();
     }
 });
-
-
-function changeCurrent(e){
-    e.preventDefault();
-}
-
-function changeColor(key, color){
-    let matches = document.querySelectorAll(`highlight-me.${key}`);
-    matches.forEach((elem) => {
-        elem.style.backgroundColor = color;
-        elem.style.color = invertColor(color);
-    });
-}
-
-
-// I should find a more eye pleasing soloution than this
-
 
 function showPopup(){
     if(popup.style.visibility === 'hidden'){

@@ -132,12 +132,12 @@ function createInput(key){
     
 
 
-
+    // --- custom event listeners ---
 
     var preserveCase = 'i';
     var preserveRegex = true;
     var nextOrPrev = next;
-    input.addEventListener('input', (e) => {
+    function handleHighlighting(){
         if(
             highlightMe(key, {
                 match: input.value,
@@ -153,6 +153,10 @@ function createInput(key){
             countNum.innerHTML = '0';
             countDen.innerHTML = '0';
         }
+    }
+    
+    input.addEventListener('input', (e) => {
+        handleHighlighting();
         input.focus();
     });
     input.addEventListener('focus', (e) => {
@@ -169,44 +173,15 @@ function createInput(key){
         changeColor(key, colorInput.value);
         colorFacts.innerHTML = colorInput.value;
     });
-
     caseSensitive.addEventListener('click', (e) => {
         e.preventDefault();
         preserveCase = preserveCase === 'i' ? '' : 'i';
-        if(
-            highlightMe(key, {
-                match: input.value,
-                color: colorInput.value,
-                mods: preserveCase, 
-                litReg: preserveRegex
-            })
-        ){
-            next.click();
-            prev.click();
-            nextOrPrev = next;
-        }else{
-            countNum.innerHTML = '0';
-            countDen.innerHTML = '0';
-        }
+        handleHighlighting();
     });
     isRegex.addEventListener('click', (e) => {
         e.preventDefault();
         preserveRegex = !preserveRegex;
-        if(
-            highlightMe(key, {
-                match: input.value,
-                color: colorInput.value,
-                mods: preserveCase, 
-                litReg: preserveRegex
-            })
-        ){
-            next.click();
-            prev.click();
-            nextOrPrev = next;
-        }else{
-            countNum.innerHTML = '0';
-            countDen.innerHTML = '0';
-        }
+        handleHighlighting();
     });
 
     next.addEventListener('click', (e) => {
@@ -262,6 +237,13 @@ function createInput(key){
 
 
     return div;
+}
+function changeColor(key, color){
+    let matches = document.querySelectorAll(`highlight-me.${key}`);
+    matches.forEach((elem) => {
+        elem.style.backgroundColor = color;
+        elem.style.color = invertColor(color);
+    });
 }
 function highlightMe(key, options){
     let ogo = {
