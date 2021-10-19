@@ -149,6 +149,9 @@ function createInput(key){
             next.click();
             prev.click();
             nextOrPrev = next;
+        }else{
+            countNum.innerHTML = '0';
+            countDen.innerHTML = '0';
         }
         input.focus();
     });
@@ -181,6 +184,9 @@ function createInput(key){
             next.click();
             prev.click();
             nextOrPrev = next;
+        }else{
+            countNum.innerHTML = '0';
+            countDen.innerHTML = '0';
         }
     });
     isRegex.addEventListener('click', (e) => {
@@ -197,6 +203,9 @@ function createInput(key){
             next.click();
             prev.click();
             nextOrPrev = next;
+        }else{
+            countNum.innerHTML = '0';
+            countDen.innerHTML = '0';
         }
     });
 
