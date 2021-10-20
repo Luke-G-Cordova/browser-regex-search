@@ -1,5 +1,5 @@
 function createInput(key){
-    let form = document.querySelector('regeggs-card.chrome-regeggs-popup regeggs-div.formWrapper form.mainForm');
+    let form = document.querySelector('regeggs-card.chrome-regeggs-popup regeggs-div.formWrapper regeggs-form.mainForm');
     
     key || (key = `regeggs-key-${Math.random().toString(36).substr(2, 5)}`);
 
@@ -43,11 +43,11 @@ function createInput(key){
 
     
 
-    let caseSensitive = document.createElement('button');
+    let caseSensitive = document.createElement('regeggs-button');
     caseSensitive.innerHTML = '/i';
-    let isRegex = document.createElement('button');
+    let isRegex = document.createElement('regeggs-button');
     isRegex.innerHTML = '/r';
-    let scrollable = document.createElement('button');
+    let scrollable = document.createElement('regeggs-button');
     scrollable.innerHTML = '/s';
 
     caseSensitive = modifiers.appendChild(caseSensitive);
@@ -73,16 +73,16 @@ function createInput(key){
     cWrapper.className = 'cWrapper';
     cWrapper.id = 'chrepo-cWrapper-id';
 
-    let next = document.createElement('button');
+    let next = document.createElement('regeggs-button');
     new Shine(next, {bubble: false, overrideArgs:[2, 0, 0, 0]});
     
-    let prev = document.createElement('button');
+    let prev = document.createElement('regeggs-button');
     new Shine(prev, {bubble: false, overrideArgs:[2, 0, 0, 0]});
 
-    let minus = document.createElement('button');
+    let minus = document.createElement('regeggs-button');
     new Shine(minus, {bubble: false, overrideArgs:[2, 0, 0, 0]});
 
-    let copy = document.createElement('button');
+    let copy = document.createElement('regeggs-button');
     new Shine(copy, {bubble: false, overrideArgs:[2, 0, 0, 0]});
     
 
@@ -275,13 +275,11 @@ function highlightMe(key, options){
     }else{
         CURRENT_INDEXES[GI] = CUR_INDEX;
     }
-    let finalRegex;
-    try{
-        finalRegex = new RegExp(ogo.match, `${ogo.mods}g`);
-    }catch(e) {
-        finalRegex = false;
-    }
+
+    
     clearHighlight(key);
+    let finalRegex;
+    try{finalRegex = new RegExp(ogo.match, `${ogo.mods}g`);}catch(e) {finalRegex = null;}
     if(ogo.match !== '' && DEF_REJECTS.indexOf(ogo.match) === -1 && !!finalRegex){
         let multiNodeMatchId;
         MY_HIGHLIGHTS[GI] = highlight(document.body, finalRegex, function(match, sameMatchID){
