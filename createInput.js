@@ -196,35 +196,39 @@ function createInput(key){
         e.preventDefault();
         nextOrPrev = next;
         let GI = ELEM_KEYS.indexOf(key);
-        CURRENT_INDEXES[GI] = nextMatch(MY_HIGHLIGHTS[GI].elements, CURRENT_INDEXES[GI], {
-            direction: 1, 
-            newStyles: {
-                backgroundColor: 'orange'
-            }, 
-            oldStyles: {
-                backgroundColor: colorInput.value
-            },
-            scrollable: preserveScroll
-        });
-        countNum.innerHTML = CURRENT_INDEXES[GI] + 1;
-        countDen.innerHTML = MY_HIGHLIGHTS[GI].elements.length;
+        if(!!MY_HIGHLIGHTS[GI]){
+            CURRENT_INDEXES[GI] = nextMatch(MY_HIGHLIGHTS[GI].elements, CURRENT_INDEXES[GI], {
+                direction: 1, 
+                newStyles: {
+                    backgroundColor: 'orange'
+                }, 
+                oldStyles: {
+                    backgroundColor: colorInput.value
+                },
+                scrollable: preserveScroll
+            });
+            countNum.innerHTML = CURRENT_INDEXES[GI] + 1;
+            countDen.innerHTML = MY_HIGHLIGHTS[GI].elements.length;
+        }
     });
     prev.addEventListener('click', (e) => {
         e.preventDefault();
         nextOrPrev = prev;
         let GI = ELEM_KEYS.indexOf(key);
-        CURRENT_INDEXES[GI] = nextMatch(MY_HIGHLIGHTS[GI].elements, CURRENT_INDEXES[GI], {
-            direction: -1, 
-            newStyles: {
-                backgroundColor: 'orange'
-            }, 
-            oldStyles: {
-                backgroundColor: colorInput.value
-            },
-            scrollable: preserveScroll
-        });
-        countNum.innerHTML = CURRENT_INDEXES[GI] + 1;
-        countDen.innerHTML = MY_HIGHLIGHTS[GI].elements.length;
+        if(!!MY_HIGHLIGHTS[GI]){
+            CURRENT_INDEXES[GI] = nextMatch(MY_HIGHLIGHTS[GI].elements, CURRENT_INDEXES[GI], {
+                direction: -1, 
+                newStyles: {
+                    backgroundColor: 'orange'
+                }, 
+                oldStyles: {
+                    backgroundColor: colorInput.value
+                },
+                scrollable: preserveScroll
+            });
+            countNum.innerHTML = CURRENT_INDEXES[GI] + 1;
+            countDen.innerHTML = MY_HIGHLIGHTS[GI].elements.length;
+        }
     });
     minus.addEventListener('click', (e) => {
         e.preventDefault();
@@ -235,14 +239,16 @@ function createInput(key){
     copy.addEventListener('click', (e) =>{
         e.preventDefault();
         let GI = ELEM_KEYS.indexOf(key);
-        let selection = '';
-        MY_HIGHLIGHTS[GI].elements.forEach(elem => {
-            for(let i = 0;i<elem.length;i++){
-                selection += elem[i].innerText;
-            }
-            selection += '\n';
-        });
-        navigator.clipboard.writeText(selection);
+        if(!!MY_HIGHLIGHTS[GI]){
+            let selection = '';
+            MY_HIGHLIGHTS[GI].elements.forEach(elem => {
+                for(let i = 0;i<elem.length;i++){
+                    selection += elem[i].innerText;
+                }
+                selection += '\n';
+            });
+            navigator.clipboard.writeText(selection);
+        }
     });
 
 
