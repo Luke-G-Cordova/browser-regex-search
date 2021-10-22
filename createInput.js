@@ -88,8 +88,7 @@ function createInput(key){
 
     let colorInput = document.createElement('input');
     new Shine(colorInput, {bubble: false, overrideArgs:[2, 0, 0, 0]});
-    let colorFacts = document.createElement('p');
-    colorFacts.style.padding = '0';
+    let colorFacts = document.createElement('regeggs-p');
     colorFacts.style.margin = '0 5px';
 
     
