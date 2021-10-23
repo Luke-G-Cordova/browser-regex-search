@@ -14,6 +14,7 @@ chrome.runtime.onConnect.addListener((port) => {
     }
 });
 chrome.commands.onCommand.addListener((command) => {
+    console.log(command);
     if(command === 'open_popup'){
         let sendObj = {
             from: 'background',

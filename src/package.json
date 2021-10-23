@@ -3,9 +3,7 @@
   "version": "1.0.0",
   "description": "Regular expression functionality for ctrl+f search",
   "main": "background.js",
-  "scripts": {
-    
-  },
+  "scripts": {},
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Luke-G-Cordova/chrome-regex.git"

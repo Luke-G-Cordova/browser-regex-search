@@ -17,7 +17,11 @@ function createInput(key){
     modifiers.className = 'modifiersWrapper';
     modifiers.id = 'chrepo-modifiersWrapper-id';
 
+
+
+
     let input = document.createElement('input');
+
     input.className = 'myInput';
     input.id = 'chrepo-myInput-id';
     input.type = 'text';

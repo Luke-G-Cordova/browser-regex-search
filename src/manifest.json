@@ -11,33 +11,35 @@
     "content_scripts": [
         {
             "matches": ["*://*/*", "https://*/"],
-            "js": ["Shine.js", "Draggable.js", "nextMatch.js", "createInput.js", "domPopup.js", "highlight.js", "picManip.js"],
+            "js": [
+                "Shine.js",
+                "Draggable.js", 
+                "nextMatch.js", 
+                "createInput.js", 
+                "domPopup.js", 
+                "highlight.js"
+            ],
             "css": ["popupStyles.css"]
         }
     ],
     "background":{
-        "service_worker": "background.js"
+        "service_worker": "./background.js"
     },
     "action": {
         "default_icon": {
-            "16": "/images/regex.png",
-            "24": "/images/regex.png",
-            "32": "/images/regex.png"
+            "16": "./images/regex.png",
+            "24": "./images/regex.png",
+            "32": "./images/regex.png"
         },
         "default_title": "Regular Expressions",
         "default_popup": "popup.html"
     },
     "icons": {
-        "16": "/images/regex.png",
-        "48": "/images/regex.png",
-        "128": "/images/regex.png"
+        "16": "./images/regex.png",
+        "48": "./images/regex.png",
+        "128": "./images/regex.png"
     },
     "commands":{
-        "_execute_action":{
-            "suggested_key": {
-                "default": "Ctrl+Shift+L"
-            }
-        },
         "open_popup":{
             "suggested_key": {
                 "default": "Ctrl+Shift+F"
