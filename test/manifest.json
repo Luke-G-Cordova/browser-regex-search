@@ -1,0 +1,45 @@
+{
+    "manifest_version": 3,
+    "name": "TEST Chrome Regular Expressions",
+    "version": "1.0",
+    "description": "This is an extension built to increase functionality of the ctrl+f shortcut in google chrome.",
+    "permissions": [
+        "activeTab",
+        "notifications",
+        "declarativeContent"
+    ],
+    "content_scripts": [
+        {
+            "matches": ["*://*/*", "https://*/"],
+            "js": [
+                "content.js"
+            ],
+            "html":["popup.html"]
+        }
+    ],
+    "background":{
+        "service_worker": "./background.js"
+    },
+    "action": {
+        "default_icon": {
+            "16": "./images/regex.png",
+            "24": "./images/regex.png",
+            "32": "./images/regex.png"
+        },
+        "default_title": "Regular Expressions",
+        "default_popup": "popup.html"
+    },
+    "icons": {
+        "16": "./images/regex.png",
+        "48": "./images/regex.png",
+        "128": "./images/regex.png"
+    },
+    "commands":{
+        "open_popup":{
+            "suggested_key": {
+                "default": "Ctrl+Shift+F"
+            },
+            "description":"opens the dom based popup"
+        }
+    }
+}
