@@ -186,16 +186,31 @@ function createInput(key){
     caseSensitive.addEventListener('click', (e) => {
         e.preventDefault();
         preserveCase = preserveCase === 'i' ? '' : 'i';
+        if(preserveCase === 'i'){
+            caseSensitive.style.backgroundColor = 'gold'
+        }else{
+            caseSensitive.style.backgroundColor = 'red';
+        }
         handleHighlighting();
     });
     isRegex.addEventListener('click', (e) => {
         e.preventDefault();
         preserveRegex = !preserveRegex;
+        if(preserveRegex){
+            isRegex.style.backgroundColor = 'gold'
+        }else{
+            isRegex.style.backgroundColor = 'red';
+        }
         handleHighlighting();
     });
     scrollable.addEventListener('click', (e) => {
         e.preventDefault();
         preserveScroll = !preserveScroll;
+        if(preserveScroll){
+            scrollable.style.backgroundColor = 'gold'
+        }else{
+            scrollable.style.backgroundColor = 'red';
+        }
     });
 
     next.addEventListener('click', (e) => {
