@@ -1,35 +1,15 @@
-
-
-/*
-    I am overdoing the specificity to prevent
-    against inherited styles from any given 
-    page the user visits
-    I am aiming for Selector specificity of (2,2,2)
-    This means:
-        2 elements 1 parent and 1 child
-        2 id 1 for parent 1 for child
-        2 class names 1 for parent 1 for child
-*/
-
-/* all children of the regeggs-card */
-regeggs-div{
-    display: block;
-}
+regeggs-div{display: block;}regeggs-span{display:inline;}
 regeggs-button{
-    width: 25px;
+    min-width: 25px;
     height: 25px;
     border-radius: 50%;
     background-color: gold;
     border: 1px solid black;
     text-align: center;
+    display: inline-block;
 }
-regeggs-button:hover{
-    cursor: pointer;
-    background-color: #ffde26;
-}
-regeggs-button:active{
-    background-color: #dbba00;
-}
+regeggs-button:hover{cursor: pointer;background-color: #ffde26;}
+regeggs-button:active{background-color: #dbba00;}
 regeggs-card#chrepo-id.chrome-regeggs-popup *{
     font-family: 'Trebuchet MS', sans-serif;
     color: black;
@@ -93,8 +73,6 @@ regeggs-div#chrepo-conWrapper-id.controllWrapper regeggs-div#chrepo-inputAdder-i
     float: left;
     background-color: #0a9c00;
 }
-
-/* the main form wrapper */
 regeggs-div#chrepo-pCont-id.pContent regeggs-div#chrepo-formWrapper-id.formWrapper{
     overflow: auto;
     max-height: 200px;
@@ -117,47 +95,15 @@ regeggs-div#chrepo-pCont-id.pContent regeggs-div#chrepo-formWrapper-id.formWrapp
     border: 1px solid black;
 }
 
-/* the main form */
-/* regeggs-div#chrepo-formWrapper-id.formWrapper regeggs-form#chrepo-form-id.mainForm{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-} */
-
-/* the wrapper for the input bar, the modifier buttons (/i /r) and the count */
-form#chrepo-form-id.mainForm regeggs-div#chrepo-inputWrapper-id.inputWrapper{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    width: 100%;
-    font-size: initial;
+regeggs-div.inputWrapper{
+    margin: 5px;
 }
-
-/*styles for the input bar*/
-regeggs-div#chrepo-icWrapper-id.icWrapper input#chrepo-myInput-id.myInput{
-    border-radius: 5px;
-    background-color: white;
-    box-sizing: border-box;
-    width: 60%;
-    border: 1px solid black;
-    padding: 2px;
-    margin: 2px;
+regeggs-div.iWrapper{
+    margin: 5px;
 }
-regeggs-div#chrepo-icWrapper-id.icWrapper regeggs-span#chrepo-modifiersWrapper-id.modifiersWrapper{
-    width: 30%;
+regeggs-div.iWrapper input{
+    height: 20px;
 }
-
-/* wrapper for next/prev/minus/copy inputs and regeggs-buttons*/
-regeggs-div#chrepo-inputWrapper-id.inputWrapper regeggs-div#chrepo-buttonWrapper-id.buttonWrapper{
-    width: 100%;
-}
-
-/* wrapper for color facts and input*/
-regeggs-div#chrepo-buttonWrapper-id.buttonWrapper regeggs-div#chrepo-cWrapper-id.cWrapper{
+regeggs-span.count{
     float: right;
-    display: flex;
-    align-items: center;
-    font-size: initial;
 }

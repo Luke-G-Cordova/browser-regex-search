@@ -15,11 +15,11 @@
                 "Shine.js",
                 "Draggable.js", 
                 "nextMatch.js", 
-                "createInput.js", 
+                "createInput2.js", 
                 "domPopup.js", 
                 "highlight.js"
             ],
-            "css": ["popupStyles.css"]
+            "css": ["popupStyles2.css"]
         }
     ],
     "background":{

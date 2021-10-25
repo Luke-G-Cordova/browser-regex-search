@@ -18,7 +18,7 @@ window.addEventListener('load', () => {
 
     popupShine = new Shine(popup);
     popupShine.updateStyles({
-        visibility: 'hidden',          // this should be hidden
+        visibility: 'visible',          // this should be hidden
         top:`${20 + window.scrollY}px`, 
         left: `${20 + window.scrollX}px`
     });
@@ -55,11 +55,11 @@ window.addEventListener('load', () => {
     formWrapper.className = 'formWrapper';
     formWrapper.id = 'chrepo-formWrapper-id';
 
-    let form = document.createElement('regeggs-form');
-    form.onsubmit = () => false;
-    form.className = 'mainForm';
-    form.id = 'chrepo-form-id';
-    form = formWrapper.appendChild(form);
+    // let form = document.createElement('regeggs-form');
+    // form.onsubmit = () => false;
+    // form.className = 'mainForm';
+    // form.id = 'chrepo-form-id';
+    // form = formWrapper.appendChild(form);
     formWrapper = pContent.appendChild(formWrapper);
 
     popup.appendChild(pContent);

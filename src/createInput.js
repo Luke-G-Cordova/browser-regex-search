@@ -47,13 +47,15 @@ function createInput(key){
     let caseSensitive = document.createElement('regeggs-button');
     new Shine(caseSensitive, {bubble: false, overrideArgs:[2, 0, 0, 0]});
     caseSensitive.innerHTML = '/i';
+
     let isRegex = document.createElement('regeggs-button');
     new Shine(isRegex, {bubble: false, overrideArgs:[2, 0, 0, 0]});
     isRegex.innerHTML = '/r';
+
     let scrollable = document.createElement('regeggs-button');
     new Shine(scrollable, {bubble: false, overrideArgs:[2, 0, 0, 0]});
     scrollable.innerHTML = '/s';
-    scrollable.style.width = '25px';
+    
 
     caseSensitive = modifiers.appendChild(caseSensitive);
     isRegex = modifiers.appendChild(isRegex);
