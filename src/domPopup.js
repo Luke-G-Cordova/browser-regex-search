@@ -9,9 +9,8 @@ var popupShine;
 var popupDragger;
 
 
-
 window.addEventListener('load', () => {
-    
+
     popup = document.createElement('regeggs-card');
     
     popup.className = 'chrome-regeggs-popup';
@@ -102,7 +101,6 @@ window.addEventListener('load', () => {
 
 
 chrome.runtime.onMessage.addListener((msg, sender, response) => {
-    console.log('got it');
     if((msg.from === 'background') && (msg.subject === 'open_popup')){
         showPopup();
     }

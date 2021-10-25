@@ -44,15 +44,16 @@ function createInput(key){
     countDen = count.appendChild(countDen);
 
     
-
-    
-
     let caseSensitive = document.createElement('regeggs-button');
+    new Shine(caseSensitive, {bubble: false, overrideArgs:[2, 0, 0, 0]});
     caseSensitive.innerHTML = '/i';
     let isRegex = document.createElement('regeggs-button');
+    new Shine(isRegex, {bubble: false, overrideArgs:[2, 0, 0, 0]});
     isRegex.innerHTML = '/r';
     let scrollable = document.createElement('regeggs-button');
+    new Shine(scrollable, {bubble: false, overrideArgs:[2, 0, 0, 0]});
     scrollable.innerHTML = '/s';
+    scrollable.style.width = '25px';
 
     caseSensitive = modifiers.appendChild(caseSensitive);
     isRegex = modifiers.appendChild(isRegex);
@@ -105,16 +106,16 @@ function createInput(key){
     
     minus.innerHTML = '-';
     minus.className = 'minus';
-    minus.type = 'button';
+    // minus.type = 'button';
 
     next.innerHTML = '&#8658;';
     next.className = 'next';
-    next.type = 'button';
+    // next.type = 'button';
     next.name = color + '|' + key;
     
     prev.innerHTML = '&#8656;';
     prev.className = 'prev';
-    prev.type = 'button';
+    // prev.type = 'button';
     prev.name = color + '|' + key;
 
     copy.innerHTML = '&#9974;';
