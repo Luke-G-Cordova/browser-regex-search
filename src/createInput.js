@@ -1,5 +1,5 @@
 function createInput(key){
-    let form = document.querySelector('regeggs-card.chrome-regeggs-popup regeggs-div.formWrapper regeggs-form.mainForm');
+    let form = document.querySelector('regeggs-card.chrome-regeggs-popup regeggs-div.formWrapper');
     
     key || (key = `regeggs-key-${Math.random().toString(36).substr(2, 5)}`);
 

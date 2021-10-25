@@ -22,6 +22,7 @@ regeggs-button{
     background-color: gold;
     border: 1px solid black;
     text-align: center;
+    display: inline-block;
 }
 regeggs-button:hover{
     cursor: pointer;
