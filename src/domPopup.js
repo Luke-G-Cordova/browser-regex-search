@@ -18,7 +18,7 @@ window.addEventListener('load', () => {
 
     popupShine = new Shine(popup);
     popupShine.updateStyles({
-        visibility: 'visible',          // this should be hidden
+        visibility: 'hidden',          // this should be hidden
         top:`${20 + window.scrollY}px`, 
         left: `${20 + window.scrollX}px`
     });
