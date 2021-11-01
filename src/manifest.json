@@ -12,14 +12,14 @@
         {
             "matches": ["*://*/*", "https://*/"],
             "js": [
-                "Shine.js",
-                "Draggable.js", 
+                "./stylers/Shine.js",
+                "./stylers/Draggable.js", 
                 "nextMatch.js", 
                 "createInput.js", 
                 "domPopup.js", 
                 "highlight.js"
             ],
-            "css": ["popupStyles.css"]
+            "css": ["./stylers/popupStyles.css"]
         }
     ],
     "background":{
@@ -32,7 +32,7 @@
             "32": "./images/regex.png"
         },
         "default_title": "Regular Expressions",
-        "default_popup": "popup.html"
+        "default_popup": "./stylers/popup.html"
     },
     "icons": {
         "16": "./images/regex.png",

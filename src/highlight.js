@@ -24,10 +24,6 @@ function clearHighlight(keys){
 
 function highlight(root, regex, callback, excludes){
     excludes = ['script', 'style', 'iframe', 'canvas', 'noscript'].concat(excludes);
-    const regexChecks = ['?=', '?!', '<=', '?<!'];
-    function validRegex(){
-
-    }
     var tw = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, function(node) {
         if(
             node.data.trim() === '' || 
