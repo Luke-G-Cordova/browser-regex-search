@@ -7,8 +7,6 @@ Adding functionality to the ctrl+f search function of google Chrome
     <li>multiple searches at once</li>
     <li>ability to change highlight colors</li>
     <li>ability to drag search bar across a given html page</li>
-</ol>
-<ol>Future functionalities: 
     <li>copy selection to clipboard</li>
 </ol>
 <div>Not deployed yet</div>
