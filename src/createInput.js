@@ -148,7 +148,7 @@ function createInput(key){
 
     var preserveCase = 'i';
     var preserveScroll = true;
-    var preserveRegex = true;
+    var preserveRegex = false;
     var nextOrPrev = next;
     var maxLimit = 1000;
     function handleHighlighting(){
@@ -201,7 +201,7 @@ function createInput(key){
     isRegex.addEventListener('click', (e) => {
         e.preventDefault();
         preserveRegex = !preserveRegex;
-        if(preserveRegex){
+        if(!preserveRegex){
             isRegex.style.backgroundColor = 'gold'
         }else{
             isRegex.style.backgroundColor = 'red';
@@ -320,11 +320,14 @@ function highlightMe(key, options){
     try{finalRegex = new RegExp(ogo.match, `${ogo.mods}g`);}catch(e) {finalRegex = null;}
     if(ogo.match !== '' && DEF_REJECTS.indexOf(ogo.match) === -1 && !!finalRegex){
         let multiNodeMatchId;
-        MY_HIGHLIGHTS[GI] = highlight(document.body, {
+        MY_HIGHLIGHTS[GI] = highlight(document.body,
+        {
             regex: finalRegex, 
             excludes: 'regeggs-card',
-            limit: ogo.limit
-        }, function(match, sameMatchID){
+            limit: ogo.limit,
+            loose: true
+        },
+        function(match, sameMatchID){
 
             multiNodeMatchId = sameMatchID;
             var highlightMeElem = document.createElement("highlight-me");

@@ -22,11 +22,12 @@ function clearHighlight(keys){
 }
 
 
-function highlight(root, options, callback){
+function highlight1(root, options, callback){
     let ogo = {
         regex: new RegExp(),
         excludes: [],
-        limit: 1000
+        limit: 1000,
+        loose: false
     }
     if(options){
         Object.assign(ogo, options);
@@ -116,6 +117,263 @@ function highlight(root, options, callback){
         masterStr = groupedNodes[i].map(elem => elem.data).join('');
 
         while((test = ogo.regex.exec(masterStr)) && test[0] !== '' && nodeList.length < ogo.limit){
+            var lastRegIndex = ogo.regex.lastIndex;
+            
+            count++;
+
+            var j = 0;
+            var nodeParts = '' + groupedNodes[i][j].data;
+
+            var testIndex = test.index;
+            while(testIndex > nodeParts.length - 1){
+                j++;
+                nodeParts = nodeParts + groupedNodes[i][j].data;
+            }
+
+            ogo.regex.lastIndex = 0;
+
+            test2 = ogo.regex.exec(groupedNodes[i][j].data);
+            
+            var inThisNode = nodeParts.substr(testIndex);
+
+            test2 || (
+                test2 = [], 
+                test2[0] = inThisNode, 
+                test2['index'] = groupedNodes[i][j].data.length - inThisNode.length, 
+                test2['input'] = groupedNodes[i][j].data,
+                test2['groups'] = undefined
+            );
+            
+            var helpArr = [];
+
+            helpArr.push(test2[0]);
+
+            var sameMatchID = 0;
+            nodeList.push([]);
+            for(let k = 0 ; helpArr.join('').length < test[0].length ; k++){
+
+                newNode = groupedNodes[i][j].splitText(groupedNodes[i][j].length - helpArr[k].length);
+                tag = callback(helpArr[k], sameMatchID);
+                newNode.data = '';
+                insertedNode = newNode.parentNode.insertBefore(tag, newNode);
+                nodeList[nodeList.length - 1].push(insertedNode);
+                if(groupedNodes[i][j].data.length === 0){
+                    groupedNodes[i][j] = insertedNode.firstChild;
+                }else{
+                    groupedNodes[i].splice(j + 1, 0, insertedNode.firstChild);
+                    j++;
+                }
+                j++;
+                sameMatchID++;
+                helpArr.push(groupedNodes[i][j].data);
+            }
+            var lastNode = helpArr.pop();
+            if(helpArr[0]){
+
+                newNode = groupedNodes[i][j].splitText(0);
+                tag = callback(lastNode.substr(0, test[0].length - helpArr.join('').length), -1);
+                newNode.data = newNode.data.substr(test[0].length - helpArr.join('').length);
+                insertedNode = newNode.parentNode.insertBefore(tag, newNode);
+                nodeList[nodeList.length - 1].push(insertedNode);
+                
+                groupedNodes[i][j] = insertedNode.firstChild;
+                if(newNode.data.length > 0){
+                    groupedNodes[i].splice(j + 1, 0, newNode);
+                }
+                sameMatchID++;
+            }else{
+                newNode = groupedNodes[i][j].splitText(test2.index);
+                
+                tag = callback(test2[0], -1);
+                newNode.data = newNode.data.substr(test2[0].length);
+                insertedNode = newNode.parentNode.insertBefore(tag, newNode);
+
+                nodeList[nodeList.length - 1].push(insertedNode);
+
+                if(groupedNodes[i][j].data === ''){
+                    if(newNode.data === ''){
+                        groupedNodes[i].splice(j, 1, insertedNode.firstChild);
+                    }else{
+                        groupedNodes[i].splice(j, 1, insertedNode.firstChild, newNode);
+                    }
+                }else{
+                    if(newNode.data === ''){
+                        groupedNodes[i].splice(j + 1, 0, insertedNode.firstChild);
+                    }else{
+                        groupedNodes[i].splice(j + 1, 0, insertedNode.firstChild, newNode);
+                    }
+                }
+            }
+            nodeParts = '';
+            ogo.regex.lastIndex = lastRegIndex;
+        }
+        ogo.regex.lastIndex = 0;
+    }
+    return {
+        count,
+        elements: nodeList
+    };
+}
+
+
+
+let lev = levenshteinDist('/hi/', 'hi', true);
+
+console.log(lev);
+
+
+
+function levenshteinDist(search, test, ratio_calc = false){
+    let noReg = search.toString();
+    noReg = noReg.substr(1, noReg.indexOf('/', 2) - 1);
+    let rows = noReg.length + 1;
+    let cols = test.length + 1;
+    let distance = new Array(rows).fill(new Array(cols).fill(0, 0, cols));
+    let ratio;
+    for(let i = 1;i<rows;i++){
+        for(let k = 1;k<cols;k++){
+            distance[i][0] = i;
+            distance[0][k] = k;
+        }
+    }
+    let cost;
+    console.log(distance);
+    for(var col = 1;col<=cols;col++){
+        for(var row = 1;row<=rows;row++){
+            if(noReg[row-1] == test[col-1]){
+                cost = 0;
+            }else{
+                if(ratio_calc){
+                    cost = 2;
+                }else{
+                    cost = 1;
+                }
+            }
+            
+            distance[row][col] = Math.min(
+                distance[row-1][col] + 1,
+                distance[row][col-1] + 1,
+                distance[row-1][col-1] + cost
+            );
+        }
+    }
+    console.log(distance);
+    if(ratio_calc){
+        ratio = ((noReg.length+test.length) - distance[row-1][col-1]) / (noReg.length+test.length);
+        return ratio;
+    }else{
+        return distance[row-1][col-1];
+    }
+    
+}
+
+
+
+function highlight(root, options, callback){
+    let ogo = {
+        regex: new RegExp(),
+        excludes: [],
+        limit: 1000,
+        loose: false
+    }
+    if(options){
+        Object.assign(ogo, options);
+    }
+    ogo.excludes = ['script', 'style', 'iframe', 'canvas', 'noscript'].concat(ogo.excludes);
+    var tw = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, function(node) {
+        if(
+            node.data.trim() === '' || 
+            isDescendant(ogo.excludes, node)||
+            // excludes.indexOf(node.parentNode.tagName.toLowerCase()) > -1 ||
+            !node.parentElement.offsetParent
+        ){
+            return NodeFilter.FILTER_REJECT;
+        }
+        return NodeFilter.FILTER_ACCEPT;
+    });
+    
+    function isDescendant(tags, node){
+        if(node !== document.body && tags.indexOf(node.parentNode.tagName.toLowerCase()) === -1){
+            return isDescendant(tags, node.parentNode);
+        }
+        return node !== document.body;
+    }
+
+    function trimBadHtmlNodes(node){
+        if(node.data.indexOf('\n') !== -1){
+            var before = after = '';
+            after = (node.data[node.data.length - 1] === ' ' || node.data[node.data.length - 1] === '\n') ? ' ' : '';
+            before = (node.data[0] === ' ' || node.data[0] === '\n') ? ' ' : '';
+            node.data = before + node.data.trim() + after;
+        }
+    }
+    
+    function relativeNodes(node1, node2){
+        var parNode1 = node1, parNode2 = node2;
+        var atRoot = false;
+        while(true){
+            atRoot = parNode1 === root && parNode2 === root;
+            if(atRoot) return null;
+            if(parNode1.parentNode === node2.parentNode) return node2.parentNode;
+            if(parNode2.parentNode === node1.parentNode) return node1.parentNode;
+            if(parNode1 !== root){
+                parNode1 = parNode1.parentNode;
+                if(window.getComputedStyle(parNode1, '').display === 'block'){
+                    parNode1 = root;
+                }
+            }
+            if(parNode2 !== root){
+                parNode2 = parNode2.parentNode;
+                if(window.getComputedStyle(parNode2, '').display === 'block'){
+                    parNode2 = root;
+                }
+            }
+        }
+    }
+
+    var nodes = [];
+    var groupedNodes = [];
+    var lastElem;
+    while(tw.nextNode()){
+        trimBadHtmlNodes(tw.currentNode);
+        if(groupedNodes.length === 0){
+            groupedNodes.push([]);
+            groupedNodes[groupedNodes.length - 1].push(tw.currentNode);
+        }else{
+            lastElem = nodes[nodes.length -1];
+            if(relativeNodes(tw.currentNode, lastElem)){
+                groupedNodes[groupedNodes.length - 1].push(tw.currentNode);
+            }else{
+                groupedNodes[groupedNodes.length] = [];
+                groupedNodes[groupedNodes.length - 1].push(tw.currentNode);
+            }
+        }
+        nodes.push(tw.currentNode);
+    }
+    var masterStr = '';
+    var test;
+    var test2;
+    var tag;
+    var newNode;
+    var count = 0;
+    var nodeList = [];
+
+    var groupedNodesLength = groupedNodes.length;
+    for(i = 0;i<groupedNodesLength && nodeList.length < ogo.limit;i++){
+
+        masterStr = groupedNodes[i].map(elem => elem.data).join('');
+
+        // let close = levenshteinDist(ogo.regex, masterStr);
+        // console.log(close);
+
+
+        while(
+            (
+                (test = ogo.regex.exec(masterStr)) && 
+                test[0] !== ''
+            ) && 
+            nodeList.length < ogo.limit
+        ){
             var lastRegIndex = ogo.regex.lastIndex;
             
             count++;
