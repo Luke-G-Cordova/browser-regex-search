@@ -1,3 +1,5 @@
+
+var getGI = (key) => ELEM_KEYS.indexOf(key);
 function createInput(key){
     let form = document.querySelector('regeggs-card.chrome-regeggs-popup regeggs-div.formWrapper');
     
@@ -16,9 +18,6 @@ function createInput(key){
     let modifiers = document.createElement('regeggs-span');
     modifiers.className = 'modifiersWrapper';
     modifiers.id = 'chrepo-modifiersWrapper-id';
-
-
-
 
     let input = document.createElement('input');
 
@@ -55,11 +54,18 @@ function createInput(key){
     let scrollable = document.createElement('regeggs-button');
     new Shine(scrollable, {bubble: false, overrideArgs:[2, 0, 0, 0]});
     scrollable.innerHTML = '/s';
+
+    let maxMatchLimit = document.createElement('input');
+    maxMatchLimit.type = 'number'
+    maxMatchLimit.value = 1000;
+    maxMatchLimit.style.width = '50px';
+    
     
 
     caseSensitive = modifiers.appendChild(caseSensitive);
     isRegex = modifiers.appendChild(isRegex);
     scrollable = modifiers.appendChild(scrollable);
+    maxMatchLimit = modifiers.appendChild(maxMatchLimit);
 
     input = icWrapper.appendChild(input);
     modifiers = icWrapper.appendChild(modifiers);
@@ -138,22 +144,21 @@ function createInput(key){
     div = form.appendChild(div);
     
     
-    
-
-
     // --- custom event listeners ---
 
     var preserveCase = 'i';
     var preserveScroll = true;
     var preserveRegex = true;
     var nextOrPrev = next;
+    var maxLimit = 1000;
     function handleHighlighting(){
         if(
             highlightMe(key, {
                 match: input.value,
                 color: colorInput.value,
                 mods: preserveCase, 
-                litReg: preserveRegex
+                litReg: preserveRegex,
+                limit: maxLimit
             })
         ){
             next.click();
@@ -212,11 +217,15 @@ function createInput(key){
             scrollable.style.backgroundColor = 'red';
         }
     });
-
+    maxMatchLimit.addEventListener('input', (e) => {
+        e.preventDefault();
+        maxLimit = maxMatchLimit.value;
+        handleHighlighting();
+    });
     next.addEventListener('click', (e) => {
         e.preventDefault();
         nextOrPrev = next;
-        let GI = ELEM_KEYS.indexOf(key);
+        let GI = getGI(key);
         if(!!MY_HIGHLIGHTS[GI]){
             CURRENT_INDEXES[GI] = nextMatch(MY_HIGHLIGHTS[GI].elements, CURRENT_INDEXES[GI], {
                 direction: 1, 
@@ -235,7 +244,7 @@ function createInput(key){
     prev.addEventListener('click', (e) => {
         e.preventDefault();
         nextOrPrev = prev;
-        let GI = ELEM_KEYS.indexOf(key);
+        let GI = getGI(key);
         if(!!MY_HIGHLIGHTS[GI]){
             CURRENT_INDEXES[GI] = nextMatch(MY_HIGHLIGHTS[GI].elements, CURRENT_INDEXES[GI], {
                 direction: -1, 
@@ -259,7 +268,7 @@ function createInput(key){
     });
     copy.addEventListener('click', (e) =>{
         e.preventDefault();
-        let GI = ELEM_KEYS.indexOf(key);
+        let GI = getGI(key);
         if(!!MY_HIGHLIGHTS[GI]){
             let selection = '';
             MY_HIGHLIGHTS[GI].elements.forEach(elem => {
@@ -272,9 +281,9 @@ function createInput(key){
         }
     });
 
-
     return div;
 }
+
 function changeColor(key, color){
     let matches = document.querySelectorAll(`highlight-me.${key}`);
     matches.forEach((elem) => {
@@ -282,22 +291,24 @@ function changeColor(key, color){
         elem.style.color = invertColor(color);
     });
 }
+
 function highlightMe(key, options){
     let ogo = {
         match: '',
         color: '#FFFF00',
         mods: '',
-        litReg: false
+        litReg: false,
+        limit: 1000
     }
     if(options){
         Object.assign(ogo, options);
         ogo.match = ogo.litReg ? ogo.match : escapeRegExp(ogo.match);
     }
-    let GI = ELEM_KEYS.indexOf(key);
+    let GI = getGI(key);
     CUR_INDEX = 0;
     if(GI === -1) {
         ELEM_KEYS.push(key);
-        GI = ELEM_KEYS.indexOf(key);
+        GI = getGI(key);
         CURRENT_INDEXES.push(CUR_INDEX);
     }else{
         CURRENT_INDEXES[GI] = CUR_INDEX;
@@ -309,7 +320,11 @@ function highlightMe(key, options){
     try{finalRegex = new RegExp(ogo.match, `${ogo.mods}g`);}catch(e) {finalRegex = null;}
     if(ogo.match !== '' && DEF_REJECTS.indexOf(ogo.match) === -1 && !!finalRegex){
         let multiNodeMatchId;
-        MY_HIGHLIGHTS[GI] = highlight(document.body, finalRegex, function(match, sameMatchID){
+        MY_HIGHLIGHTS[GI] = highlight(document.body, {
+            regex: finalRegex, 
+            excludes: 'regeggs-card',
+            limit: ogo.limit
+        }, function(match, sameMatchID){
 
             multiNodeMatchId = sameMatchID;
             var highlightMeElem = document.createElement("highlight-me");
@@ -327,7 +342,7 @@ function highlightMe(key, options){
 
             highlightMeElem.textContent = match;
             return highlightMeElem;
-        }, 'regeggs-card');
+        });
         return true;
     }
     return false;

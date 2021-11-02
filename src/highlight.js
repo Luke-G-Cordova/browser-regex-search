@@ -22,12 +22,20 @@ function clearHighlight(keys){
 }
 
 
-function highlight(root, regex, callback, excludes){
-    excludes = ['script', 'style', 'iframe', 'canvas', 'noscript'].concat(excludes);
+function highlight(root, options, callback){
+    let ogo = {
+        regex: new RegExp(),
+        excludes: [],
+        limit: 1000
+    }
+    if(options){
+        Object.assign(ogo, options);
+    }
+    ogo.excludes = ['script', 'style', 'iframe', 'canvas', 'noscript'].concat(ogo.excludes);
     var tw = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, function(node) {
         if(
             node.data.trim() === '' || 
-            isDescendant(excludes, node)||
+            isDescendant(ogo.excludes, node)||
             // excludes.indexOf(node.parentNode.tagName.toLowerCase()) > -1 ||
             !node.parentElement.offsetParent
         ){
@@ -103,12 +111,12 @@ function highlight(root, regex, callback, excludes){
     var nodeList = [];
     
     var groupedNodesLength = groupedNodes.length;
-    for(i = 0;i<groupedNodesLength;i++){
+    for(i = 0;i<groupedNodesLength && nodeList.length < ogo.limit;i++){
 
         masterStr = groupedNodes[i].map(elem => elem.data).join('');
 
-        while((test = regex.exec(masterStr)) && test[0] !== ''){
-            var lastRegIndex = regex.lastIndex;
+        while((test = ogo.regex.exec(masterStr)) && test[0] !== '' && nodeList.length < ogo.limit){
+            var lastRegIndex = ogo.regex.lastIndex;
             
             count++;
 
@@ -121,9 +129,9 @@ function highlight(root, regex, callback, excludes){
                 nodeParts = nodeParts + groupedNodes[i][j].data;
             }
 
-            regex.lastIndex = 0;
+            ogo.regex.lastIndex = 0;
 
-            test2 = regex.exec(groupedNodes[i][j].data);
+            test2 = ogo.regex.exec(groupedNodes[i][j].data);
             
             var inThisNode = nodeParts.substr(testIndex);
 
@@ -196,9 +204,9 @@ function highlight(root, regex, callback, excludes){
                 }
             }
             nodeParts = '';
-            regex.lastIndex = lastRegIndex;
+            ogo.regex.lastIndex = lastRegIndex;
         }
-        regex.lastIndex = 0;
+        ogo.regex.lastIndex = 0;
     }
     return {
         count,
