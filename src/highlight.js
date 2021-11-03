@@ -216,55 +216,45 @@ function highlight1(root, options, callback){
 }
 
 
-
-let lev = levenshteinDist('/hi/', 'hi', true);
-
-console.log(lev);
-
-
-
 function levenshteinDist(search, test, ratio_calc = false){
-    let noReg = search.toString();
-    noReg = noReg.substr(1, noReg.indexOf('/', 2) - 1);
-    let rows = noReg.length + 1;
+    let rows = search.length + 1;
     let cols = test.length + 1;
-    let distance = new Array(rows).fill(new Array(cols).fill(0, 0, cols));
-    let ratio;
-    for(let i = 1;i<rows;i++){
-        for(let k = 1;k<cols;k++){
-            distance[i][0] = i;
+    let distance = new Array(rows);
+    
+    // setup initial matrix
+    for(let i = 0;i<rows;i++){
+        distance[i] = new Array(cols).fill(0, 0, cols);
+    }
+    for(let i = 0;i<distance.length;i++){
+        distance[i][0] = i;
+        for(let k = 0;k<distance[i].length;k++){
             distance[0][k] = k;
         }
     }
+    
+    // preform levenshtein algorithm on matrix
     let cost;
-    console.log(distance);
-    for(var col = 1;col<=cols;col++){
-        for(var row = 1;row<=rows;row++){
-            if(noReg[row-1] == test[col-1]){
+    for(let i = 1;i<rows;i++){
+        for(let k = 1;k<cols;k++){
+            if(search[i-1] === test[k-1]){
                 cost = 0;
+            }else if(ratio_calc){
+                cost = 2;
             }else{
-                if(ratio_calc){
-                    cost = 2;
-                }else{
-                    cost = 1;
-                }
+                cost = 1;
             }
-            
-            distance[row][col] = Math.min(
-                distance[row-1][col] + 1,
-                distance[row][col-1] + 1,
-                distance[row-1][col-1] + cost
+            distance[i][k] = Math.min(
+                distance[i-1][k] + 1, 
+                distance[i][k-1] + 1,
+                distance[i-1][k-1] + cost
             );
         }
     }
-    console.log(distance);
     if(ratio_calc){
-        ratio = ((noReg.length+test.length) - distance[row-1][col-1]) / (noReg.length+test.length);
-        return ratio;
+        return ((search.length + test.length) - distance[rows-1][cols-1]) / (search.length + test.length)
     }else{
-        return distance[row-1][col-1];
+        return distance[rows-1][cols-1];
     }
-    
 }
 
 
