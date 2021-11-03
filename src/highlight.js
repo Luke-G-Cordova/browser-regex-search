@@ -215,6 +215,9 @@ function highlight1(root, options, callback){
     };
 }
 
+let dist = levenshteinDist('Token sad', 'ajaToken sadfe', true);
+console.log(dist);
+
 
 function levenshteinDist(search, test, ratio_calc = false){
     let rows = search.length + 1;
@@ -250,6 +253,19 @@ function levenshteinDist(search, test, ratio_calc = false){
             );
         }
     }
+
+
+    let indexes = [];
+    for(let i = 1;i<distance[rows-1].length-1;i++){
+        if((indexes.length%2===0 && distance[rows-1][i]<distance[rows-1][i-1])){
+            indexes.push(distance[rows-1][i]);
+        }else if((indexes.length%2!==0 && distance[rows-1][i]>distance[rows-1][i-1])){
+            indexes.push(distance[rows-1][i-1]);
+        }
+        console.log(distance[rows-1][i]);
+    }
+    console.log(indexes);
+    console.log(test.substring(Math.min(...indexes)-1, Math.max(...indexes)+2));
     if(ratio_calc){
         return ((search.length + test.length) - distance[rows-1][cols-1]) / (search.length + test.length)
     }else{
@@ -352,9 +368,10 @@ function highlight(root, options, callback){
     for(i = 0;i<groupedNodesLength && nodeList.length < ogo.limit;i++){
 
         masterStr = groupedNodes[i].map(elem => elem.data).join('');
-
-        // let close = levenshteinDist(ogo.regex, masterStr);
-        // console.log(close);
+        let mReg = ogo.regex.toString();
+        mReg = mReg.substring(mReg.indexOf('/') + 1, mReg.lastIndexOf('/'));
+        let close = levenshteinDist(mReg, masterStr, true);
+        console.log(close);
 
 
         while(
