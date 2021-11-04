@@ -215,57 +215,57 @@ function highlight1(root, options, callback){
     };
 }
 
-let dist = levenshteinDist('Token sad', 'ajaToken sadfe', true);
+let dist = levenshteinDist('Token', 'jhk Token sad Token asd token fe', true);
 console.log(dist);
-
-
 function levenshteinDist(search, test, ratio_calc = false){
     let rows = search.length + 1;
     let cols = test.length + 1;
     let distance = new Array(rows);
     
     // setup initial matrix
-    for(let i = 0;i<rows;i++){
-        distance[i] = new Array(cols).fill(0, 0, cols);
-    }
-    for(let i = 0;i<distance.length;i++){
-        distance[i][0] = i;
-        for(let k = 0;k<distance[i].length;k++){
-            distance[0][k] = k;
+    let createMatrix = function(rows, cols, matrix){
+        for(let i = 0;i<rows;i++){
+            matrix[i] = new Array(cols).fill(0, 0, cols);
         }
-    }
-    
-    // preform levenshtein algorithm on matrix
-    let cost;
-    for(let i = 1;i<rows;i++){
-        for(let k = 1;k<cols;k++){
-            if(search[i-1] === test[k-1]){
-                cost = 0;
-            }else if(ratio_calc){
-                cost = 2;
-            }else{
-                cost = 1;
+        for(let i = 0;i<matrix.length;i++){
+            matrix[i][0] = i;
+            for(let k = 0;k<matrix[i].length;k++){
+                matrix[0][k] = k;
             }
-            distance[i][k] = Math.min(
-                distance[i-1][k] + 1, 
-                distance[i][k-1] + 1,
-                distance[i-1][k-1] + cost
-            );
         }
     }
 
-
-    let indexes = [];
-    for(let i = 1;i<distance[rows-1].length-1;i++){
-        if((indexes.length%2===0 && distance[rows-1][i]<distance[rows-1][i-1])){
-            indexes.push(distance[rows-1][i]);
-        }else if((indexes.length%2!==0 && distance[rows-1][i]>distance[rows-1][i-1])){
-            indexes.push(distance[rows-1][i-1]);
+    // preform levenshtein algorithm on matrix
+    let transMatrix = function(matrix){
+        let cost;
+        for(let i = 1;i<rows;i++){
+            for(let k = 1;k<cols;k++){
+                if(search[i-1] === test[k-1]){
+                    cost = 0;
+                }else if(ratio_calc){
+                    cost = 2;
+                }else{
+                    cost = 1;
+                }
+                matrix[i][k] = Math.min(
+                    matrix[i-1][k] + 1, 
+                    matrix[i][k-1] + 1,
+                    matrix[i-1][k-1] + cost
+                );
+            }
         }
-        console.log(distance[rows-1][i]);
     }
-    console.log(indexes);
-    console.log(test.substring(Math.min(...indexes)-1, Math.max(...indexes)+2));
+    createMatrix(rows, cols, distance);
+    transMatrix(distance)
+    console.log(distance);
+
+    // get indexes of likely matches
+    let leastChange = Math.min(...distance[rows-1]);
+    let lcind = distance[rows-1].indexOf(leastChange);
+    for(let i = 1, k = 0;i<=rows; i++, k++){
+        console.log(distance[rows-i][lcind-k]);
+    }
+
     if(ratio_calc){
         return ((search.length + test.length) - distance[rows-1][cols-1]) / (search.length + test.length)
     }else{
