@@ -31,8 +31,7 @@
             "24": "./images/regex.png",
             "32": "./images/regex.png"
         },
-        "default_title": "Regular Expressions",
-        "default_popup": "./stylers/popup.html"
+        "default_title": "Regular Expressions"
     },
     "icons": {
         "16": "./images/regex.png",

@@ -1,17 +1,6 @@
 
 var inputs = [];
-chrome.runtime.onConnect.addListener((port) => {
-    if(port.name === 'popup'){
-        port.onDisconnect.addListener(() => {
-            let sendObj = {
-                from: 'background',
-                subject: 'popupClosed',
-                data: ''
-            };
-            sendData(sendObj);
-        });
-    }
-});
+
 chrome.commands.onCommand.addListener((command) => {
     if(command === 'open_popup'){
         let sendObj = {
@@ -25,6 +14,14 @@ chrome.runtime.onMessage.addListener((msg, sender, response) => {
     if(msg.from === 'popup' && msg.subject === 'getInputs'){
         response(inputs);
     }
+});
+chrome.action.onClicked.addListener((tab) => {
+    let sendObj = {
+        from: 'background', 
+        subject: 'open_popup'
+    }
+    sendData(sendObj);
+    
 });
 
 function sendData(sendObj){
