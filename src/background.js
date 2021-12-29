@@ -9,12 +9,10 @@ chrome.runtime.onConnect.addListener((port) => {
                 data: ''
             };
             sendData(sendObj);
-            console.log('popup closed');
         });
     }
 });
 chrome.commands.onCommand.addListener((command) => {
-    console.log(command);
     if(command === 'open_popup'){
         let sendObj = {
             from: 'background',
