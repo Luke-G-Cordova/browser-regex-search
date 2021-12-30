@@ -12,6 +12,7 @@
         {
             "matches": ["*://*/*", "https://*/"],
             "js": [
+                "global_vars.js",
                 "./stylers/Shine.js",
                 "./stylers/Draggable.js", 
                 "nextMatch.js", 

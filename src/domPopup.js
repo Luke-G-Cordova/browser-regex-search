@@ -1,19 +1,4 @@
 
-var CUR_INDEX = 0;
-var ELEM_KEYS = [];
-var CURRENT_INDEXES = [];
-var MY_HIGHLIGHTS = [];
-var DEF_REJECTS = ['\\', ''];
-var popup;
-var popupShine;
-var popupDragger;
-
-
-window.addEventListener('load', () => {
-
-});
-
-
 chrome.runtime.onMessage.addListener((msg, sender, response) => {
     if((msg.from === 'background') && (msg.subject === 'open_popup')){
         showPopup();
@@ -21,12 +6,6 @@ chrome.runtime.onMessage.addListener((msg, sender, response) => {
 });
 
 function showPopup(){
-    // if(popup.style.visibility === 'hidden'){
-    //     popup.style.visibility = 'visible';
-    //     ogWindow = window.scrollY;
-    // }else{
-    //     popup.style.visibility = 'hidden';
-    // }
     if(!popup){
         popup = document.createElement('regeggs-card');
     
@@ -35,7 +14,7 @@ function showPopup(){
     
         popupShine = new Shine(popup);
         popupShine.updateStyles({
-            visibility: 'visible',          // this should be hidden
+            visibility: 'visible',          // this should be visible
             top:`${20 + window.scrollY}px`, 
             left: `${20 + window.scrollX}px`
         });
@@ -72,11 +51,6 @@ function showPopup(){
         formWrapper.className = 'formWrapper';
         formWrapper.id = 'chrepo-formWrapper-id';
     
-        // let form = document.createElement('regeggs-form');
-        // form.onsubmit = () => false;
-        // form.className = 'mainForm';
-        // form.id = 'chrepo-form-id';
-        // form = formWrapper.appendChild(form);
         formWrapper = pContent.appendChild(formWrapper);
     
         popup.appendChild(pContent);
