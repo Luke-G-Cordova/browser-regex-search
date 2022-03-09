@@ -18,7 +18,7 @@
                 "nextMatch.js", 
                 "createInput.js", 
                 "domPopup.js", 
-                "highlight.js"
+                "highlight_iframe_test.js"
             ],
             "css": ["./stylers/popupStyles.css"]
         }
