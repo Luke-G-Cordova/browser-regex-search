@@ -1,8 +1,7 @@
 class Draggable {
     constructor(elem, options) {
         this.ogo = {
-            noDragElems: [],
-            Shine: null
+            noDragElems: []
         }
         this.elem = elem;
         
@@ -20,7 +19,7 @@ class Draggable {
         
         var noDragElems = [].slice.call(this.ogo.noDragElems);
         var border = window.getComputedStyle(this.elem, null).getPropertyValue('border-left-width'); 
-        border = Number(border.substr(0, border.length - 2)) + 20;
+        border = Number(border.substring(0, border.length - 2)) + 20;
         if(noDragElems.length !== 0){
             noDragElems.forEach((ndElem) =>{
                 ndElem.onmouseover = (e) => {
@@ -48,7 +47,6 @@ class Draggable {
                     this.elem.style.left = this.elem.offsetLeft + (endX - startX) + 'px';
                     this.elem.style.top = this.elem.offsetTop + (endY - startY) + 'px';
 
-                    this.shadowRelativeToVisible();
 
                     if(this.elem.offsetLeft + this.elem.clientWidth + border > window.innerWidth + window.scrollX){
                         this.elem.style.left = window.innerWidth - this.elem.clientWidth - border + 'px';
@@ -87,8 +85,6 @@ class Draggable {
             this.ogo.Shine.addNewBoxShadow(
                 og => `${bShadowValueX}px ${bShadowValueY}px 5px rgba(0,0,0, .5), ${og}`
             );
-        }else{
-
         }
         function scale(num, inMin, inMax, outMin, outMax){
             return (num - inMin)*(outMax-outMin)/(inMax-inMin)+outMin;

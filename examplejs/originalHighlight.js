@@ -158,7 +158,7 @@ function highlight(root, regex, callback, excludes){
             //          ['the', 'house'], 
             //          ['a', 'car']
             //      ]
-            // if i = 0 and j = 0 groupedNodes[i][j] = 'house'
+            // if i = 0 and j = 1 groupedNodes[i][j] = 'house'
             var j = 0;
             
             // nodeParts keeps track of which node we are searching through
@@ -167,7 +167,7 @@ function highlight(root, regex, callback, excludes){
             var nodeParts = '' + groupedNodes[i][j].data;
 
             // this loop finds which node contains the first occurence 
-            // of the regex, j will represent the first occurence of the
+            // of the regex, j will represent the first occurence
             while(test.index > nodeParts.length - 1){
                 j++;
                 nodeParts += groupedNodes[i][j].data;
@@ -188,12 +188,12 @@ function highlight(root, regex, callback, excludes){
             //      oneNode has 'hi t' and the next has 'he bird', we still want 
             //          to be able to highlight the 'the' accross both nodes.
             //      in this case, inThisNode = 't'
-            var inThisNode = nodeParts.substr(test.index);
+            var inThisNode = nodeParts.substring(test.index);
 
             // in the case of a match accross 2 nodes, test2 will not catch
             // the match because it matching against the full regex not part of it.
             // in this case, test2 is undefined, so this next statement sets test2
-            // to a valid test case when undefined.
+            // to a valid test case of the value of inThisNode when undefined.
             test2 || (
                 test2 = [], 
                 test2[0] = inThisNode, 
@@ -221,7 +221,7 @@ function highlight(root, regex, callback, excludes){
             var sameMatchID = 0;
             
             // this for loop takes care of the first node that the match occures in, and
-            // all subsequent matches, excluding the very last match.
+            // all subsequent matches, excluding the very last node.
             nodeList.push([]);
             for(k = 0 ; helpArr.join('').length < test[0].length ; k++){
                 

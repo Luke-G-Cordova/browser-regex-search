@@ -17,8 +17,8 @@
                 "./stylers/Draggable.js", 
                 "nextMatch.js", 
                 "createInput.js", 
-                "domPopup.js", 
-                "highlight_iframe_test.js"
+                "domPopup.js",
+                "highlight.js"
             ],
             "css": ["./stylers/popupStyles.css"]
         }

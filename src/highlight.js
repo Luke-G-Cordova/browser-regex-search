@@ -110,7 +110,6 @@ function highlight(root, options, callback){
     var newNode;
     var count = 0;
     var nodeList = [];
-    
 
     var groupedNodesLength = groupedNodes.length;
     for(i = 0;i<groupedNodesLength && nodeList.length < ogo.limit;i++){
@@ -135,7 +134,7 @@ function highlight(root, options, callback){
 
             test2 = ogo.regex.exec(groupedNodes[i][j].data);
             
-            var inThisNode = nodeParts.substr(testIndex);
+            var inThisNode = nodeParts.substring(testIndex);
 
             test2 || (
                 test2 = [], 
