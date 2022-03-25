@@ -1,3 +1,14 @@
+chrome.runtime.connect({ name: 'highlight' });
+function sendIframeMessage(url){
+    chrome.runtime.sendMessage({
+        from: 'highlight',
+        subject: 'newTabIframe',
+        url
+    }, res => {
+
+    });
+}
+
 // http://blog.alexanderdickson.com/javascript-replacing-text
 function clearHighlight(keys){
     var elems;

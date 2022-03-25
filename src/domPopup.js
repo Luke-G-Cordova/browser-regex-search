@@ -5,6 +5,7 @@ chrome.runtime.onMessage.addListener((msg, sender, response) => {
     }
 });
 
+
 function showPopup(){
     if(!popup){
         function updateStyles(styles, elem){

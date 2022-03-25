@@ -1,5 +1,4 @@
 
-var inputs = [];
 
 chrome.commands.onCommand.addListener((command) => {
     if(command === 'open_popup'){
@@ -11,8 +10,10 @@ chrome.commands.onCommand.addListener((command) => {
     }
 });
 chrome.runtime.onMessage.addListener((msg, sender, response) => {
-    if(msg.from === 'popup' && msg.subject === 'getInputs'){
-        response(inputs);
+    if(msg.from === 'highlight'){
+        if(msg.subject === 'newTabIframe'){
+            chrome.tabs.create({url:msg.url});
+        }
     }
 });
 chrome.action.onClicked.addListener((tab) => {
