@@ -232,6 +232,7 @@ function createInput(key){
         }else{
             levenshtien.style.backgroundColor = 'red';
         }
+        handleHighlighting();
     });
     maxMatchLimit.addEventListener('input', (e) => {
         e.preventDefault();
