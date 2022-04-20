@@ -55,6 +55,10 @@ function createInput(key){
     new Shine(scrollable, {bubble: false, overrideArgs:[2, 0, 0, 0]});
     scrollable.innerHTML = '/s';
 
+    let levenshtien = document.createElement('regeggs-button');
+    new Shine(levenshtien, {bubble: false, overrideArgs:[2, 0, 0, 0]});
+    levenshtien.innerHTML = '/l';
+
     let maxMatchLimit = document.createElement('input');
     maxMatchLimit.type = 'number'
     maxMatchLimit.value = 1000;
@@ -65,6 +69,7 @@ function createInput(key){
     caseSensitive = modifiers.appendChild(caseSensitive);
     isRegex = modifiers.appendChild(isRegex);
     scrollable = modifiers.appendChild(scrollable);
+    levenshtien = modifiers.appendChild(levenshtien);
     maxMatchLimit = modifiers.appendChild(maxMatchLimit);
 
     input = icWrapper.appendChild(input);
@@ -148,6 +153,7 @@ function createInput(key){
 
     var preserveCase = 'i';
     var preserveScroll = true;
+    var preserveLevenshtien = false;
     var preserveRegex = false;
     var nextOrPrev = next;
     var maxLimit = 1000;
@@ -215,6 +221,15 @@ function createInput(key){
             scrollable.style.backgroundColor = 'gold'
         }else{
             scrollable.style.backgroundColor = 'red';
+        }
+    });
+    levenshtien.addEventListener('click', (e) => {
+        e.preventDefault();
+        preserveLevenshtien = !preserveLevenshtien;
+        if(!preserveLevenshtien){
+            levenshtien.style.backgroundColor = 'gold'
+        }else{
+            levenshtien.style.backgroundColor = 'red';
         }
     });
     maxMatchLimit.addEventListener('input', (e) => {
