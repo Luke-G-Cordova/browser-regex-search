@@ -126,99 +126,192 @@ function highlight(root, options, callback){
     for(i = 0;i<groupedNodesLength && nodeList.length < ogo.limit;i++){
 
         masterStr = groupedNodes[i].map(elem => elem.data).join('');
+        if(!ogo.loose){
 
-        while((test = ogo.regex.exec(masterStr)) && test[0] !== '' && nodeList.length < ogo.limit){
-            var lastRegIndex = ogo.regex.lastIndex;
-            
-            count++;
-
-            var j = 0;
-            var nodeParts = '' + groupedNodes[i][j].data;
-
-            var testIndex = test.index;
-            while(testIndex > nodeParts.length - 1){
-                j++;
-                nodeParts = nodeParts + groupedNodes[i][j].data;
-            }
-
-            ogo.regex.lastIndex = 0;
-
-            test2 = ogo.regex.exec(groupedNodes[i][j].data);
-            
-            var inThisNode = nodeParts.substring(testIndex);
-
-            test2 || (
-                test2 = [], 
-                test2[0] = inThisNode, 
-                test2['index'] = groupedNodes[i][j].data.length - inThisNode.length, 
-                test2['input'] = groupedNodes[i][j].data,
-                test2['groups'] = undefined
-            );
-            
-            var helpArr = [];
-
-            helpArr.push(test2[0]);
-
-            var sameMatchID = 0;
-            nodeList.push([]);
-            for(let k = 0 ; helpArr.join('').length < test[0].length ; k++){
-
-                newNode = groupedNodes[i][j].splitText(groupedNodes[i][j].length - helpArr[k].length);
-                tag = callback(helpArr[k], sameMatchID);
-                newNode.data = '';
-                insertedNode = newNode.parentNode.insertBefore(tag, newNode);
-                nodeList[nodeList.length - 1].push(insertedNode);
-                if(groupedNodes[i][j].data.length === 0){
-                    groupedNodes[i][j] = insertedNode.firstChild;
-                }else{
-                    groupedNodes[i].splice(j + 1, 0, insertedNode.firstChild);
+            while((test = ogo.regex.exec(masterStr)) && test[0] !== '' && nodeList.length < ogo.limit){
+                var lastRegIndex = ogo.regex.lastIndex;
+                
+                count++;
+    
+                var j = 0;
+                var nodeParts = '' + groupedNodes[i][j].data;
+    
+                var testIndex = test.index;
+                while(testIndex > nodeParts.length - 1){
                     j++;
+                    nodeParts = nodeParts + groupedNodes[i][j].data;
                 }
-                j++;
-                sameMatchID++;
-                helpArr.push(groupedNodes[i][j].data);
-            }
-            var lastNode = helpArr.pop();
-            if(helpArr[0]){
-
-                newNode = groupedNodes[i][j].splitText(0);
-                tag = callback(lastNode.substr(0, test[0].length - helpArr.join('').length), -1);
-                newNode.data = newNode.data.substr(test[0].length - helpArr.join('').length);
-                insertedNode = newNode.parentNode.insertBefore(tag, newNode);
-                nodeList[nodeList.length - 1].push(insertedNode);
+    
+                ogo.regex.lastIndex = 0;
+    
+                test2 = ogo.regex.exec(groupedNodes[i][j].data);
                 
-                groupedNodes[i][j] = insertedNode.firstChild;
-                if(newNode.data.length > 0){
-                    groupedNodes[i].splice(j + 1, 0, newNode);
-                }
-                sameMatchID++;
-            }else{
-                newNode = groupedNodes[i][j].splitText(test2.index);
+                var inThisNode = nodeParts.substring(testIndex);
+    
+                test2 || (
+                    test2 = [], 
+                    test2[0] = inThisNode, 
+                    test2['index'] = groupedNodes[i][j].data.length - inThisNode.length, 
+                    test2['input'] = groupedNodes[i][j].data,
+                    test2['groups'] = undefined
+                );
                 
-                tag = callback(test2[0], -1);
-                newNode.data = newNode.data.substr(test2[0].length);
-                insertedNode = newNode.parentNode.insertBefore(tag, newNode);
-
-                nodeList[nodeList.length - 1].push(insertedNode);
-
-                if(groupedNodes[i][j].data === ''){
-                    if(newNode.data === ''){
-                        groupedNodes[i].splice(j, 1, insertedNode.firstChild);
+                var helpArr = [];
+    
+                helpArr.push(test2[0]);
+    
+                var sameMatchID = 0;
+                nodeList.push([]);
+                for(let k = 0 ; helpArr.join('').length < test[0].length ; k++){
+    
+                    newNode = groupedNodes[i][j].splitText(groupedNodes[i][j].length - helpArr[k].length);
+                    tag = callback(helpArr[k], sameMatchID);
+                    newNode.data = '';
+                    insertedNode = newNode.parentNode.insertBefore(tag, newNode);
+                    nodeList[nodeList.length - 1].push(insertedNode);
+                    if(groupedNodes[i][j].data.length === 0){
+                        groupedNodes[i][j] = insertedNode.firstChild;
                     }else{
-                        groupedNodes[i].splice(j, 1, insertedNode.firstChild, newNode);
-                    }
-                }else{
-                    if(newNode.data === ''){
                         groupedNodes[i].splice(j + 1, 0, insertedNode.firstChild);
+                        j++;
+                    }
+                    j++;
+                    sameMatchID++;
+                    helpArr.push(groupedNodes[i][j].data);
+                }
+                var lastNode = helpArr.pop();
+                if(helpArr[0]){
+    
+                    newNode = groupedNodes[i][j].splitText(0);
+                    tag = callback(lastNode.substr(0, test[0].length - helpArr.join('').length), -1);
+                    newNode.data = newNode.data.substr(test[0].length - helpArr.join('').length);
+                    insertedNode = newNode.parentNode.insertBefore(tag, newNode);
+                    nodeList[nodeList.length - 1].push(insertedNode);
+                    
+                    groupedNodes[i][j] = insertedNode.firstChild;
+                    if(newNode.data.length > 0){
+                        groupedNodes[i].splice(j + 1, 0, newNode);
+                    }
+                    sameMatchID++;
+                }else{
+                    newNode = groupedNodes[i][j].splitText(test2.index);
+                    
+                    tag = callback(test2[0], -1);
+                    newNode.data = newNode.data.substr(test2[0].length);
+                    insertedNode = newNode.parentNode.insertBefore(tag, newNode);
+    
+                    nodeList[nodeList.length - 1].push(insertedNode);
+    
+                    if(groupedNodes[i][j].data === ''){
+                        if(newNode.data === ''){
+                            groupedNodes[i].splice(j, 1, insertedNode.firstChild);
+                        }else{
+                            groupedNodes[i].splice(j, 1, insertedNode.firstChild, newNode);
+                        }
                     }else{
-                        groupedNodes[i].splice(j + 1, 0, insertedNode.firstChild, newNode);
+                        if(newNode.data === ''){
+                            groupedNodes[i].splice(j + 1, 0, insertedNode.firstChild);
+                        }else{
+                            groupedNodes[i].splice(j + 1, 0, insertedNode.firstChild, newNode);
+                        }
                     }
                 }
+                nodeParts = '';
+                ogo.regex.lastIndex = lastRegIndex;
             }
-            nodeParts = '';
-            ogo.regex.lastIndex = lastRegIndex;
+            ogo.regex.lastIndex = 0;
+        }else{
+            
+            if((test = findClosestMatch(ogo.regex, masterStr, 50))){
+
+                count += test.length;
+                for(let k = 0;k<test.length;k++){
+    
+                    let curMatch = test[k];
+    
+                    var j = 0;
+                    var nodeParts = '' + groupedNodes[i][j].data;
+                    
+                    var curMatchIndex = curMatch.index;
+                    while(curMatchIndex > nodeParts.length - 1){
+                        j++;
+                        nodeParts = nodeParts + groupedNodes[i][j].data;
+                    }
+                    let curMatch2 = findClosestMatch(ogo.regex, groupedNodes[i][j].data)[k];
+    
+                    var inThisNode = nodeParts.substring(curMatchIndex);
+        
+                    curMatch2 || (
+                        curMatch2 = [], 
+                        curMatch2[0] = inThisNode, 
+                        curMatch2['index'] = groupedNodes[i][j].data.length - inThisNode.length,
+                        curMatch2['size'] = nodeParts.length - curMatch2['index']
+                    );
+                    var helpArr = [];
+    
+                    helpArr.push(curMatch2[0]);
+    
+                    var sameMatchID = 0;
+                    nodeList.push([]);
+                    for(let k = 0 ; helpArr.join('').length < curMatch[0].length ; k++){
+                        
+                        newNode = groupedNodes[i][j].splitText(groupedNodes[i][j].length - helpArr[k].length);
+                        tag = callback(helpArr[k], sameMatchID);
+                        newNode.data = '';
+                        insertedNode = newNode.parentNode.insertBefore(tag, newNode);
+                        nodeList[nodeList.length - 1].push(insertedNode);
+                        if(groupedNodes[i][j].data.length === 0){
+                            groupedNodes[i][j] = insertedNode.firstChild;
+                        }else{
+                            groupedNodes[i].splice(j + 1, 0, insertedNode.firstChild);
+                            j++;
+                        }
+                        j++;
+                        sameMatchID++;
+                        helpArr.push(groupedNodes[i][j].data);
+                    }
+                    
+                    var lastNode = helpArr.pop();
+                    if(helpArr[0]){
+                        
+                        newNode = groupedNodes[i][j].splitText(0);
+                        tag = callback(lastNode.substr(0, curMatch[0].length - helpArr.join('').length), -1);
+                        newNode.data = newNode.data.substr(curMatch[0].length - helpArr.join('').length);
+                        insertedNode = newNode.parentNode.insertBefore(tag, newNode);
+                        nodeList[nodeList.length - 1].push(insertedNode);
+                        
+                        groupedNodes[i][j] = insertedNode.firstChild;
+                        if(newNode.data.length > 0){
+                            groupedNodes[i].splice(j + 1, 0, newNode);
+                        }
+                        sameMatchID++;
+                    }else{
+                        newNode = groupedNodes[i][j].splitText(curMatch2.index);
+
+                        tag = callback(curMatch2[0], -1);
+                        newNode.data = newNode.data.substr(curMatch2[0].length);
+                        insertedNode = newNode.parentNode.insertBefore(tag, newNode);
+        
+                        nodeList[nodeList.length - 1].push(insertedNode);
+        
+                        if(groupedNodes[i][j].data === ''){
+                            if(newNode.data === ''){
+                                groupedNodes[i].splice(j, 1, insertedNode.firstChild);
+                            }else{
+                                groupedNodes[i].splice(j, 1, insertedNode.firstChild, newNode);
+                            }
+                        }else{
+                            if(newNode.data === ''){
+                                groupedNodes[i].splice(j + 1, 0, insertedNode.firstChild);
+                            }else{
+                                groupedNodes[i].splice(j + 1, 0, insertedNode.firstChild, newNode);
+                            }
+                        }
+                    }
+                    nodeParts = '';
+                }
+            }
         }
-        ogo.regex.lastIndex = 0;
     }
     return {
         count,

@@ -164,7 +164,8 @@ function createInput(key){
                 color: colorInput.value,
                 mods: preserveCase, 
                 litReg: preserveRegex,
-                limit: maxLimit
+                limit: maxLimit,
+                loose: preserveLevenshtien
             })
         ){
             next.click();
@@ -313,7 +314,8 @@ function highlightMe(key, options){
         color: '#FFFF00',
         mods: '',
         litReg: false,
-        limit: 1000
+        limit: 1000,
+        loose: false
     }
     if(options){
         Object.assign(ogo, options);
@@ -332,7 +334,11 @@ function highlightMe(key, options){
     
     clearHighlight(key);
     let finalRegex;
-    try{finalRegex = new RegExp(ogo.match, `${ogo.mods}g`);}catch(e) {finalRegex = null;}
+    if(!ogo.loose){
+        try{finalRegex = new RegExp(ogo.match, `${ogo.mods}g`);}catch(e) {finalRegex = null;}
+    }else{
+        finalRegex = ogo.match;
+    }
     if(ogo.match !== '' && DEF_REJECTS.indexOf(ogo.match) === -1 && !!finalRegex){
         let multiNodeMatchId;
         MY_HIGHLIGHTS[GI] = highlight(document.body,
@@ -340,7 +346,7 @@ function highlightMe(key, options){
             regex: finalRegex, 
             excludes: 'regeggs-card',
             limit: ogo.limit,
-            loose: true
+            loose: ogo.loose
         },
         function(match, sameMatchID){
 
@@ -357,7 +363,6 @@ function highlightMe(key, options){
             // highlightMeElem.id = `${CUR_INDEX}|${key}|${multiNodeMatchId}`;
 
             CUR_INDEX = multiNodeMatchId > -1 ? CUR_INDEX : CUR_INDEX + 1;
-
             highlightMeElem.textContent = match;
             return highlightMeElem;
         });

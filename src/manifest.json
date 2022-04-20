@@ -18,6 +18,7 @@
                 "nextMatch.js", 
                 "createInput.js", 
                 "domPopup.js",
+                "levenshtien.js",
                 "highlight.js"
             ],
             "css": ["./stylers/popupStyles.css"]

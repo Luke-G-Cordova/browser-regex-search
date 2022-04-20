@@ -21,7 +21,7 @@ function lev_distance(str1, str2){
     let dis = mat[mat.length - 1][mat[mat.length - 1].length - 1];
     return (1 - (dis/Math.max(str1.length, str2.length))) * 100;
 }
-function findClosestMatch(search, content){
+function findClosestMatch(search, content, minPercent = 50){
     let matches = [];
     let percent = 0;
     let bPercent = 0;
@@ -54,6 +54,9 @@ function findClosestMatch(search, content){
             matches.push(match);
         }
     }
+    if(!matches[0] || matches[0].percent <= minPercent){
+        return null;
+    }
     matches = matches.reduce((prev, cur) => {
         if(prev.length === 0 || cur.percent === prev[0].percent){
             prev.push(cur);
@@ -63,6 +66,5 @@ function findClosestMatch(search, content){
         }
         return prev;
     }, []);
-    
     return matches;
 }
