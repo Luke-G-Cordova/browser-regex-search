@@ -207,7 +207,7 @@ function highlight(root, options, callback){
             ogo.regex.lastIndex = 0;
         }else{
             let match = findClosestMatch(ogo.regex, masterStr);
-            if(match.percent > 50){
+            if(match.percent > 80){
                 count++;
         
                 var j = 0;
@@ -238,9 +238,9 @@ function highlight(root, options, callback){
                 }else{
                     var helpStr = '';
                     newNode = groupedNodes[i][j].splitText(nodeStartIndex);
-                    helpStr += nodeParts.substring(match.index);
-                    tag = callback(nodeParts.substring(match.index), sameMatchID);
-                    newNode.data = newNode.data.substring(match.index);
+                    helpStr += newNode.data;
+                    tag = callback(newNode.data, sameMatchID);
+                    newNode.data = '';
                     insertedNode = newNode.parentNode.insertBefore(tag, newNode);
                     nodeList[nodeList.length - 1].push(insertedNode);
                     if(groupedNodes[i][j].data.length === 0){
