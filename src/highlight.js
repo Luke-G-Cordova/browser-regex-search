@@ -37,7 +37,7 @@ function highlight(root, options, callback){
     let ogo = {
         regex: new RegExp(),
         excludes: [],
-        limit: 1000,
+        limit: 1000,      //change back to 1000
         loose: false
     }
     if(options){
@@ -126,8 +126,8 @@ function highlight(root, options, callback){
     for(i = 0;i<groupedNodesLength && nodeList.length < ogo.limit;i++){
 
         masterStr = groupedNodes[i].map(elem => elem.data).join('');
-        if(!ogo.loose){
 
+        if(!ogo.loose){
             while((test = ogo.regex.exec(masterStr)) && test[0] !== '' && nodeList.length < ogo.limit){
                 var lastRegIndex = ogo.regex.lastIndex;
                 
@@ -221,7 +221,86 @@ function highlight(root, options, callback){
             }
             ogo.regex.lastIndex = 0;
         }else{
-            // not ready yet
+            let match = findClosestMatch(ogo.regex, masterStr);
+            console.log(match);
+            if(match.percent > 50){
+                count++;
+        
+                var j = 0;
+                var e = 0;
+                var nodeParts = '' + groupedNodes[i][j].data;
+                var nodePartsEnd = '' + groupedNodes[i][e].data;
+    
+                while(match.index > nodeParts.length - 1){
+                    j++;
+                    nodeParts = nodeParts + groupedNodes[i][j].data;
+                }
+                while(match.endIndex > nodePartsEnd.length - 1){
+                    e++;
+                    nodePartsEnd = nodePartsEnd + groupedNodes[i][e].data;
+                }
+                let nodeStartIndex = match.index - (nodeParts.length - groupedNodes[i][j].data.length);
+                let nodeEndIndex = match.endIndex - (nodePartsEnd.length - groupedNodes[i][e].data.length);
+                var sameMatchID = 0;
+
+                nodeList.push([]);
+                if(j === e){
+                    newNode = groupedNodes[i][j].splitText(nodeStartIndex);
+                    tag = callback(match[0], sameMatchID);
+                    newNode.data = newNode.data.substring(match.size);
+                    insertedNode = newNode.parentNode.insertBefore(tag, newNode);
+                    nodeList[nodeList.length - 1].push(insertedNode);
+                    if(groupedNodes[i][j].data.length === 0){
+                        groupedNodes[i][j] = insertedNode.firstChild;
+                    }else{
+                        groupedNodes[i].splice(j + 1, 0, insertedNode.firstChild);
+                        j++;
+                    }
+                    j++;
+                    sameMatchID++;
+                }else{
+                    newNode = groupedNodes[i][j].splitText(nodeStartIndex);
+                    tag = callback(nodeParts.substring(match.index), sameMatchID);
+                    newNode.data = newNode.data.substring(match.index);
+                    insertedNode = newNode.parentNode.insertBefore(tag, newNode);
+                    nodeList[nodeList.length - 1].push(insertedNode);
+                    if(groupedNodes[i][j].data.length === 0){
+                        groupedNodes[i][j] = insertedNode.firstChild;
+                    }else{
+                        groupedNodes[i].splice(j + 1, 0, insertedNode.firstChild);
+                        j++;
+                    }
+                    j++;
+                    sameMatchID++;
+                    // for(;j<e;j++){
+                    //     newNode = groupedNodes[i][j].splitText(0);
+                    //     tag = callback(match[0], sameMatchID);
+                    //     newNode.data = '';
+                    //     insertedNode = newNode.parentNode.insertBefore(tag, newNode);
+                    //     nodeList[nodeList.length - 1].push(insertedNode);
+                    //     if(groupedNodes[i][j].data.length === 0){
+                    //         groupedNodes[i][j] = insertedNode.firstChild;
+                    //     }else{
+                    //         groupedNodes[i].splice(j + 1, 0, insertedNode.firstChild);
+                    //         j++;
+                    //     }
+                    //     j++;
+                    //     sameMatchID++;
+                    // }
+                    newNode = groupedNodes[i][j].splitText(0);
+                    tag = callback(newNode.data.substring(0, nodeEndIndex), sameMatchID);
+                    newNode.data = newNode.data.substring(nodeEndIndex);
+                    insertedNode = newNode.parentNode.insertBefore(tag, newNode);
+                    nodeList[nodeList.length - 1].push(insertedNode);
+                    if(groupedNodes[i][j].data.length === 0){
+                        groupedNodes[i][j] = insertedNode.firstChild;
+                    }else{
+                        groupedNodes[i].splice(j + 1, 0, insertedNode.firstChild);
+                    }
+                    sameMatchID++;
+                }
+                
+            }
         }
     }
     return {

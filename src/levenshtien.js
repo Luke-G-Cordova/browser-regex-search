@@ -20,41 +20,69 @@ function lev_distance(str1, str2){
     return dis;
 }
 
-
 function findClosestMatch(search, content){
     let keep = true;
     let oldDist = lev_distance(search, content);
-    let left = 1, right = 0;
-    let takingLeft = true;
+    let left = 0, right = 1;
+    let takingRight = true;
+    let twoEquals = false;
+    let lastMoves = [0, 0];
     while(keep){
         let newDist = lev_distance(search, content.substring(left, content.length - right));
         if(newDist < oldDist){
-            if(takingLeft){
-                left++;
-            }else{
+            if(takingRight){
                 right++;
+                lastMoves = [0, 1];
+            }else{
+                left++;
+                lastMoves = [1, 0];
             }
             oldDist = newDist;
+            twoEquals = false;
         }else if(newDist === oldDist){
-            if(takingLeft){
-                right++;
-            }
-        }else{
-            if(takingLeft){
+            if(takingRight){
+                if(!twoEquals){
+                    left++;
+                    right--;
+                    lastMoves = [1, -1];
+                }else{
+                    left++;
+                    lastMoves = [1, 0];
+                    takingRight = false;
+                }
+            }else{
                 left--;
                 right++;
-                takingLeft = !takingLeft;
-            }else{
+                lastMoves = [-1, 1];
+                takingRight = true;
+            }
+            twoEquals = true;
+        }else{
+            if(twoEquals&&takingRight){
+                left -= lastMoves[0];
+                right -= lastMoves[1];
+                keep = false;
+            }else if(takingRight){
+                left++;
                 right--;
+                lastMoves = [1, -1];
+                takingRight = !takingRight;
+            }else{
+                left -= lastMoves[0];
+                right -= lastMoves[1];
                 keep = false;
             }
+            twoEquals = false;
         }
     }
     let match = [];
     match[0] = content.substring(left, content.length - right);
+    match['input'] = search;
     match['size'] = match[0].length;
     match['percent'] = (1 - (oldDist/Math.max(search.length, match.size))) * 100;
+    match['changes'] = oldDist;
     match['index'] = left;
+    match['endIndex'] = content.length - right;
     match['length'] = 4;
     return match;
 }

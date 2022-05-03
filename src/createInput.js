@@ -61,7 +61,8 @@ function createInput(key){
 
     let maxMatchLimit = document.createElement('input');
     maxMatchLimit.type = 'number'
-    maxMatchLimit.value = 1000;
+    var maxLimit = 10;
+    maxMatchLimit.value = maxLimit;
     maxMatchLimit.style.width = '50px';
     
     
@@ -156,7 +157,7 @@ function createInput(key){
     var preserveLevenshtien = false;
     var preserveRegex = false;
     var nextOrPrev = next;
-    var maxLimit = 1000;
+    
     function handleHighlighting(){
         if(
             highlightMe(key, {
@@ -320,7 +321,7 @@ function highlightMe(key, options){
     }
     if(options){
         Object.assign(ogo, options);
-        ogo.match = ogo.litReg ? ogo.match : escapeRegExp(ogo.match);
+        ogo.match = ogo.litReg ? ogo.match : ogo.loose ? ogo.match : escapeRegExp(ogo.match);
     }
     let GI = getGI(key);
     CUR_INDEX = 0;
