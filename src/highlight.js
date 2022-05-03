@@ -71,41 +71,26 @@ function highlight(root, options, callback){
             node.data = before + node.data.trim() + after;
         }
     }
-    
-    function relativeNodes(node1, node2){
-        var parNode1 = node1, parNode2 = node2;
-        var atRoot = false;
-        while(true){
-            atRoot = parNode1 === root && parNode2 === root;
-            if(atRoot) return null;
-            if(parNode1.parentNode === node2.parentNode) return node2.parentNode;
-            if(parNode2.parentNode === node1.parentNode) return node1.parentNode;
-            if(parNode1 !== root){
-                parNode1 = parNode1.parentNode;
-                if(window.getComputedStyle(parNode1, '').display === 'block'){
-                    parNode1 = root;
-                }
-            }
-            if(parNode2 !== root){
-                parNode2 = parNode2.parentNode;
-                if(window.getComputedStyle(parNode2, '').display === 'block'){
-                    parNode2 = root;
-                }
-            }
+
+    function getLastBlockElem(node){
+        let elem = node.parentElement;
+        while(window.getComputedStyle(elem, '').display != 'block'){
+            elem = elem.parentElement;
+            if(elem === root)return null;
         }
+        return elem;
     }
+
 
     var nodes = [];
     var groupedNodes = [];
-    var lastElem;
     while(tw.nextNode()){
         trimBadHtmlNodes(tw.currentNode);
         if(groupedNodes.length === 0){
             groupedNodes.push([]);
             groupedNodes[groupedNodes.length - 1].push(tw.currentNode);
         }else{
-            lastElem = nodes[nodes.length -1];
-            if(relativeNodes(tw.currentNode, lastElem)){
+            if(getLastBlockElem(nodes[nodes.length -1]) === getLastBlockElem(tw.currentNode)/*relativeNodes(tw.currentNode, lastElem)*/){
                 groupedNodes[groupedNodes.length - 1].push(tw.currentNode);
             }else{
                 groupedNodes[groupedNodes.length] = [];
@@ -222,29 +207,21 @@ function highlight(root, options, callback){
             ogo.regex.lastIndex = 0;
         }else{
             let match = findClosestMatch(ogo.regex, masterStr);
-            console.log(match);
             if(match.percent > 50){
                 count++;
         
                 var j = 0;
-                var e = 0;
                 var nodeParts = '' + groupedNodes[i][j].data;
-                var nodePartsEnd = '' + groupedNodes[i][e].data;
     
                 while(match.index > nodeParts.length - 1){
                     j++;
                     nodeParts = nodeParts + groupedNodes[i][j].data;
                 }
-                while(match.endIndex > nodePartsEnd.length - 1){
-                    e++;
-                    nodePartsEnd = nodePartsEnd + groupedNodes[i][e].data;
-                }
                 let nodeStartIndex = match.index - (nodeParts.length - groupedNodes[i][j].data.length);
-                let nodeEndIndex = match.endIndex - (nodePartsEnd.length - groupedNodes[i][e].data.length);
                 var sameMatchID = 0;
 
                 nodeList.push([]);
-                if(j === e){
+                if(nodeStartIndex + match.size <= groupedNodes[i][j].data.length){
                     newNode = groupedNodes[i][j].splitText(nodeStartIndex);
                     tag = callback(match[0], sameMatchID);
                     newNode.data = newNode.data.substring(match.size);
@@ -259,7 +236,9 @@ function highlight(root, options, callback){
                     j++;
                     sameMatchID++;
                 }else{
+                    var helpStr = '';
                     newNode = groupedNodes[i][j].splitText(nodeStartIndex);
+                    helpStr += nodeParts.substring(match.index);
                     tag = callback(nodeParts.substring(match.index), sameMatchID);
                     newNode.data = newNode.data.substring(match.index);
                     insertedNode = newNode.parentNode.insertBefore(tag, newNode);
@@ -272,24 +251,27 @@ function highlight(root, options, callback){
                     }
                     j++;
                     sameMatchID++;
-                    // for(;j<e;j++){
-                    //     newNode = groupedNodes[i][j].splitText(0);
-                    //     tag = callback(match[0], sameMatchID);
-                    //     newNode.data = '';
-                    //     insertedNode = newNode.parentNode.insertBefore(tag, newNode);
-                    //     nodeList[nodeList.length - 1].push(insertedNode);
-                    //     if(groupedNodes[i][j].data.length === 0){
-                    //         groupedNodes[i][j] = insertedNode.firstChild;
-                    //     }else{
-                    //         groupedNodes[i].splice(j + 1, 0, insertedNode.firstChild);
-                    //         j++;
-                    //     }
-                    //     j++;
-                    //     sameMatchID++;
-                    // }
+                    
+                    while((helpStr + groupedNodes[i][j].data).length < match.size){
+                        helpStr += groupedNodes[i][j].data;
+                        newNode = groupedNodes[i][j].splitText(0);
+                        tag = callback(newNode.data, sameMatchID);
+                        newNode.data = '';
+                        insertedNode = newNode.parentNode.insertBefore(tag, newNode);
+                        nodeList[nodeList.length -1].push(insertedNode);
+                        if(groupedNodes[i][j].data.length === 0){
+                            groupedNodes[i][j] = insertedNode.firstChild;
+                        }else{
+                            groupedNodes[i].splice(j + 1, 0, insertedNode.firstChild);
+                            j++;
+                        }
+                        sameMatchID++;
+                        j++;
+                    }
+
                     newNode = groupedNodes[i][j].splitText(0);
-                    tag = callback(newNode.data.substring(0, nodeEndIndex), sameMatchID);
-                    newNode.data = newNode.data.substring(nodeEndIndex);
+                    tag = callback(newNode.data.substring(0, match.size - helpStr.length), sameMatchID);
+                    newNode.data = newNode.data.substring(match.size - helpStr.length);
                     insertedNode = newNode.parentNode.insertBefore(tag, newNode);
                     nodeList[nodeList.length - 1].push(insertedNode);
                     if(groupedNodes[i][j].data.length === 0){
