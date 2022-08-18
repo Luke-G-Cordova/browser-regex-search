@@ -4,7 +4,7 @@
   "description": "Adding functionality to the ctrl+f search function of google Chrome\r <div>Additional functionalities:</div>\r <ol>\r     <li>regular expression search</li>\r     <li>multiple searches at once</li>\r     <li>ability to change highlight colors</li>\r     <li>ability to drag search bar across a given html page</li>\r     <li>copy selection to clipboard</li>\r </ol>\r <div>Not deployed yet</div>\r <div>Want to test out the current state?</div>\r <div>Directions: </div>\r <ol>\r     <li>clone the repository locally</li>\r     <li>navigate to <a href=\"chrome://extensions/\">chrome://extensions/</a></li>\r     <li>turn developer mode on in the top right hand corner</li>\r     <li>click load unpacked </li>\r     <li>select the directory you cloned into</li>\r     <li>might have to restart chrome, the keyboard shortcuts can be finiky on the first go</li>\r     <li>on any given webpage use the shortcut CTRL+SHIFT+F to bring up the search bar</li>\r </ol>",
   "main": "index.js",
   "scripts": {
-    "build": "npx tsc && @powershell -NoProfile -ExecutionPolicy Unrestricted -Command ./bsr.ps1",
+    "build": " powershell ./bsr.ps1 && npx tsc",
     "build:w": "npx tsc -w"
   },
   "repository": {
