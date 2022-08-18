@@ -1,11 +1,15 @@
 
-
-# chrome manifest transfer to build directory
-
 # set up file path variables
 $chromeFolder = "./browser-search-regex/chrome/"
 $buildChromeFolder = "./build/chrome/"
 $manifestFile = "manifest.json"
+
+# create necessary build folder if it does not exist
+if (-not (Test-Path -Path $buildChromeFolder)) {
+  New-Item -Path "$($buildChromeFolder)" -ItemType Directory -Force | Out-Null
+}
+
+# --- chrome manifest transfer to build directory ---
 
 # delete all items currently in the build folder
 Remove-Item $buildChromeFolder -Recurse 
