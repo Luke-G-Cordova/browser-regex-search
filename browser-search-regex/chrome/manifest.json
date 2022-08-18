@@ -7,17 +7,8 @@
   "content_scripts": [
     {
       "matches": ["*://*/*", "https://*/"],
-      "js": [
-        "global_vars.js",
-        "./stylers/Shine.js",
-        "./stylers/Draggable.js",
-        "nextMatch.js",
-        "createInput.js",
-        "domPopup.js",
-        "levenshtien.js",
-        "highlight.js"
-      ],
-      "css": ["./stylers/popupStyles.css"]
+      "js": [],
+      "css": []
     }
   ],
   "background": {
