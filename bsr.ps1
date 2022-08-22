@@ -30,7 +30,7 @@ $manifestJSON.content_scripts[0].js = New-Object -TypeName 'System.Collections.A
 $manifestJSON.content_scripts[0].css = New-Object -TypeName 'System.Collections.ArrayList'
 
 # loop through each .ts and .css file and add their paths to the manifest
-Get-ChildItem "$($chromeFolder)*" -Include *.ts, *.css -Exclude *background.ts -Recurse | 
+Get-ChildItem "$($chromeFolder)*" -Include *.ts, *.css -Exclude *.d.ts, *background.ts -Recurse | 
   ForEach-Object { 
     $fileName = (Split-Path -Leaf -Resolve $_)
     if ((Get-ChildItem $_ | Select-Object Extension).Extension -eq ".ts") {
@@ -43,4 +43,4 @@ Get-ChildItem "$($chromeFolder)*" -Include *.ts, *.css -Exclude *background.ts -
   Out-Null 
 
 # write the new json to the build manifest file
-$manifestJSON | ConvertTo-Json -depth 3 > "$($buildChromeFolder)$($manifestFile)" -WarningAction:SilentlyContinue
+$manifestJSON | ConvertTo-Json -depth 32 | set-content "$($buildChromeFolder)$($manifestFile)"
