@@ -1,5 +1,5 @@
 chrome.runtime.onMessage.addListener((msg, sender, response) => {
-  if (msg.from === "background" && msg.subject === "open_popup") {
+  if (msg.from === 'background' && msg.subject === 'open_popup') {
     showPopup();
   }
 });
@@ -12,48 +12,48 @@ function showPopup() {
         elem.style[sty] = styles[sty];
       }
     }
-    popup = document.createElement("regeggs-card");
+    popup = document.createElement('regeggs-card');
 
-    popup.className = "chrome-regeggs-popup";
-    popup.id = "chrepo-id"; //ch(chrome)re(regeggs)po(popup)-id
+    popup.className = 'chrome-regeggs-popup';
+    popup.id = 'chrepo-id'; //ch(chrome)re(regeggs)po(popup)-id
 
     updateStyles(
       {
-        visibility: "visible", // this should be visible
+        visibility: 'visible', // this should be visible
         top: `${20 + window.scrollY}px`,
         left: `${20 + window.scrollX}px`,
       },
       popup
     );
 
-    let pContent = document.createElement("regeggs-div");
-    pContent.className = "pContent";
-    pContent.id = "chrepo-pCont-id";
+    let pContent = document.createElement('regeggs-div');
+    pContent.className = 'pContent';
+    pContent.id = 'chrepo-pCont-id';
 
-    let controllWrapper = document.createElement("regeggs-div");
-    controllWrapper.className = "controllWrapper";
-    controllWrapper.id = "chrepo-conWrapper-id";
+    let controllWrapper = document.createElement('regeggs-div');
+    controllWrapper.className = 'controllWrapper';
+    controllWrapper.id = 'chrepo-conWrapper-id';
 
-    let inputAdder = document.createElement("regeggs-div");
-    inputAdder.className = "controllButton";
-    inputAdder.id = "chrepo-inputAdder-id";
+    let inputAdder = document.createElement('regeggs-div');
+    inputAdder.className = 'controllButton';
+    inputAdder.id = 'chrepo-inputAdder-id';
 
-    inputAdder.innerHTML = "+";
+    inputAdder.innerHTML = '+';
 
-    let exitBtn = document.createElement("regeggs-div");
-    exitBtn.className = "controllButton";
-    exitBtn.id = "chrepo-exitBtn-id";
+    let exitBtn = document.createElement('regeggs-div');
+    exitBtn.className = 'controllButton';
+    exitBtn.id = 'chrepo-exitBtn-id';
 
-    exitBtn.innerHTML = "X";
+    exitBtn.innerHTML = 'X';
 
     exitBtn = controllWrapper.appendChild(exitBtn);
     inputAdder = controllWrapper.appendChild(inputAdder);
 
     controllWrapper = pContent.appendChild(controllWrapper);
 
-    let formWrapper = document.createElement("regeggs-div");
-    formWrapper.className = "formWrapper";
-    formWrapper.id = "chrepo-formWrapper-id";
+    let formWrapper = document.createElement('regeggs-div');
+    formWrapper.className = 'formWrapper';
+    formWrapper.id = 'chrepo-formWrapper-id';
 
     formWrapper = pContent.appendChild(formWrapper);
 
@@ -66,27 +66,27 @@ function showPopup() {
     });
     popupDragger.drag();
 
-    inputAdder.addEventListener("mouseover", () => {
+    inputAdder.addEventListener('mouseover', () => {
       updateStyles(
         {
-          cursor: "pointer",
+          cursor: 'pointer',
         },
         inputAdder
       );
     });
-    inputAdder.addEventListener("click", () =>
+    inputAdder.addEventListener('click', () =>
       popupDragger.addNoDragElems(createInput())
     );
 
-    exitBtn.addEventListener("mouseover", () => {
+    exitBtn.addEventListener('mouseover', () => {
       updateStyles(
         {
-          cursor: "pointer",
+          cursor: 'pointer',
         },
         exitBtn
       );
     });
-    exitBtn.addEventListener("mouseup", () => {
+    exitBtn.addEventListener('mouseup', () => {
       showPopup();
     });
   } else {

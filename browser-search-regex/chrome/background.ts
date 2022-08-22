@@ -12,7 +12,7 @@ const sendData = (data: communicationInfo) => {
       if (tabs[0].id != null) {
         chrome.tabs.sendMessage(tabs[0].id, data);
       } else {
-        console.error("tabId is undefined");
+        console.error('tabId is undefined');
       }
     }
   );
@@ -22,9 +22,9 @@ const sendData = (data: communicationInfo) => {
  * these send the open_popup event to the content scripts
  */
 chrome.commands.onCommand.addListener((command) => {
-  if (command === "open_popup") {
+  if (command === 'open_popup') {
     let sendObj: communicationInfo = {
-      from: "background",
+      from: 'background',
       subject: command,
     };
     sendData(sendObj);
@@ -33,8 +33,8 @@ chrome.commands.onCommand.addListener((command) => {
 
 chrome.action.onClicked.addListener(() => {
   let sendObj: communicationInfo = {
-    from: "background",
-    subject: "open_popup",
+    from: 'background',
+    subject: 'open_popup',
   };
   sendData(sendObj);
 });

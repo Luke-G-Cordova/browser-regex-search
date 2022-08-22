@@ -44,7 +44,7 @@ function highlight(root, options, callback) {
   if (options) {
     Object.assign(ogo, options);
   }
-  ogo.excludes = ["script", "style", "iframe", "canvas", "noscript"].concat(
+  ogo.excludes = ['script', 'style', 'iframe', 'canvas', 'noscript'].concat(
     ogo.excludes
   );
   var tw = document.createTreeWalker(
@@ -52,7 +52,7 @@ function highlight(root, options, callback) {
     NodeFilter.SHOW_TEXT,
     function (node) {
       if (
-        node.data.trim() === "" ||
+        node.data.trim() === '' ||
         isDescendant(ogo.excludes, node) ||
         // excludes.indexOf(node.parentNode.tagName.toLowerCase()) > -1 ||
         !node.parentElement.offsetParent
@@ -74,21 +74,21 @@ function highlight(root, options, callback) {
   }
 
   function trimBadHtmlNodes(node) {
-    if (node.data.indexOf("\n") !== -1) {
-      var before = (after = "");
+    if (node.data.indexOf('\n') !== -1) {
+      var before = (after = '');
       after =
-        node.data[node.data.length - 1] === " " ||
-        node.data[node.data.length - 1] === "\n"
-          ? " "
-          : "";
-      before = node.data[0] === " " || node.data[0] === "\n" ? " " : "";
+        node.data[node.data.length - 1] === ' ' ||
+        node.data[node.data.length - 1] === '\n'
+          ? ' '
+          : '';
+      before = node.data[0] === ' ' || node.data[0] === '\n' ? ' ' : '';
       node.data = before + node.data.trim() + after;
     }
   }
 
   function getLastBlockElem(node) {
     let elem = node.parentElement;
-    while (window.getComputedStyle(elem, "").display != "block") {
+    while (window.getComputedStyle(elem, '').display != 'block') {
       elem = elem.parentElement;
       if (elem === root) return null;
     }
@@ -117,7 +117,7 @@ function highlight(root, options, callback) {
     }
     nodes.push(tw.currentNode);
   }
-  var masterStr = "";
+  var masterStr = '';
   var test;
   var test2;
   var tag;
@@ -127,12 +127,12 @@ function highlight(root, options, callback) {
 
   var groupedNodesLength = groupedNodes.length;
   for (i = 0; i < groupedNodesLength && nodeList.length < ogo.limit; i++) {
-    masterStr = groupedNodes[i].map((elem) => elem.data).join("");
+    masterStr = groupedNodes[i].map((elem) => elem.data).join('');
 
     if (!ogo.loose) {
       while (
         (test = ogo.regex.exec(masterStr)) &&
-        test[0] !== "" &&
+        test[0] !== '' &&
         nodeList.length < ogo.limit
       ) {
         var lastRegIndex = ogo.regex.lastIndex;
@@ -140,7 +140,7 @@ function highlight(root, options, callback) {
         count++;
 
         var j = 0;
-        var nodeParts = "" + groupedNodes[i][j].data;
+        var nodeParts = '' + groupedNodes[i][j].data;
 
         var testIndex = test.index;
         while (testIndex > nodeParts.length - 1) {
@@ -157,9 +157,9 @@ function highlight(root, options, callback) {
         test2 ||
           ((test2 = []),
           (test2[0] = inThisNode),
-          (test2["index"] = groupedNodes[i][j].data.length - inThisNode.length),
-          (test2["input"] = groupedNodes[i][j].data),
-          (test2["groups"] = undefined));
+          (test2['index'] = groupedNodes[i][j].data.length - inThisNode.length),
+          (test2['input'] = groupedNodes[i][j].data),
+          (test2['groups'] = undefined));
 
         var helpArr = [];
 
@@ -167,12 +167,12 @@ function highlight(root, options, callback) {
 
         var sameMatchID = 0;
         nodeList.push([]);
-        for (let k = 0; helpArr.join("").length < test[0].length; k++) {
+        for (let k = 0; helpArr.join('').length < test[0].length; k++) {
           newNode = groupedNodes[i][j].splitText(
             groupedNodes[i][j].length - helpArr[k].length
           );
           tag = callback(helpArr[k], sameMatchID);
-          newNode.data = "";
+          newNode.data = '';
           insertedNode = newNode.parentNode.insertBefore(tag, newNode);
           nodeList[nodeList.length - 1].push(insertedNode);
           if (groupedNodes[i][j].data.length === 0) {
@@ -189,11 +189,11 @@ function highlight(root, options, callback) {
         if (helpArr[0]) {
           newNode = groupedNodes[i][j].splitText(0);
           tag = callback(
-            lastNode.substr(0, test[0].length - helpArr.join("").length),
+            lastNode.substr(0, test[0].length - helpArr.join('').length),
             -1
           );
           newNode.data = newNode.data.substr(
-            test[0].length - helpArr.join("").length
+            test[0].length - helpArr.join('').length
           );
           insertedNode = newNode.parentNode.insertBefore(tag, newNode);
           nodeList[nodeList.length - 1].push(insertedNode);
@@ -212,14 +212,14 @@ function highlight(root, options, callback) {
 
           nodeList[nodeList.length - 1].push(insertedNode);
 
-          if (groupedNodes[i][j].data === "") {
-            if (newNode.data === "") {
+          if (groupedNodes[i][j].data === '') {
+            if (newNode.data === '') {
               groupedNodes[i].splice(j, 1, insertedNode.firstChild);
             } else {
               groupedNodes[i].splice(j, 1, insertedNode.firstChild, newNode);
             }
           } else {
-            if (newNode.data === "") {
+            if (newNode.data === '') {
               groupedNodes[i].splice(j + 1, 0, insertedNode.firstChild);
             } else {
               groupedNodes[i].splice(
@@ -231,7 +231,7 @@ function highlight(root, options, callback) {
             }
           }
         }
-        nodeParts = "";
+        nodeParts = '';
         ogo.regex.lastIndex = lastRegIndex;
       }
       ogo.regex.lastIndex = 0;
@@ -241,7 +241,7 @@ function highlight(root, options, callback) {
         count++;
 
         var j = 0;
-        var nodeParts = "" + groupedNodes[i][j].data;
+        var nodeParts = '' + groupedNodes[i][j].data;
 
         while (match.index > nodeParts.length - 1) {
           j++;
@@ -267,11 +267,11 @@ function highlight(root, options, callback) {
           j++;
           sameMatchID++;
         } else {
-          var helpStr = "";
+          var helpStr = '';
           newNode = groupedNodes[i][j].splitText(nodeStartIndex);
           helpStr += newNode.data;
           tag = callback(newNode.data, sameMatchID);
-          newNode.data = "";
+          newNode.data = '';
           insertedNode = newNode.parentNode.insertBefore(tag, newNode);
           nodeList[nodeList.length - 1].push(insertedNode);
           if (groupedNodes[i][j].data.length === 0) {
@@ -287,7 +287,7 @@ function highlight(root, options, callback) {
             helpStr += groupedNodes[i][j].data;
             newNode = groupedNodes[i][j].splitText(0);
             tag = callback(newNode.data, sameMatchID);
-            newNode.data = "";
+            newNode.data = '';
             insertedNode = newNode.parentNode.insertBefore(tag, newNode);
             nodeList[nodeList.length - 1].push(insertedNode);
             if (groupedNodes[i][j].data.length === 0) {
