@@ -26,7 +26,9 @@ New-Item -Path "$($buildChromeFolder)$($manifestFile)" -ItemType File -Force | O
 $manifestJSON = Get-Content "$($chromeFolder)$($manifestFile)" -raw | ConvertFrom-Json
 
 # insure that the js and the css attributes are of type ArrayList
+$originalJS = $manifestJSON.content_scripts[0].js
 $manifestJSON.content_scripts[0].js = New-Object -TypeName 'System.Collections.ArrayList'
+$originalCSS = $manifestJSON.content_scripts[0].css
 $manifestJSON.content_scripts[0].css = New-Object -TypeName 'System.Collections.ArrayList'
 
 # loop through each .ts and .css file and add their paths to the manifest
@@ -41,6 +43,8 @@ Get-ChildItem "$($chromeFolder)*" -Include *.ts, *.css -Exclude *.d.ts, *backgro
     }
   } | 
   Out-Null 
+$manifestJSON.content_scripts[0].js = $originalJS + $manifestJSON.content_scripts[0].js
+$manifestJSON.content_scripts[0].css = $originalCSS + $manifestJSON.content_scripts[0].css
 
 # write the new json to the build manifest file
 $manifestJSON | ConvertTo-Json -depth 32 | set-content "$($buildChromeFolder)$($manifestFile)"
