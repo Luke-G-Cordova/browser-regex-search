@@ -1,17 +1,17 @@
 
-# set up file path variables
+# set up file path variables for chrome
 $chromeFolder = "./browser-search-regex/chrome/"
 $buildChromeFolder = "./build/chrome/"
 $customLibFolder = "./browser-search-regex/custom_lib/"
 $manifestFile = "manifest.json"
 
-# create the manifest.json file
+# create the manifest.json file for chrome
 New-Item -Path "$($buildChromeFolder)$($manifestFile)" -ItemType File -Force | Out-Null
 
 # convert the contents of manifest.json to a powershell object
 $manifestJSON = Get-Content "$($chromeFolder)$($manifestFile)" -raw | ConvertFrom-Json
 
-function IncludeTSPathsInManifest {
+function ChromeIncludeTSPathsInManifest {
   param($parentDir)
   Get-ChildItem "$($parentDir)*" -Include *.ts, *.css -Exclude *.d.ts, *background.ts | 
     ForEach-Object { 
@@ -31,8 +31,6 @@ if (-not (Test-Path -Path $buildChromeFolder)) {
   New-Item -Path "$($buildChromeFolder)" -ItemType Directory -Force | Out-Null
 }
 
-# --- chrome manifest transfer to build directory ---
-
 # delete all items currently in the build folder
 Remove-Item $buildChromeFolder -Recurse 
 
@@ -49,7 +47,7 @@ $originalCSS = $manifestJSON.content_scripts[0].css
 $manifestJSON.content_scripts[0].css = New-Object -TypeName 'System.Collections.ArrayList'
 
 # loop through each .ts and .css file and add their paths to the manifest
-IncludeTSPathsInManifest -parentDir $chromeFolder
+ChromeIncludeTSPathsInManifest -parentDir $chromeFolder
 
 $manifestJSON.content_scripts[0].js = $originalJS + $manifestJSON.content_scripts[0].js
 $manifestJSON.content_scripts[0].css = $originalCSS + $manifestJSON.content_scripts[0].css
