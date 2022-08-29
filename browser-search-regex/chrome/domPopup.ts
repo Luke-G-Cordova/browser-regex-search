@@ -1,3 +1,4 @@
+/// <reference path="./custom_lib/stylers/Styler.ts" />
 chrome.runtime.onMessage.addListener((msg) => {
   if (msg.from === 'background' && msg.subject === 'open_popup') {
     showPopup();
@@ -11,6 +12,6 @@ const showPopup = () => {
   popup.style.left = `${20 + window.scrollX}px`;
   popup = document.body.insertBefore(popup, document.body.firstChild);
 
-  // let popupDragger = new Draggable(popup);
-  // popupDragger.drag();
+  let popupDragger = new Styler.Draggable(popup);
+  popupDragger.drag();
 };

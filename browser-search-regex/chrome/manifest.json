@@ -7,7 +7,7 @@
   "content_scripts": [
     {
       "matches": ["*://*/*", "https://*/"],
-      "js": ["../custom_lib/stylers/Draggable.js"],
+      "js": ["./custom_lib/stylers/Styler.js"],
       "css": []
     }
   ],
