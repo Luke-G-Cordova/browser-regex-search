@@ -7,11 +7,7 @@
   "content_scripts": [
     {
       "matches": ["*://*/*", "https://*/"],
-      "js": [
-        "./custom_lib/stylers/Styler.js",
-        "./custom_lib/DOM_manipulator/DomPopup.js",
-        "./custom_lib/DOM_manipulator/Globals.js"
-      ],
+      "js": [],
       "css": []
     }
   ],

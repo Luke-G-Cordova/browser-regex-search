@@ -2,7 +2,6 @@
 # set up file path variables for chrome
 $chromeFolder = "./browser-search-regex/chrome/"
 $buildChromeFolder = "./build/chrome/"
-$customLibFolder = "./browser-search-regex/custom_lib/"
 $manifestFile = "manifest.json"
 
 # create the manifest.json file for chrome
@@ -12,18 +11,20 @@ New-Item -Path "$($buildChromeFolder)$($manifestFile)" -ItemType File -Force | O
 $manifestJSON = Get-Content "$($chromeFolder)$($manifestFile)" -raw | ConvertFrom-Json
 
 function ChromeIncludeTSPathsInManifest {
-  param($parentDir)
-  Get-ChildItem "$($parentDir)*" -Include *.ts, *.css -Exclude *.d.ts, *background.ts | 
+  Set-Location $chromeFolder
+
+  Get-ChildItem "./*" -Include *.ts, *.css -Exclude *.d.ts, *background.ts -Recurse | 
     ForEach-Object { 
-      $fileName = (Split-Path -Leaf -Resolve $_)
-      if ((Get-ChildItem $_ | Select-Object Extension).Extension -eq ".ts") {
-        $manifestJSON.content_scripts[0].js.Add("./$($fileName)".replace('.ts', '.js'))
+      if ($_.Extension -eq ".ts") {
+        $manifestJSON.content_scripts[0].js.Add((Resolve-Path $_ -Relative).replace('.ts', '.js').replace("\", "/"))
       }
-      elseif ((Get-ChildItem $_ | Select-Object Extension).Extension -eq ".css") {
-        $manifestJSON.content_scripts[0].css.Add("./$($fileName)")
+      elseif ($_.Extension -eq ".css") {
+        $manifestJSON.content_scripts[0].css.Add((Resolve-Path $_ -Relative).replace("\", "/"))
       }
     } | 
     Out-Null 
+
+  Set-Location $PSScriptRoot
 }
 
 # create necessary build folder if it does not exist
@@ -47,7 +48,7 @@ $originalCSS = $manifestJSON.content_scripts[0].css
 $manifestJSON.content_scripts[0].css = New-Object -TypeName 'System.Collections.ArrayList'
 
 # loop through each .ts and .css file and add their paths to the manifest
-ChromeIncludeTSPathsInManifest -parentDir $chromeFolder
+ChromeIncludeTSPathsInManifest
 
 $manifestJSON.content_scripts[0].js = $originalJS + $manifestJSON.content_scripts[0].js
 $manifestJSON.content_scripts[0].css = $originalCSS + $manifestJSON.content_scripts[0].css
