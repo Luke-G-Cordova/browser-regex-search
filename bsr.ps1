@@ -39,7 +39,7 @@ Remove-Item $buildChromeFolder -Recurse
 # copy all files that are not of type .ts or .json
 Get-ChildItem "$($chromeFolder)" -Exclude *.ts, *.json | 
   ForEach-Object {
-    Copy-Item $_ "$($buildChromeFolder)$(Split-Path -Leaf -Resolve $_)" -Recurse
+    Copy-Item $_ "$($buildChromeFolder)$(Split-Path -Leaf -Resolve $_)" -Exclude *.ts, *.json -Recurse
   }
 
 # insure that the js and the css attributes are of type ArrayList

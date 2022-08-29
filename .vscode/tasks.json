@@ -2,15 +2,20 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "type": "npm",
-      "script": "build",
+      "label": "build",
+      "type": "shell",
+      "command": "./bsr.ps1 && npx tsc",
+      "windows": {
+        "command": "./bsr.ps1 && npx tsc"
+      },
       "group": {
         "kind": "build",
         "isDefault": true
       },
-      "problemMatcher": [],
-      "label": "npm: build",
-      "detail": "tsc && ./bsr.ps1"
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      }
     }
   ]
 }
