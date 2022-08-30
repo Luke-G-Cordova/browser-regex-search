@@ -1,36 +1,37 @@
-interface highlightOptions {
+interface HighlightOptions {
   regex: RegExp | string;
   excludes: string[];
   limit: number;
 }
 
 namespace Highlighter {
-  export const clearHighlight = (keys: any) => {
-    var elements: any;
-    var nodes: any;
-    var elements: any;
-    var keysCopy = [].concat(keys);
+  export const clearHighlight = (keys: string[] | string) => {
+    let elements: NodeListOf<Element> | Array<Element>;
+    let nodes: NodeListOf<Element> | Array<Element>;
+    let keysArray = Array<string>.prototype.concat(keys);
 
-    for (let j = 0; j < keysCopy.length; j++) {
+    for (let j = 0; j < keysArray.length; j++) {
       elements = document.querySelectorAll(
-        `highlight-me.chrome-regeggz-highlight-me.${keysCopy[j]}`
+        `highlight-me.chrome-regeggz-highlight-me.${keysArray[j]}`
       );
+
       elements = [].slice.call(elements);
       for (let i = 0; i < elements.length; i++) {
         nodes = [].slice.call(elements[i].childNodes);
-        var nodesFragment = document.createDocumentFragment();
+        let nodesFragment = document.createDocumentFragment();
         for (let node in nodes) {
           nodesFragment.appendChild(nodes[node]);
         }
-        elements[i].parentNode.replaceChild(nodesFragment, elements[i]);
+        elements[i].parentNode?.replaceChild(nodesFragment, elements[i]);
         elements[i] = nodes[0];
-        nodes[0].parentNode.normalize();
+        nodes[0].parentNode?.normalize();
       }
     }
   };
+
   export const highlight = (
     root: HTMLElement,
-    options: highlightOptions = {
+    options: HighlightOptions = {
       regex: '',
       excludes: [],
       limit: 1000,

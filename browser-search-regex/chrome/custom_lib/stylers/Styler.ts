@@ -1,5 +1,9 @@
 namespace Styler {
   export class Draggable {
+    /**
+     * If equal to 0, will drag
+     * Increases by for every nonDraggableChildElements
+     */
     private notDraggable: number;
 
     /**
