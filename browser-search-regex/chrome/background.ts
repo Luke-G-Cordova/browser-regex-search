@@ -1,4 +1,13 @@
 /**
+ * used to send data between background.js
+ * and the rest of the application
+ */
+interface communicationInfo {
+  from: string;
+  subject: string;
+}
+
+/**
  * sends data to different parts of the extension
  * @param data object to be sent
  */
