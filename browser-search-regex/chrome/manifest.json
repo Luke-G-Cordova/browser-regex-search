@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "Chrome Regular Expressions",
+  "name": "Browser Regex Search",
   "version": "1.0",
   "description": "This is an extension built to increase functionality of the ctrl+f shortcut in google chrome.",
   "permissions": ["activeTab", "notifications", "declarativeContent"],
