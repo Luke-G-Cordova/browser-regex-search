@@ -36,7 +36,7 @@ namespace Highlighter {
       excludes: [],
       limit: 1000,
     },
-    callback: (match: string, id: number) => void
+    callback: (match: string, id: number) => HTMLElement
   ) => {
     options.excludes = [
       'script',
@@ -49,7 +49,7 @@ namespace Highlighter {
     var tw = document.createTreeWalker(
       root,
       NodeFilter.SHOW_TEXT,
-      function (node: any) {
+      function (node: any): number {
         if (
           node.data.trim() === '' ||
           isDescendant(options.excludes, node) ||
