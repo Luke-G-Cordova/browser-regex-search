@@ -3,6 +3,19 @@ interface HighlightOptions {
   excludes: string[];
   limit: number;
 }
+interface ClosestMatch extends Array<string> {
+  input: string;
+  size: number;
+  percent: number;
+  changes: number;
+  index: number;
+  endIndex: number;
+  length: number;
+}
+interface NodeParts {
+  nodeParts: string;
+  j: number;
+}
 
 namespace Highlighter {
   export const clearHighlight = (keys: string[] | string) => {
@@ -53,12 +66,12 @@ namespace Highlighter {
 
     let masterStr = '';
     let test: RegExpExecArray | null;
-    let test2: any;
-    let tag;
+    let test2: RegExpExecArray | null;
+    let tag: HTMLElement;
     let newNode: Text;
-    let insertedNode: any;
+    let insertedNode: Node | undefined;
     let count = 0;
-    let nodeList: any[] = [];
+    let nodeList: Node[][] = [];
 
     let groupedNodesLength = groupedNodes.length;
     for (
@@ -68,38 +81,30 @@ namespace Highlighter {
     ) {
       masterStr = groupedNodes[i].map((elem: any) => elem.data).join('');
 
-      if (typeof options.regex !== 'string') {
+      if (options.regex instanceof RegExp) {
         while (
           (test = options.regex.exec(masterStr)) &&
           test[0] !== '' &&
           nodeList.length < options.limit
         ) {
-          var lastRegIndex = options.regex.lastIndex;
+          let lastRegIndex = options.regex.lastIndex;
 
           count++;
 
-          var j = 0;
-          var nodeParts = '' + groupedNodes[i][j].data;
-
-          var testIndex = test.index;
-          while (testIndex > nodeParts.length - 1) {
-            j++;
-            nodeParts = nodeParts + groupedNodes[i][j].data;
-          }
+          let { nodeParts, j } = getNodeParts(i, test.index, groupedNodes);
 
           options.regex.lastIndex = 0;
 
           test2 = options.regex.exec(groupedNodes[i][j].data);
 
-          var inThisNode = nodeParts.substring(testIndex);
+          var inThisNode = nodeParts.substring(test.index);
 
           test2 ||
-            ((test2 = []),
-            (test2[0] = inThisNode),
-            (test2['index'] =
-              groupedNodes[i][j].data.length - inThisNode.length),
-            (test2['input'] = groupedNodes[i][j].data),
-            (test2['groups'] = undefined));
+            (test2 = makeCustomRegExpExecArray(
+              inThisNode,
+              groupedNodes[i][j].data.length - inThisNode.length,
+              groupedNodes[i][j].data
+            ));
 
           var helpArr: string[] = [];
 
@@ -114,16 +119,21 @@ namespace Highlighter {
             tag = callback(helpArr[k], sameMatchID);
             newNode.data = '';
             insertedNode = newNode.parentNode?.insertBefore(tag, newNode);
-            nodeList[nodeList.length - 1].push(insertedNode);
-            if (groupedNodes[i][j].data.length === 0) {
-              groupedNodes[i][j] = insertedNode.firstChild;
-            } else {
-              groupedNodes[i].splice(j + 1, 0, insertedNode.firstChild);
+            if (
+              insertedNode != null &&
+              insertedNode.firstChild instanceof Text
+            ) {
+              nodeList[nodeList.length - 1].push(insertedNode);
+              if (groupedNodes[i][j].data.length === 0) {
+                groupedNodes[i][j] = insertedNode.firstChild;
+              } else {
+                groupedNodes[i].splice(j + 1, 0, insertedNode.firstChild);
+                j++;
+              }
               j++;
+              sameMatchID++;
+              helpArr.push(groupedNodes[i][j].data);
             }
-            j++;
-            sameMatchID++;
-            helpArr.push(groupedNodes[i][j].data);
           }
           var lastNode = helpArr.pop();
           if (helpArr[0] && lastNode != null) {
@@ -136,13 +146,17 @@ namespace Highlighter {
               test[0].length - helpArr.join('').length
             );
             insertedNode = newNode.parentNode?.insertBefore(tag, newNode);
-            nodeList[nodeList.length - 1].push(insertedNode);
-
-            groupedNodes[i][j] = insertedNode.firstChild;
-            if (newNode.data.length > 0) {
-              groupedNodes[i].splice(j + 1, 0, newNode);
+            if (
+              insertedNode != null &&
+              insertedNode.firstChild instanceof Text
+            ) {
+              nodeList[nodeList.length - 1].push(insertedNode);
+              groupedNodes[i][j] = insertedNode.firstChild;
+              if (newNode.data.length > 0) {
+                groupedNodes[i].splice(j + 1, 0, newNode);
+              }
+              sameMatchID++;
             }
-            sameMatchID++;
           } else {
             newNode = groupedNodes[i][j].splitText(test2.index);
 
@@ -150,24 +164,33 @@ namespace Highlighter {
             newNode.data = newNode.data.substring(test2[0].length);
             insertedNode = newNode.parentNode?.insertBefore(tag, newNode);
 
-            nodeList[nodeList.length - 1].push(insertedNode);
-
-            if (groupedNodes[i][j].data === '') {
-              if (newNode.data === '') {
-                groupedNodes[i].splice(j, 1, insertedNode.firstChild);
+            if (
+              insertedNode != null &&
+              insertedNode.firstChild instanceof Text
+            ) {
+              nodeList[nodeList.length - 1].push(insertedNode);
+              if (groupedNodes[i][j].data === '') {
+                if (newNode.data === '') {
+                  groupedNodes[i].splice(j, 1, insertedNode.firstChild);
+                } else {
+                  groupedNodes[i].splice(
+                    j,
+                    1,
+                    insertedNode.firstChild,
+                    newNode
+                  );
+                }
               } else {
-                groupedNodes[i].splice(j, 1, insertedNode.firstChild, newNode);
-              }
-            } else {
-              if (newNode.data === '') {
-                groupedNodes[i].splice(j + 1, 0, insertedNode.firstChild);
-              } else {
-                groupedNodes[i].splice(
-                  j + 1,
-                  0,
-                  insertedNode.firstChild,
-                  newNode
-                );
+                if (newNode.data === '') {
+                  groupedNodes[i].splice(j + 1, 0, insertedNode.firstChild);
+                } else {
+                  groupedNodes[i].splice(
+                    j + 1,
+                    0,
+                    insertedNode.firstChild,
+                    newNode
+                  );
+                }
               }
             }
           }
@@ -197,38 +220,11 @@ namespace Highlighter {
             tag = callback(match[0], sameMatchID);
             newNode.data = newNode.data.substring(match.size);
             insertedNode = newNode.parentNode?.insertBefore(tag, newNode);
-            nodeList[nodeList.length - 1].push(insertedNode);
-            if (groupedNodes[i][j].data.length === 0) {
-              groupedNodes[i][j] = insertedNode.firstChild;
-            } else {
-              groupedNodes[i].splice(j + 1, 0, insertedNode.firstChild);
-              j++;
-            }
-            j++;
-            sameMatchID++;
-          } else {
-            var helpStr = '';
-            newNode = groupedNodes[i][j].splitText(nodeStartIndex);
-            helpStr += newNode.data;
-            tag = callback(newNode.data, sameMatchID);
-            newNode.data = '';
-            insertedNode = newNode.parentNode?.insertBefore(tag, newNode);
-            nodeList[nodeList.length - 1].push(insertedNode);
-            if (groupedNodes[i][j].data.length === 0) {
-              groupedNodes[i][j] = insertedNode.firstChild;
-            } else {
-              groupedNodes[i].splice(j + 1, 0, insertedNode.firstChild);
-              j++;
-            }
-            j++;
-            sameMatchID++;
 
-            while ((helpStr + groupedNodes[i][j].data).length < match.size) {
-              helpStr += groupedNodes[i][j].data;
-              newNode = groupedNodes[i][j].splitText(0);
-              tag = callback(newNode.data, sameMatchID);
-              newNode.data = '';
-              insertedNode = newNode.parentNode?.insertBefore(tag, newNode);
+            if (
+              insertedNode != null &&
+              insertedNode.firstChild instanceof Text
+            ) {
               nodeList[nodeList.length - 1].push(insertedNode);
               if (groupedNodes[i][j].data.length === 0) {
                 groupedNodes[i][j] = insertedNode.firstChild;
@@ -236,8 +232,53 @@ namespace Highlighter {
                 groupedNodes[i].splice(j + 1, 0, insertedNode.firstChild);
                 j++;
               }
-              sameMatchID++;
               j++;
+              sameMatchID++;
+            }
+          } else {
+            var helpStr = '';
+            newNode = groupedNodes[i][j].splitText(nodeStartIndex);
+            helpStr += newNode.data;
+            tag = callback(newNode.data, sameMatchID);
+            newNode.data = '';
+            insertedNode = newNode.parentNode?.insertBefore(tag, newNode);
+
+            if (
+              insertedNode != null &&
+              insertedNode.firstChild instanceof Text
+            ) {
+              nodeList[nodeList.length - 1].push(insertedNode);
+              if (groupedNodes[i][j].data.length === 0) {
+                groupedNodes[i][j] = insertedNode.firstChild;
+              } else {
+                groupedNodes[i].splice(j + 1, 0, insertedNode.firstChild);
+                j++;
+              }
+              j++;
+              sameMatchID++;
+            }
+
+            while ((helpStr + groupedNodes[i][j].data).length < match.size) {
+              helpStr += groupedNodes[i][j].data;
+              newNode = groupedNodes[i][j].splitText(0);
+              tag = callback(newNode.data, sameMatchID);
+              newNode.data = '';
+              insertedNode = newNode.parentNode?.insertBefore(tag, newNode);
+
+              if (
+                insertedNode != null &&
+                insertedNode.firstChild instanceof Text
+              ) {
+                nodeList[nodeList.length - 1].push(insertedNode);
+                if (groupedNodes[i][j].data.length === 0) {
+                  groupedNodes[i][j] = insertedNode.firstChild;
+                } else {
+                  groupedNodes[i].splice(j + 1, 0, insertedNode.firstChild);
+                  j++;
+                }
+                sameMatchID++;
+                j++;
+              }
             }
 
             newNode = groupedNodes[i][j].splitText(0);
@@ -247,13 +288,19 @@ namespace Highlighter {
             );
             newNode.data = newNode.data.substring(match.size - helpStr.length);
             insertedNode = newNode.parentNode?.insertBefore(tag, newNode);
-            nodeList[nodeList.length - 1].push(insertedNode);
-            if (groupedNodes[i][j].data.length === 0) {
-              groupedNodes[i][j] = insertedNode.firstChild;
-            } else {
-              groupedNodes[i].splice(j + 1, 0, insertedNode.firstChild);
+
+            if (
+              insertedNode != null &&
+              insertedNode.firstChild instanceof Text
+            ) {
+              nodeList[nodeList.length - 1].push(insertedNode);
+              if (groupedNodes[i][j].data.length === 0) {
+                groupedNodes[i][j] = insertedNode.firstChild;
+              } else {
+                groupedNodes[i].splice(j + 1, 0, insertedNode.firstChild);
+              }
+              sameMatchID++;
             }
-            sameMatchID++;
           }
         }
       }
@@ -346,8 +393,20 @@ const makeGroupedNodeArray = (tw: TreeWalker, root: HTMLElement) => {
   return groupedNodes;
 };
 
-// levenshtein comparison
-const findClosestMatch = (str1: string, str2: string) => {
+const makeCustomRegExpExecArray = (
+  inThisNode: string,
+  index: number,
+  input: string
+): RegExpExecArray => {
+  let test2: any = [];
+  test2[0] = inThisNode;
+  test2['index'] = index;
+  test2['input'] = input;
+  test2['groups'] = undefined;
+  return test2;
+};
+
+const findClosestMatch = (str1: string, str2: string): ClosestMatch => {
   let mat = lev_distance_matrix(str1, str2);
   let i, j;
   for (
@@ -383,6 +442,23 @@ const findClosestMatch = (str1: string, str2: string) => {
   match['length'] = 6;
   return match;
 };
+
+const getNodeParts = (
+  i: number,
+  testIndex: number,
+  groupedNodes: Text[][]
+): NodeParts => {
+  let j = 0;
+  let nodeParts = '' + groupedNodes[i][j].data;
+
+  while (testIndex > nodeParts.length - 1) {
+    j++;
+    nodeParts = nodeParts + groupedNodes[i][j].data;
+  }
+  return { nodeParts, j };
+};
+
+// levenshtein comparison
 
 const lev_distance = (str1: string, str2: string) => {
   let mat = [];
