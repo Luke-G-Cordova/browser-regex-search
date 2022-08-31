@@ -6,18 +6,19 @@ interface HighlightOptions {
 
 namespace Highlighter {
   export const clearHighlight = (keys: string[] | string) => {
-    let elements: NodeListOf<Element> | Array<Element>;
-    let nodes: NodeListOf<Element> | Array<Element>;
+    let elements: Array<Node>;
+    let nodes: Array<ChildNode>;
     let keysArray = Array<string>.prototype.concat(keys);
 
     for (let j = 0; j < keysArray.length; j++) {
-      elements = document.querySelectorAll(
-        `highlight-me.chrome-regeggz-highlight-me.${keysArray[j]}`
+      elements = Array.from(
+        document.querySelectorAll(
+          `highlight-me.chrome-regeggz-highlight-me.${keysArray[j]}`
+        )
       );
 
-      elements = [].slice.call(elements);
       for (let i = 0; i < elements.length; i++) {
-        nodes = [].slice.call(elements[i].childNodes);
+        nodes = Array.from(elements[i].childNodes);
         let nodesFragment = document.createDocumentFragment();
         for (let node in nodes) {
           nodesFragment.appendChild(nodes[node]);
@@ -49,12 +50,13 @@ namespace Highlighter {
     var tw = document.createTreeWalker(
       root,
       NodeFilter.SHOW_TEXT,
-      function (node: any): number {
+      function (node: Node): number {
+        if (!(node instanceof CharacterData)) return NodeFilter.FILTER_ACCEPT;
         if (
           node.data.trim() === '' ||
           isDescendant(options.excludes, node) ||
           // excludes.indexOf(node.parentNode.tagName.toLowerCase()) > -1 ||
-          !node.parentElement.offsetParent
+          !node.parentElement?.offsetParent
         ) {
           return NodeFilter.FILTER_REJECT;
         }
