@@ -14,7 +14,7 @@ interface ClosestMatch extends Array<string> {
 }
 interface NodeParts {
   nodeParts: string;
-  j: number;
+  indexOfNodeThatMatchStartsIn: number;
 }
 
 namespace Highlighter {
@@ -70,34 +70,48 @@ namespace Highlighter {
     let tag: HTMLElement;
     let newNode: Text;
     let insertedNode: Node | undefined;
-    let count = 0;
+    let amountOfSelectedMatches = 0;
     let nodeList: Node[][] = [];
-
     let groupedNodesLength = groupedNodes.length;
+
+    // loop through all groups of nodes or until we have looped options.limit times
     for (
       let i = 0;
       i < groupedNodesLength && nodeList.length < options.limit;
       i++
     ) {
+      // get a string that is formed from a group of nodes
       masterStr = groupedNodes[i].map((elem: any) => elem.data).join('');
 
+      let sameMatchID = 0;
+
+      // determine wether or not the search string
+      // is a regular expression or a string
       if (options.regex instanceof RegExp) {
+        // loop through the matches in masterStr
         while (
           (test = options.regex.exec(masterStr)) &&
           test[0] !== '' &&
           nodeList.length < options.limit
         ) {
+          // store the index of the last match
           let lastRegIndex = options.regex.lastIndex;
 
-          count++;
+          amountOfSelectedMatches++;
 
-          let { nodeParts, j } = getNodeParts(i, test.index, groupedNodes);
+          let { nodeParts, indexOfNodeThatMatchStartsIn: j } = getNodeParts(
+            test.index,
+            groupedNodes[i]
+          );
 
           options.regex.lastIndex = 0;
 
-          test2 = options.regex.exec(groupedNodes[i][j].data);
+          // get the string that starts at the found match
+          // and ends at the end of the containing nodes text
+          let inThisNode = nodeParts.substring(test.index);
 
-          var inThisNode = nodeParts.substring(test.index);
+          // try to find the whole match in the current node
+          test2 = options.regex.exec(groupedNodes[i][j].data);
 
           test2 ||
             (test2 = makeCustomRegExpExecArray(
@@ -106,11 +120,10 @@ namespace Highlighter {
               groupedNodes[i][j].data
             ));
 
-          var helpArr: string[] = [];
+          let helpArr: string[] = [];
 
           helpArr.push(test2[0]);
 
-          var sameMatchID = 0;
           nodeList.push([]);
           for (let k = 0; helpArr.join('').length < test[0].length; k++) {
             newNode = groupedNodes[i][j].splitText(
@@ -135,7 +148,8 @@ namespace Highlighter {
               helpArr.push(groupedNodes[i][j].data);
             }
           }
-          var lastNode = helpArr.pop();
+
+          let lastNode = helpArr.pop();
           if (helpArr[0] && lastNode != null) {
             newNode = groupedNodes[i][j].splitText(0);
             tag = callback(
@@ -195,16 +209,17 @@ namespace Highlighter {
             }
           }
           nodeParts = '';
+          // replace the current regex match index with the last matches index
           options.regex.lastIndex = lastRegIndex;
         }
         options.regex.lastIndex = 0;
       } else {
         let match = findClosestMatch(options.regex, masterStr);
         if (match.percent > 80) {
-          count++;
+          amountOfSelectedMatches++;
 
-          var j = 0;
-          var nodeParts = '' + groupedNodes[i][j].data;
+          let j = 0;
+          let nodeParts = '' + groupedNodes[i][j].data;
 
           while (match.index > nodeParts.length - 1) {
             j++;
@@ -212,7 +227,6 @@ namespace Highlighter {
           }
           let nodeStartIndex =
             match.index - (nodeParts.length - groupedNodes[i][j].data.length);
-          var sameMatchID = 0;
 
           nodeList.push([]);
           if (nodeStartIndex + match.size <= groupedNodes[i][j].data.length) {
@@ -236,7 +250,7 @@ namespace Highlighter {
               sameMatchID++;
             }
           } else {
-            var helpStr = '';
+            let helpStr = '';
             newNode = groupedNodes[i][j].splitText(nodeStartIndex);
             helpStr += newNode.data;
             tag = callback(newNode.data, sameMatchID);
@@ -305,8 +319,9 @@ namespace Highlighter {
         }
       }
     }
+
     return {
-      count,
+      amountOfSelectedMatches,
       elements: nodeList,
     };
   };
@@ -442,20 +457,25 @@ const findClosestMatch = (str1: string, str2: string): ClosestMatch => {
   match['length'] = 6;
   return match;
 };
-
+/**
+ *
+ * @param testIndex the index of the found match in the master string
+ * @param currentGroupOfNodes the group of nodes who's text forms the master string
+ * @returns `NodeParts` interface that stores a nodeParts array or the text from each node
+ * in the current group of nodes and the index of the node from which the current match was found in
+ */
 const getNodeParts = (
-  i: number,
   testIndex: number,
-  groupedNodes: Text[][]
+  currentGroupOfNodes: Text[]
 ): NodeParts => {
   let j = 0;
-  let nodeParts = '' + groupedNodes[i][j].data;
+  let nodeParts = '' + currentGroupOfNodes[j].data;
 
   while (testIndex > nodeParts.length - 1) {
     j++;
-    nodeParts = nodeParts + groupedNodes[i][j].data;
+    nodeParts = nodeParts + currentGroupOfNodes[j].data;
   }
-  return { nodeParts, j };
+  return { nodeParts, indexOfNodeThatMatchStartsIn: j };
 };
 
 // levenshtein comparison
