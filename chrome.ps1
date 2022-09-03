@@ -1,5 +1,4 @@
 $changedFile = $args[0]#Resolve-Path -LiteralPath $args[0]
-$changedFileExtension = [System.IO.Path]::GetExtension($changedFile)
 $changeType = $args[1]
 
 function buildDir {
@@ -21,47 +20,45 @@ function buildDir {
 }
 
 function buildManifest {
-  if (( $changedFileExtension -eq ".ts" ) -or ( $changedFileExtension -eq ".css" )) {
 
-    # create the manifest.json file for chrome
-    New-Item -Path "$($PSScriptRoot)/build/chrome/manifest.json" -ItemType File -Force | Out-Null
+  # create the manifest.json file for chrome
+  New-Item -Path "$PSScriptRoot/build/chrome/manifest.json" -ItemType File -Force | Out-Null
 
-    # convert the contents of manifest.json to a powershell object
-    $manifestJSON = Get-Content "$($PSScriptRoot)/browser-search-regex/chrome/manifest.json" -raw | ConvertFrom-Json
+  # convert the contents of manifest.json to a powershell object
+  $manifestJSON = Get-Content "$PSScriptRoot/browser-search-regex/chrome/manifest.json" -raw | ConvertFrom-Json
 
-    # insure that the js and the css attributes are of type ArrayList
-    $originalJS = $manifestJSON.content_scripts[0].js
-    $manifestJSON.content_scripts[0].js = New-Object -TypeName 'System.Collections.ArrayList'
-    $originalCSS = $manifestJSON.content_scripts[0].css
-    $manifestJSON.content_scripts[0].css = New-Object -TypeName 'System.Collections.ArrayList'
+  # insure that the js and the css attributes are of type ArrayList
+  $originalJS = $manifestJSON.content_scripts[0].js
+  $manifestJSON.content_scripts[0].js = New-Object -TypeName 'System.Collections.ArrayList'
+  $originalCSS = $manifestJSON.content_scripts[0].css
+  $manifestJSON.content_scripts[0].css = New-Object -TypeName 'System.Collections.ArrayList'
 
-    Set-Location "$($PSScriptRoot)/browser-search-regex/chrome/" 
+  Set-Location "$PSScriptRoot/browser-search-regex/chrome/" 
 
-    Get-ChildItem "./*" -Include *.ts, *.css -Exclude *.d.ts, *background.ts -Recurse | 
-      ForEach-Object { 
-        if ($_.Extension -eq ".ts") {
-          $manifestJSON.content_scripts[0].js.Add((Resolve-Path $_ -Relative).replace('.ts', '.js').replace("\", "/"))
-        }
-        elseif ($_.Extension -eq ".css") {
-          $manifestJSON.content_scripts[0].css.Add((Resolve-Path $_ -Relative).replace("\", "/"))
-        }
-      } | 
-      Out-Null 
+  Get-ChildItem "./*" -Include *.ts, *.css -Exclude *.d.ts, *background.ts -Recurse | 
+    ForEach-Object { 
+      if ($_.Extension -eq ".ts") {
+        $manifestJSON.content_scripts[0].js.Add((Resolve-Path $_ -Relative).replace('.ts', '.js').replace("\", "/"))
+      }
+      elseif ($_.Extension -eq ".css") {
+        $manifestJSON.content_scripts[0].css.Add((Resolve-Path $_ -Relative).replace("\", "/"))
+      }
+    } | 
+    Out-Null 
 
-    Set-Location $PSScriptRoot
+  Set-Location $PSScriptRoot
 
-    $manifestJSON.content_scripts[0].js = $originalJS + $manifestJSON.content_scripts[0].js
-    $manifestJSON.content_scripts[0].css = $originalCSS + $manifestJSON.content_scripts[0].css
+  $manifestJSON.content_scripts[0].js = $originalJS + $manifestJSON.content_scripts[0].js
+  $manifestJSON.content_scripts[0].css = $originalCSS + $manifestJSON.content_scripts[0].css
 
-    # write the new json to the build manifest file
-    $manifestJSON | ConvertTo-Json -depth 32 | set-content "$(PSSCriptRoot)/build/chrome/manifest.json"
-  }
+  # write the new json to the build manifest file
+  $manifestJSON | ConvertTo-Json -depth 32 | set-content "$PSScriptRoot/build/chrome/manifest.json"
 }
 
 function existsInBuild {
   param($fileInSrc)
 
-  Get-ChildItem "$($PSScriptRoot)/browser-search-regex/chrome/" -Exclude *.js, *.js.map -Recurse | 
+  Get-ChildItem "$PSScriptRoot/browser-search-regex/chrome/" -Exclude *.js, *.js.map -Recurse | 
     ForEach-Object {
       if ((getRelativePathToChrome $_.FullName ) -eq $fileInSrc) {
         return $true
@@ -77,8 +74,8 @@ function buildFile {
 
   # if the highest parent build/chrome dir does not exist,
   # just build the whole directory
-  if (-not (Test-Path -Path "$($PSScriptRoot)/build/chrome/")) {
-    buildDir "$($PSScriptRoot)/browser-search-regex/chrome/" "$($PSScriptRoot)/build/chrome/"
+  if (-not (Test-Path -Path "$PSScriptRoot/build/chrome/")) {
+    buildDir "$PSScriptRoot/browser-search-regex/chrome/" "$PSScriptRoot/build/chrome/"
   }
   # if the src file is a dirctory build the directory
   elseif (($changeType -ne "Deleted") -and ((Get-Item $srcFile) -is [System.IO.DirectoryInfo])) {
@@ -106,7 +103,11 @@ function buildFile {
       # a changed srcFile should be coppied to the buildFile if it 
       # is not a .ts file, .ts files should be handled by typescript
       "Changed" { 
-        if ($srcExtension -ne ".ts") {
+        if ($srcFile -eq "$PSScriptRoot/browser-search-regex/chrome/manifest.json") {
+          Write-Host"here"
+          buildManifest
+        }
+        elseif ($srcExtension -ne ".ts") {
           Copy-Item $srcFile $buildFile
         }
       }
@@ -114,7 +115,7 @@ function buildFile {
       # is not a .ts file, .ts files should be handled by typescript
       "Deleted" { 
         # search through the src folder for an extra file
-        Get-ChildItem "$($PSScriptRoot)/build/chrome/" -Exclude *.ts -Recurse | 
+        Get-ChildItem "$PSScriptRoot/build/chrome/" -Exclude *.ts -Recurse | 
           ForEach-Object {
             if (-not (existsInBuild $_.FullName)) {
               Remove-Item $_.FullName
@@ -165,7 +166,7 @@ function getRelativePathToChrome {
     $parDir = Split-Path $parDir
 
   }
-  return "$($PSScriptRoot)/build/chrome/$retPath".Replace("/", "\")
+  return "$PSScriptRoot/build/chrome/$retPath".Replace("/", "\")
 }
 
 $changedBuildFile = ""
@@ -174,3 +175,4 @@ if ($changedFile -ne "Deleted") {
 }
 
 buildFile $changedFile $changedBuildFile $changeType
+buildManifest
