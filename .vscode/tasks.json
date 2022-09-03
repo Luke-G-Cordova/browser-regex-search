@@ -3,14 +3,31 @@
   "tasks": [
     {
       "label": "build",
-      "type": "shell",
-      "command": "./bsr.ps1 && npx tsc",
-      "windows": {
-        "command": "./bsr.ps1 && npx tsc"
-      },
+      "dependsOn": ["Custom Build", "Typescript Build"],
       "group": {
         "kind": "build",
         "isDefault": true
+      }
+    },
+    {
+      "label": "Custom Build",
+      "type": "shell",
+      "command": "./bsr.ps1",
+      "windows": {
+        "command": "./bsr.ps1"
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "new",
+        "close": true
+      }
+    },
+    {
+      "label": "Typescript Build",
+      "type": "shell",
+      "command": "npx tsc -w",
+      "windows": {
+        "command": "npx tsc -w"
       },
       "presentation": {
         "reveal": "always",
