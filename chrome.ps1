@@ -43,7 +43,7 @@ function buildManifest {
   Get-ChildItem "./*" -Include *.ts, *.css -Exclude *.d.ts, *background.ts -Recurse | 
     ForEach-Object { 
       if ($_.Extension -eq ".ts") {
-        # make sure to replace .ts extensions with .js
+        # make sure to replace .ts extensions with .js and replace \ with / for chrome
         $manifestJSON.content_scripts[0].js.Add((Resolve-Path $_ -Relative).replace('.ts', '.js').replace("\", "/"))
       }
       elseif ($_.Extension -eq ".css") {
@@ -68,7 +68,7 @@ function existsInBuild {
   param($fileInSrc)
   
   # loop through each file in the src folder 
-  Get-ChildItem "$PSScriptRoot/browser-search-regex/chrome/"-Exclude *.js, *.js.map -Recurse | 
+  Get-ChildItem "$PSScriptRoot/browser-search-regex/chrome/"-Exclude *.ts -Recurse | 
     ForEach-Object {
 
       # change the path of the current file to be in the build directory and compare to the $fileInSrc
