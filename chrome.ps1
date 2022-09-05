@@ -146,10 +146,22 @@ function buildFile {
           buildManifest
         }
         elseif ( $srcExtension -eq ".css") {
-          buildManifest
+          Get-ChildItem "$PSScriptRoot/build/chrome/" -Exclude *.ts -Recurse | 
+            ForEach-Object {
+              if (-not (existsInBuild $_.FullName)) {
+                Remove-Item $_.FullName
+              }
+            }
           Copy-Item $srcFile $buildFile
+          buildManifest
         }
         else {
+          Get-ChildItem "$PSScriptRoot/build/chrome/" -Exclude *.ts -Recurse | 
+            ForEach-Object {
+              if (-not (existsInBuild $_.FullName)) {
+                Remove-Item $_.FullName
+              }
+            }
           Copy-Item $srcFile $buildFile
         }
       }
