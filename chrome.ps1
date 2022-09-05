@@ -130,12 +130,7 @@ function buildFile {
       # is not a .ts file, .ts files should be handled by typescript
       "Deleted" { 
         # search through the src folder for an extra file
-        Get-ChildItem "$PSScriptRoot/build/chrome/" -Exclude *.ts -Recurse | 
-          ForEach-Object {
-            if (-not (existsInBuild $_.FullName)) {
-              Remove-Item $_.FullName
-            }
-          }
+        deleteFilesNotInSrc
         buildManifest
       }
       # a renamed srcFile should be coppied to the buildFile if it 
@@ -146,27 +141,27 @@ function buildFile {
           buildManifest
         }
         elseif ( $srcExtension -eq ".css") {
-          Get-ChildItem "$PSScriptRoot/build/chrome/" -Exclude *.ts -Recurse | 
-            ForEach-Object {
-              if (-not (existsInBuild $_.FullName)) {
-                Remove-Item $_.FullName
-              }
-            }
+          deleteFilesNotInSrc
           Copy-Item $srcFile $buildFile
           buildManifest
         }
         else {
-          Get-ChildItem "$PSScriptRoot/build/chrome/" -Exclude *.ts -Recurse | 
-            ForEach-Object {
-              if (-not (existsInBuild $_.FullName)) {
-                Remove-Item $_.FullName
-              }
-            }
+          deleteFilesNotInSrc
           Copy-Item $srcFile $buildFile
         }
       }
     }
   }
+}
+
+# delete all files in the build directory that are not in the source directory
+function deleteFilesNotInSrc {
+  Get-ChildItem "$PSScriptRoot/build/chrome/" -Exclude *.js, *.map -Recurse | 
+    ForEach-Object {
+      if (-not (existsInBuild $_.FullName)) {
+        Remove-Item $_.FullName
+      }
+    }
 }
 
 # returns a files path as if it were a child of the build directory 
