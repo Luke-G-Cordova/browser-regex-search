@@ -21,7 +21,7 @@ namespace Highlighter {
   export const clearHighlight = (keys: string[] | string) => {
     let elements: Array<Node>;
     let nodes: Array<ChildNode>;
-    let keysArray = Array<string>.prototype.concat(keys);
+    let keysArray: Array<string> = Array.prototype.concat(keys);
 
     for (let j = 0; j < keysArray.length; j++) {
       elements = Array.from(
@@ -113,6 +113,10 @@ namespace Highlighter {
           // try to find the whole match in the current node
           test2 = options.regex.exec(groupedNodes[i][j].data);
 
+          // if couldn't find the match in the current node, we know that the match
+          // spans across several nodes in this node group so make a custom
+          // RegExpExecArray containing all characters from the start of the
+          // match in the node to the end of the nodes text
           test2 ||
             (test2 = makeCustomRegExpExecArray(
               inThisNode,
@@ -122,71 +126,135 @@ namespace Highlighter {
 
           let helpArr: string[] = [];
 
+          // push the match or first part of the match to the helpArr
           helpArr.push(test2[0]);
 
+          // create an array for the nodes containing this match in the node list
           nodeList.push([]);
+
+          // loop until the combined length of text in helpArr is
+          // greater than or equal to the full match length
           for (let k = 0; helpArr.join('').length < test[0].length; k++) {
+            // split the text node at the index of the match in the text node
+            // splitText() splits the node such that the left side of the split
+            // remains to be the original node and is updated in groupedNodes[i][j]
+            // the right side of the node gets returned to newNode
             newNode = groupedNodes[i][j].splitText(
               groupedNodes[i][j].length - helpArr[k].length
             );
+
+            // get the tag to be inserted from the callback
             tag = callback(helpArr[k], sameMatchID);
+
+            // clear the nodes data
             newNode.data = '';
+
+            // insert the tag under newNodes parent, but in between groupedNodes[i][j] and newNode
             insertedNode = newNode.parentNode?.insertBefore(tag, newNode);
+
+            // if the insert was successful
             if (
               insertedNode != null &&
               insertedNode.firstChild instanceof Text
             ) {
+              // push the inserted node to the last group in nodeList
               nodeList[nodeList.length - 1].push(insertedNode);
+
+              // if the splitText() call happened on index 0 of the
+              // text node in groupedNodes[i][j], replace that node
+              // with the inserted node and do not increment j.
+              // if the splitText() call happened on an index other than
+              // 0, insert the text node into the groupedNodes array after
+              // groupedNodes[i][j] and make sure to increment j.
               if (groupedNodes[i][j].data.length === 0) {
                 groupedNodes[i][j] = insertedNode.firstChild;
               } else {
                 groupedNodes[i].splice(j + 1, 0, insertedNode.firstChild);
                 j++;
               }
+
+              // move on to the next node and increment sameMatchID for tag
               j++;
               sameMatchID++;
+
+              // push the text of the next node to helpArr for the continuation of the loop
               helpArr.push(groupedNodes[i][j].data);
             }
           }
 
+          // get the full text of the last node containing the match
           let lastNode = helpArr.pop();
+
+          // if the match occurred in more than one node
           if (helpArr[0] && lastNode != null) {
+            // split the node at the beginning to create an empty node and
+            // a node containing the full text of the original node
             newNode = groupedNodes[i][j].splitText(0);
+
+            // get the tag and provide, the part of the match that is in this node,
+            // from the start or 0 index to the length of the match minus the length
+            // of the text of the nodes containing the match, and provide -1 to signify
+            // this is the last node containing the match
             tag = callback(
               lastNode.substring(0, test[0].length - helpArr.join('').length),
               -1
             );
+            // replace newNode's data with everything that is after the occurrence of the
+            // match in this node.
             newNode.data = newNode.data.substring(
               test[0].length - helpArr.join('').length
             );
+            // insert the tag under newNodes parent, but in between groupedNodes[i][j] and newNode
             insertedNode = newNode.parentNode?.insertBefore(tag, newNode);
+
+            // if the inserted was successful
             if (
               insertedNode != null &&
               insertedNode.firstChild instanceof Text
             ) {
+              // push the inserted node to the last group in nodeList
               nodeList[nodeList.length - 1].push(insertedNode);
+              // replace groupedNodes[i][j] with the inserted text node
               groupedNodes[i][j] = insertedNode.firstChild;
+              // if newNode has text, make sure to insert it back into groupedNodes[i] after index j
               if (newNode.data.length > 0) {
                 groupedNodes[i].splice(j + 1, 0, newNode);
               }
+              // increase sameMatchID for the tag
               sameMatchID++;
             }
+            // else if the match occurs in only one node
           } else {
+            // split the node at the beginning of the match
             newNode = groupedNodes[i][j].splitText(test2.index);
 
+            // create a tag
             tag = callback(test2[0], -1);
+
+            // replace newNode's data with the text after the match in this node
             newNode.data = newNode.data.substring(test2[0].length);
+
+            // insert the tag under newNodes parent, but in between groupedNodes[i][j] and newNode
             insertedNode = newNode.parentNode?.insertBefore(tag, newNode);
 
+            // if the insert was successful
             if (
               insertedNode != null &&
               insertedNode.firstChild instanceof Text
             ) {
+              // push the inserted node to the last group in nodeList
               nodeList[nodeList.length - 1].push(insertedNode);
+
+              // if the match occurred at the beginning of the node
               if (groupedNodes[i][j].data === '') {
+                // if newNode's text is empty, replace the node at groupedNodes[i][j]
+                // with insertedNode's text in groupedNodes
                 if (newNode.data === '') {
                   groupedNodes[i].splice(j, 1, insertedNode.firstChild);
+                  // if newNode's text is not empty
                 } else {
+                  // replace replace the node at groupedNodes[i][j] with insertedNode's
+                  // text and newNode in that order in groupedNodes
                   groupedNodes[i].splice(
                     j,
                     1,
@@ -194,10 +262,14 @@ namespace Highlighter {
                     newNode
                   );
                 }
+                // if the match occurred anywhere accept the beginning of the node
               } else {
+                // if newNode's text is empty, replace newNode with insertedNode's text in groupedNodes
                 if (newNode.data === '') {
                   groupedNodes[i].splice(j + 1, 0, insertedNode.firstChild);
+                  // if newNode's text is not empty
                 } else {
+                  // replace newNode with insertedNode's text and newNode in that order in groupedNodes
                   groupedNodes[i].splice(
                     j + 1,
                     0,
@@ -208,6 +280,7 @@ namespace Highlighter {
               }
             }
           }
+          // reset nodeParts
           nodeParts = '';
           // replace the current regex match index with the last matches index
           options.regex.lastIndex = lastRegIndex;
