@@ -1,7 +1,5 @@
 
-# home direcotry
-$homeDir = $PSScriptRoot
-$chromeSrc = "$homeDir\browser-search-regex\chrome"
+$chromeSrc = "$PSScriptRoot\browser-search-regex\chrome"
 
 # file watching logic
 $fileWatcher = New-Object System.IO.FileSystemWatcher
