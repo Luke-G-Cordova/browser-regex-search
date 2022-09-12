@@ -99,9 +99,9 @@ namespace Highlighter {
         ) {
           // store the index of the last match
           let lastRegIndex = options.regex.lastIndex;
-
           amountOfSelectedMatches++;
 
+          // find the node index j in curGroupOfNodes that the first match occurs in
           let { nodeParts, indexOfNodeThatMatchStartsIn: j } = getNodeParts(
             test.index,
             curGroupOfNodes
@@ -109,34 +109,28 @@ namespace Highlighter {
 
           options.regex.lastIndex = 0;
 
-          // get the string that starts at the found match
-          // and ends at the end of the containing nodes text
-          let inThisNode = nodeParts.substring(test.index);
-
-          // try to find the whole match in the current node
+          // try to find the whole match in the current first node the match appears in
           test2 = options.regex.exec(curGroupOfNodes[j].data);
 
-          // if couldn't find the match in the current node, we know that the match
-          // spans across several nodes in this node group so make a custom
-          // RegExpExecArray containing all characters from the start of the
-          // match in the node to the end of the nodes text
-          test2 ||
-            (test2 = makeCustomRegExpExecArray(
+          // if the match occurred in more than one node meaning the match was not found in
+          // only the first node the match occurs in
+          if (test2 == null) {
+            // get the string that starts at the found match
+            // and ends at the end of the containing nodes text
+            let inThisNode = nodeParts.substring(test.index);
+
+            test2 = makeCustomRegExpExecArray(
               inThisNode,
               curGroupOfNodes[j].data.length - inThisNode.length,
               curGroupOfNodes[j].data
-            ));
-
-          // if the match occurred in more than one node: test[0] !== test2[0]
-          if (test[0] !== test2[0]) {
+            );
             // loop until the combined length of text in helpArr is
             // greater than or equal to the full match length,
             // leaving j at the index of the last node this match occurs in at the end of this loop
             let {
               helpArr,
               curGroupOfNodes: helpGroupOfNodes,
-              index: curGroupOfNodesIndex,
-              sameMatchID: sameMatchIDHold,
+              index: indexOfLastNodeIncludingMatch,
               nodeGroup,
             } = insertUpToLastNode(
               test[0].length,
@@ -146,10 +140,7 @@ namespace Highlighter {
               callback
             );
             curGroupOfNodes = helpGroupOfNodes;
-            j = curGroupOfNodesIndex;
-            sameMatchID = sameMatchIDHold;
-            // create an array for the nodes containing this match in the node list
-            nodeList.push(nodeGroup);
+            j = indexOfLastNodeIncludingMatch;
 
             // get the full text of the last node containing the match
             let lastNode = helpArr.pop();
@@ -183,16 +174,19 @@ namespace Highlighter {
               insertedNode.firstChild instanceof Text
             ) {
               // push the inserted node to the last group in nodeList
-              nodeList[nodeList.length - 1].push(insertedNode);
+              nodeGroup.push(insertedNode);
+
               // replace curGroupOfNodes[j] with the inserted text node
               curGroupOfNodes[j] = insertedNode.firstChild;
+
               // if newNode has text, make sure to insert it back into curGroupOfNodes after index j
               if (newNode.data.length > 0) {
                 curGroupOfNodes.splice(j + 1, 0, newNode);
               }
-              // increase sameMatchID for the tag
-              sameMatchID++;
             }
+            // create an array for the nodes containing this match in the node list
+            nodeList.push(nodeGroup);
+
             // else if the match occurs in only one node
           } else {
             // split the node at the beginning of the match
@@ -212,9 +206,8 @@ namespace Highlighter {
               insertedNode != null &&
               insertedNode.firstChild instanceof Text
             ) {
-              nodeList.push([]);
               // push the inserted node to the last group in nodeList
-              nodeList[nodeList.length - 1].push(insertedNode);
+              nodeList.push([insertedNode]);
 
               // if the match occurred at the beginning of the node
               if (curGroupOfNodes[j].data === '') {
@@ -511,7 +504,7 @@ const makeCustomRegExpExecArray = (
 
 const insertUpToLastNode = (
   fullMatchLength: number, // test[0].length
-  partOfMatch: string, // test2[0]
+  partOfMatchInFirstNode: string, // test2[0]
   curGroupOfNodes: Text[],
   index: number, // index of curGroupOfNodes
   callback: (match: string, id: number) => HTMLElement,
@@ -524,7 +517,7 @@ const insertUpToLastNode = (
 
   let helpArr: string[] = [];
   // push the match or first part of the match to the helpArr
-  helpArr.push(partOfMatch);
+  helpArr.push(partOfMatchInFirstNode);
 
   for (let k = 0; helpArr.join('').length < fullMatchLength; k++) {
     // split the text node at the index of the match in the text node
