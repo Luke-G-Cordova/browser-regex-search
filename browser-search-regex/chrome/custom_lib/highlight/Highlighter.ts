@@ -148,10 +148,6 @@ namespace Highlighter {
               console.error('helpArr is an empty array');
               return;
             }
-            // split the node at the beginning to create an empty node and
-            // a node containing the full text of the original node
-            newNode = curGroupOfNodes[j].splitText(0);
-
             // get the tag and provide, the part of the match that is in this node,
             // from the start or 0 index to the length of the match minus the length
             // of the text of the nodes containing the match, and provide -1 to signify
@@ -160,14 +156,12 @@ namespace Highlighter {
               lastNode.substring(0, test[0].length - helpArr.join('').length),
               -1
             );
-            // replace newNode's data with everything that is after the occurrence of the
-            // match in this node.
-            newNode.data = newNode.data.substring(
+            let { insertedNode, newNode } = insertANode(
+              curGroupOfNodes[j],
+              tag,
+              0,
               test[0].length - helpArr.join('').length
             );
-            // insert the tag under newNodes parent, but in between curGroupOfNodes[j] and newNode
-            insertedNode = newNode.parentNode?.insertBefore(tag, newNode);
-
             // if the inserted was successful
             if (
               insertedNode != null &&
@@ -189,17 +183,15 @@ namespace Highlighter {
 
             // else if the match occurs in only one node
           } else {
-            // split the node at the beginning of the match
-            newNode = curGroupOfNodes[j].splitText(test2.index);
-
             // create a tag
             tag = callback(test2[0], -1);
 
-            // replace newNode's data with the text after the match in this node
-            newNode.data = newNode.data.substring(test2[0].length);
-
-            // insert the tag under newNodes parent, but in between curGroupOfNodes[j] and newNode
-            insertedNode = newNode.parentNode?.insertBefore(tag, newNode);
+            let { insertedNode, newNode } = insertANode(
+              curGroupOfNodes[j],
+              tag,
+              test2.index,
+              test2[0].length
+            );
 
             // if the insert was successful
             if (
@@ -273,15 +265,14 @@ namespace Highlighter {
 
           // if the full match is in the current node
           if (nodeStartIndex + match.size <= curGroupOfNodes[j].data.length) {
-            // split the node at the index where the match occurs
-            newNode = curGroupOfNodes[j].splitText(nodeStartIndex);
             // create the tag
             tag = callback(match[0], sameMatchID);
-            // delete the match from newNode's text while keeping the
-            // text after the occurrence of the match
-            newNode.data = newNode.data.substring(match.size);
-            // insert the tag in between curGroupOfNodes[j] and newNode
-            insertedNode = newNode.parentNode?.insertBefore(tag, newNode);
+            let { insertedNode } = insertANode(
+              curGroupOfNodes[j],
+              tag,
+              nodeStartIndex,
+              match.size
+            );
             // if the insert was successful
             if (
               insertedNode != null &&
@@ -461,6 +452,26 @@ const getLastBlockElem = (node: Node, root: HTMLElement) => {
     if (elem === root) return null;
   }
   return elem;
+};
+
+const insertANode = (
+  node: Text,
+  tag: HTMLElement,
+  begin: number,
+  end?: number
+) => {
+  // split the node at the beginning of the match
+  let newNode = node.splitText(begin);
+
+  // replace newNode's data with the text after the match in this node
+  if (end != null) {
+    newNode.data = newNode.data.substring(end);
+  } else {
+    newNode.data = '';
+  }
+  let insertedNode = newNode.parentNode?.insertBefore(tag, newNode);
+  // insert the tag under newNodes parent, but in between curGroupOfNodes[j] and newNode
+  return { insertedNode, newNode };
 };
 
 const makeGroupedNodeArray = (tw: TreeWalker, root: HTMLElement) => {
