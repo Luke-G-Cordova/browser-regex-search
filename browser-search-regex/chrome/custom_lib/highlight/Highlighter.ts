@@ -127,33 +127,36 @@ namespace Highlighter {
               curGroupOfNodes[j].data
             ));
 
-          // loop until the combined length of text in helpArr is
-          // greater than or equal to the full match length,
-          // leaving j at the index of the last node this match occurs in at the end of this loop
-          let {
-            helpArr,
-            curGroupOfNodes: helpGroupOfNodes,
-            index: curGroupOfNodesIndex,
-            sameMatchID: sameMatchIDHold,
-            nodeGroup,
-          } = insertUpToLastNode(
-            test[0],
-            test2[0],
-            curGroupOfNodes,
-            j,
-            callback
-          );
-          curGroupOfNodes = helpGroupOfNodes;
-          j = curGroupOfNodesIndex;
-          sameMatchID = sameMatchIDHold;
-          // create an array for the nodes containing this match in the node list
-          nodeList.push(nodeGroup);
+          // if the match occurred in more than one node: test[0] !== test2[0]
+          if (test[0] !== test2[0]) {
+            // loop until the combined length of text in helpArr is
+            // greater than or equal to the full match length,
+            // leaving j at the index of the last node this match occurs in at the end of this loop
+            let {
+              helpArr,
+              curGroupOfNodes: helpGroupOfNodes,
+              index: curGroupOfNodesIndex,
+              sameMatchID: sameMatchIDHold,
+              nodeGroup,
+            } = insertUpToLastNode(
+              test[0].length,
+              test2[0],
+              curGroupOfNodes,
+              j,
+              callback
+            );
+            curGroupOfNodes = helpGroupOfNodes;
+            j = curGroupOfNodesIndex;
+            sameMatchID = sameMatchIDHold;
+            // create an array for the nodes containing this match in the node list
+            nodeList.push(nodeGroup);
 
-          // get the full text of the last node containing the match
-          let lastNode = helpArr.pop();
-
-          // if the match occurred in more than one node
-          if (helpArr[0] && lastNode != null) {
+            // get the full text of the last node containing the match
+            let lastNode = helpArr.pop();
+            if (lastNode == null) {
+              console.error('helpArr is an empty array');
+              return;
+            }
             // split the node at the beginning to create an empty node and
             // a node containing the full text of the original node
             newNode = curGroupOfNodes[j].splitText(0);
@@ -209,6 +212,7 @@ namespace Highlighter {
               insertedNode != null &&
               insertedNode.firstChild instanceof Text
             ) {
+              nodeList.push([]);
               // push the inserted node to the last group in nodeList
               nodeList[nodeList.length - 1].push(insertedNode);
 
@@ -506,7 +510,7 @@ const makeCustomRegExpExecArray = (
 };
 
 const insertUpToLastNode = (
-  match: string, // test[0]
+  fullMatchLength: number, // test[0].length
   partOfMatch: string, // test2[0]
   curGroupOfNodes: Text[],
   index: number, // index of curGroupOfNodes
@@ -522,7 +526,7 @@ const insertUpToLastNode = (
   // push the match or first part of the match to the helpArr
   helpArr.push(partOfMatch);
 
-  for (let k = 0; helpArr.join('').length < match.length; k++) {
+  for (let k = 0; helpArr.join('').length < fullMatchLength; k++) {
     // split the text node at the index of the match in the text node
     // splitText() splits the node such that the left side of the split
     // remains to be the original node and is updated in curGroupOfNodes[j]
