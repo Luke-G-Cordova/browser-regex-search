@@ -109,11 +109,10 @@ namespace Highlighter {
 
           options.regex.lastIndex = 0;
 
-          // try to find the whole match in the current first node the match appears in
+          // try to find the whole match in the node the match first appears in
           test2 = options.regex.exec(curGroupOfNodes[j].data);
 
-          // if the match occurred in more than one node meaning the match was not found in
-          // only the first node the match occurs in
+          // if match is in several nodes, test2 == null
           if (test2 == null) {
             // get the string that starts at the found match
             // and ends at the end of the containing nodes text
@@ -150,26 +149,22 @@ namespace Highlighter {
             // push the inserted node to the last group in nodeList
             nodeList.push([insertedNode]);
 
-            // if the match occurred at the beginning of the node
+            // if the match occurred at the beginning of the node, curGroupOfNodes[j].data === ''
+            // this means that we did not create a new node, we just replaced one and don't need to increment j
             if (curGroupOfNodes[j].data === '') {
-              // if newNode's text is empty, replace the node at curGroupOfNodes[j]
-              // with insertedNode's text in groupedNodes
+              // if the match occurs across the rest of the node, newNode.data === ''
+              // this means that we need to delete newNode from curGroupOfNodes because we added an empty node
               if (newNode.data === '') {
+                // delete newNode from curGroupOfNodes and replace it with insertedNodes text
                 curGroupOfNodes.splice(j, 1, insertedText);
-                // if newNode's text is not empty
               } else {
-                // replace replace the node at curGroupOfNodes[j] with insertedNode's
-                // text and newNode in that order in groupedNodes
+                // insert insertedNodes text into curGroupOfNodes while keeping newNode
                 curGroupOfNodes.splice(j, 1, insertedText, newNode);
               }
-              // if the match occurred anywhere accept the beginning of the node
             } else {
-              // if newNode's text is empty, replace newNode with insertedNode's text in groupedNodes
               if (newNode.data === '') {
                 curGroupOfNodes.splice(j + 1, 0, insertedText);
-                // if newNode's text is not empty
               } else {
-                // replace newNode with insertedNode's text and newNode in that order in groupedNodes
                 curGroupOfNodes.splice(j + 1, 0, insertedText, newNode);
               }
             }
@@ -449,13 +444,36 @@ const makeCustomRegExpExecArray = (
 };
 
 /**
+ * Using the part of the match in the first node where the match was found, this replaces
+ * every text node containing the match, cutting both the first and last nodes so that it
+ * will only replace the matched text.
+ *
+ * ex:
+ *
+ * For:
+ *
+ *  `curGroupOfNodes = ['hi I am a', 'different', 'text node', 'that is blue']`
+ *
+ * And a search string:
+ *
+ * `'I am a different text no'`
+ *
+ * a proper call looks like:
+ *
+ * `insertOverSeveralNodes(24, 'I am a', curGroupOfNodes, 0, callback)`
+ *
+ * This function will:
+ * - Split `curGroupOfNodes[0]` at index 2 and replace the text from index 3 to index `curGroupOfNodes[0].length-1` with the element `callback('I am a', 0)`
+ * - Split `curGroupOfNodes[1]` at index 0 and replace the text from index 0 to index `curGroupOfNodes[1].length-1` with the element `callback('different', 1)`
+ * - Split `curGroupOfNodes[2]` at index 0 and replace the text from index 0 to index 6 with the element `callback('text no')`
+ *
  *
  * @param fullMatchLength the length of the full match across all nodes
  * @param partOfMatchInFirstNode the first part of the match appearing in a node curGroupOfNodes[index]
  * @param curGroupOfNodes the group of nodes that the match occurs over
  * @param index the nodes index that the first part of the match appears in
  * @param callback the callback to make an HTMLElement to insert
- * @returns the group of nodes representing the matched text across several nodes
+ * @returns the group of nodes that has just been inserted into the dom
  */
 const insertOverSeveralNodes = (
   fullMatchLength: number, // test[0].length
