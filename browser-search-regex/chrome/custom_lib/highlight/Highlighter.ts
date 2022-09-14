@@ -68,8 +68,6 @@ namespace Highlighter {
     let test: RegExpExecArray | null;
     let test2: RegExpExecArray | null;
     let tag: HTMLElement;
-    let newNode: Text;
-    let insertedNode: Node | undefined;
     let amountOfSelectedMatches = 0;
     let nodeList: Node[][] = [];
     let groupedNodesLength = groupedNodes.length;
@@ -176,7 +174,7 @@ namespace Highlighter {
         let match = findClosestMatch(options.regex, masterStr);
 
         // if the match is within 80% of the test string
-        if (match.percent > 80) {
+        if (match.percent >= 0.75) {
           amountOfSelectedMatches++;
 
           // create nodeParts array and find the index j signifying the node that the match starts in
@@ -219,7 +217,7 @@ namespace Highlighter {
             let { insertedNode, insertedText, newNode } = replacePartOfNode(
               curGroupOfNodes[j],
               tag,
-              match.index,
+              nodeStartIndex,
               match.size
             );
 
@@ -519,7 +517,7 @@ const findClosestMatch = (str1: string, str2: string): ClosestMatch => {
   match[0] = str2.substring(i, j);
   match['input'] = str1;
   match['size'] = match[0].length;
-  match['percent'] = (1 - changes / Math.max(str1.length, match.size)) * 100;
+  match['percent'] = 1 - changes / Math.max(str1.length, match.size);
   match['changes'] = changes;
   match['index'] = i;
   match['endIndex'] = j;
