@@ -129,7 +129,6 @@ namespace Highlighter {
             // leaving j at the index of the last node this match occurs in at the end of this loop
             let {
               helpArr,
-              curGroupOfNodes: helpGroupOfNodes,
               index: indexOfLastNodeIncludingMatch,
               nodeGroup,
             } = insertUpToLastNode(
@@ -139,14 +138,12 @@ namespace Highlighter {
               j,
               callback
             );
-            curGroupOfNodes = helpGroupOfNodes;
             j = indexOfLastNodeIncludingMatch;
 
             // get the full text of the last node containing the match
             let lastNode = helpArr.pop();
             if (lastNode == null) {
-              console.error('helpArr is an empty array');
-              return;
+              throw 'helpArr is an empty array';
             }
             // get the tag and provide, the part of the match that is in this node,
             // from the start or 0 index to the length of the match minus the length
@@ -156,28 +153,25 @@ namespace Highlighter {
               lastNode.substring(0, test[0].length - helpArr.join('').length),
               -1
             );
-            let { insertedNode, newNode } = insertANode(
+            let { insertedNode, insertedText, newNode } = replacePartOfNode(
               curGroupOfNodes[j],
               tag,
               0,
               test[0].length - helpArr.join('').length
             );
+
             // if the inserted was successful
-            if (
-              insertedNode != null &&
-              insertedNode.firstChild instanceof Text
-            ) {
-              // push the inserted node to the last group in nodeList
-              nodeGroup.push(insertedNode);
+            // push the inserted node to the last group in nodeList
+            nodeGroup.push(insertedNode);
 
-              // replace curGroupOfNodes[j] with the inserted text node
-              curGroupOfNodes[j] = insertedNode.firstChild;
+            // replace curGroupOfNodes[j] with the inserted text node
+            curGroupOfNodes[j] = insertedText;
 
-              // if newNode has text, make sure to insert it back into curGroupOfNodes after index j
-              if (newNode.data.length > 0) {
-                curGroupOfNodes.splice(j + 1, 0, newNode);
-              }
+            // if newNode has text, make sure to insert it back into curGroupOfNodes after index j
+            if (newNode.data.length > 0) {
+              curGroupOfNodes.splice(j + 1, 0, newNode);
             }
+
             // create an array for the nodes containing this match in the node list
             nodeList.push(nodeGroup);
 
@@ -186,53 +180,37 @@ namespace Highlighter {
             // create a tag
             tag = callback(test2[0], -1);
 
-            let { insertedNode, newNode } = insertANode(
+            let { insertedNode, insertedText, newNode } = replacePartOfNode(
               curGroupOfNodes[j],
               tag,
               test2.index,
               test2[0].length
             );
 
-            // if the insert was successful
-            if (
-              insertedNode != null &&
-              insertedNode.firstChild instanceof Text
-            ) {
-              // push the inserted node to the last group in nodeList
-              nodeList.push([insertedNode]);
+            // push the inserted node to the last group in nodeList
+            nodeList.push([insertedNode]);
 
-              // if the match occurred at the beginning of the node
-              if (curGroupOfNodes[j].data === '') {
-                // if newNode's text is empty, replace the node at curGroupOfNodes[j]
-                // with insertedNode's text in groupedNodes
-                if (newNode.data === '') {
-                  curGroupOfNodes.splice(j, 1, insertedNode.firstChild);
-                  // if newNode's text is not empty
-                } else {
-                  // replace replace the node at curGroupOfNodes[j] with insertedNode's
-                  // text and newNode in that order in groupedNodes
-                  curGroupOfNodes.splice(
-                    j,
-                    1,
-                    insertedNode.firstChild,
-                    newNode
-                  );
-                }
-                // if the match occurred anywhere accept the beginning of the node
+            // if the match occurred at the beginning of the node
+            if (curGroupOfNodes[j].data === '') {
+              // if newNode's text is empty, replace the node at curGroupOfNodes[j]
+              // with insertedNode's text in groupedNodes
+              if (newNode.data === '') {
+                curGroupOfNodes.splice(j, 1, insertedText);
+                // if newNode's text is not empty
               } else {
-                // if newNode's text is empty, replace newNode with insertedNode's text in groupedNodes
-                if (newNode.data === '') {
-                  curGroupOfNodes.splice(j + 1, 0, insertedNode.firstChild);
-                  // if newNode's text is not empty
-                } else {
-                  // replace newNode with insertedNode's text and newNode in that order in groupedNodes
-                  curGroupOfNodes.splice(
-                    j + 1,
-                    0,
-                    insertedNode.firstChild,
-                    newNode
-                  );
-                }
+                // replace replace the node at curGroupOfNodes[j] with insertedNode's
+                // text and newNode in that order in groupedNodes
+                curGroupOfNodes.splice(j, 1, insertedText, newNode);
+              }
+              // if the match occurred anywhere accept the beginning of the node
+            } else {
+              // if newNode's text is empty, replace newNode with insertedNode's text in groupedNodes
+              if (newNode.data === '') {
+                curGroupOfNodes.splice(j + 1, 0, insertedText);
+                // if newNode's text is not empty
+              } else {
+                // replace newNode with insertedNode's text and newNode in that order in groupedNodes
+                curGroupOfNodes.splice(j + 1, 0, insertedText, newNode);
               }
             }
           }
@@ -267,31 +245,26 @@ namespace Highlighter {
           if (nodeStartIndex + match.size <= curGroupOfNodes[j].data.length) {
             // create the tag
             tag = callback(match[0], sameMatchID);
-            let { insertedNode } = insertANode(
+            let { insertedNode, insertedText } = replacePartOfNode(
               curGroupOfNodes[j],
               tag,
               nodeStartIndex,
               match.size
             );
             // if the insert was successful
-            if (
-              insertedNode != null &&
-              insertedNode.firstChild instanceof Text
-            ) {
-              // push the insertedNode to the last group in nodeList
-              nodeList[nodeList.length - 1].push(insertedNode);
-              // if curGroupOfNodes[j] has no text, replace curGroupOfNodes[j] with insertedNode's text
-              if (curGroupOfNodes[j].data.length === 0) {
-                curGroupOfNodes[j] = insertedNode.firstChild;
-              } else {
-                // insert insertedNode between curGroupOfNodes[j] and newNode in groupedNodes and increment j
-                curGroupOfNodes.splice(j + 1, 0, insertedNode.firstChild);
-                j++;
-              }
-              // increment j and sameMatchID
+            // push the insertedNode to the last group in nodeList
+            nodeList[nodeList.length - 1].push(insertedNode);
+            // if curGroupOfNodes[j] has no text, replace curGroupOfNodes[j] with insertedNode's text
+            if (curGroupOfNodes[j].data.length === 0) {
+              curGroupOfNodes[j] = insertedText;
+            } else {
+              // insert insertedNode between curGroupOfNodes[j] and newNode in groupedNodes and increment j
+              curGroupOfNodes.splice(j + 1, 0, insertedText);
               j++;
-              sameMatchID++;
             }
+            // increment j and sameMatchID
+            j++;
+            sameMatchID++;
             // if the full match occurs across multiple nodes
           } else {
             let helpStr = '';
@@ -454,24 +427,26 @@ const getLastBlockElem = (node: Node, root: HTMLElement) => {
   return elem;
 };
 
-const insertANode = (
-  node: Text,
-  tag: HTMLElement,
-  begin: number,
-  end?: number
+const replacePartOfNode = (
+  nodeToReplace: Text,
+  replaceWith: HTMLElement,
+  startOfReplace: number,
+  endOfReplace: number
 ) => {
-  // split the node at the beginning of the match
-  let newNode = node.splitText(begin);
+  // split the node at index startOfReplace
+  let newNode = nodeToReplace.splitText(startOfReplace);
 
-  // replace newNode's data with the text after the match in this node
-  if (end != null) {
-    newNode.data = newNode.data.substring(end);
+  // replace newNode's data with the text after index endOfReplace
+  newNode.data = newNode.data.substring(endOfReplace);
+
+  // insert replaceWith node before the newNode
+  let insertedNode = newNode.parentNode?.insertBefore(replaceWith, newNode);
+  if (insertedNode != null && insertedNode.firstChild instanceof Text) {
+    let insertedText = insertedNode.firstChild;
+    return { insertedNode, insertedText, newNode };
   } else {
-    newNode.data = '';
+    throw 'replacePartOfNode() tried inserting something that is not a node';
   }
-  let insertedNode = newNode.parentNode?.insertBefore(tag, newNode);
-  // insert the tag under newNodes parent, but in between curGroupOfNodes[j] and newNode
-  return { insertedNode, newNode };
 };
 
 const makeGroupedNodeArray = (tw: TreeWalker, root: HTMLElement) => {
