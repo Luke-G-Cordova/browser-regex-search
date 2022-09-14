@@ -124,55 +124,15 @@ namespace Highlighter {
               curGroupOfNodes[j].data.length - inThisNode.length,
               curGroupOfNodes[j].data
             );
-            // loop until the combined length of text in helpArr is
-            // greater than or equal to the full match length,
-            // leaving j at the index of the last node this match occurs in at the end of this loop
-            let {
-              helpArr,
-              index: indexOfLastNodeIncludingMatch,
-              nodeGroup,
-            } = insertUpToLastNode(
+
+            let nodeGroup = insertOverSeveralNodes(
               test[0].length,
               test2[0],
               curGroupOfNodes,
               j,
               callback
             );
-            j = indexOfLastNodeIncludingMatch;
 
-            // get the full text of the last node containing the match
-            let lastNode = helpArr.pop();
-            if (lastNode == null) {
-              throw 'helpArr is an empty array';
-            }
-            // get the tag and provide, the part of the match that is in this node,
-            // from the start or 0 index to the length of the match minus the length
-            // of the text of the nodes containing the match, and provide -1 to signify
-            // this is the last node containing the match
-            tag = callback(
-              lastNode.substring(0, test[0].length - helpArr.join('').length),
-              -1
-            );
-            let { insertedNode, insertedText, newNode } = replacePartOfNode(
-              curGroupOfNodes[j],
-              tag,
-              0,
-              test[0].length - helpArr.join('').length
-            );
-
-            // if the inserted was successful
-            // push the inserted node to the last group in nodeList
-            nodeGroup.push(insertedNode);
-
-            // replace curGroupOfNodes[j] with the inserted text node
-            curGroupOfNodes[j] = insertedText;
-
-            // if newNode has text, make sure to insert it back into curGroupOfNodes after index j
-            if (newNode.data.length > 0) {
-              curGroupOfNodes.splice(j + 1, 0, newNode);
-            }
-
-            // create an array for the nodes containing this match in the node list
             nodeList.push(nodeGroup);
 
             // else if the match occurs in only one node
@@ -488,74 +448,98 @@ const makeCustomRegExpExecArray = (
   return test2;
 };
 
-const insertUpToLastNode = (
+/**
+ *
+ * @param fullMatchLength the length of the full match across all nodes
+ * @param partOfMatchInFirstNode the first part of the match appearing in a node curGroupOfNodes[index]
+ * @param curGroupOfNodes the group of nodes that the match occurs over
+ * @param index the nodes index that the first part of the match appears in
+ * @param callback the callback to make an HTMLElement to insert
+ * @returns the group of nodes representing the matched text across several nodes
+ */
+const insertOverSeveralNodes = (
   fullMatchLength: number, // test[0].length
   partOfMatchInFirstNode: string, // test2[0]
   curGroupOfNodes: Text[],
   index: number, // index of curGroupOfNodes
-  callback: (match: string, id: number) => HTMLElement,
-  sameMatchID = 0
+  callback: (match: string, id: number) => HTMLElement
 ) => {
-  let newNode;
   let tag;
-  let insertedNode;
-  let nodeGroup: Node[] = []; // nodeList[nodeList.length - 1].push(insertedNode);
+  let sameMatchID = 0;
+  let nodeGroup: Node[] = [];
 
   let helpArr: string[] = [];
   // push the match or first part of the match to the helpArr
   helpArr.push(partOfMatchInFirstNode);
 
+  // insert all nodes leading up to the last one containing the match
   for (let k = 0; helpArr.join('').length < fullMatchLength; k++) {
-    // split the text node at the index of the match in the text node
-    // splitText() splits the node such that the left side of the split
-    // remains to be the original node and is updated in curGroupOfNodes[j]
-    // the right side of the node gets returned to newNode
-    newNode = curGroupOfNodes[index].splitText(
-      curGroupOfNodes[index].length - helpArr[k].length
-    );
-
     // get the tag to be inserted from the callback
     tag = callback(helpArr[k], sameMatchID);
 
-    // clear the nodes data
-    newNode.data = '';
+    let { insertedNode, insertedText } = replacePartOfNode(
+      curGroupOfNodes[index],
+      tag,
+      curGroupOfNodes[index].length - helpArr[k].length,
+      curGroupOfNodes[index].data.length
+    );
+    // push the inserted node to the last group in nodeList
+    nodeGroup.push(insertedNode);
 
-    // insert the tag under newNodes parent, but in between curGroupOfNodes[j] and newNode
-    insertedNode = newNode.parentNode?.insertBefore(tag, newNode);
-
-    // if the insert was successful
-    if (insertedNode != null && insertedNode.firstChild instanceof Text) {
-      // push the inserted node to the last group in nodeList
-      nodeGroup.push(insertedNode);
-
-      // if the splitText() call happened on index 0 of the
-      // text node in curGroupOfNodes[j], replace that node
-      // with the inserted node and do not increment j.
-      // if the splitText() call happened on an index other than
-      // 0, insert the text node into the groupedNodes array after
-      // curGroupOfNodes[j] and make sure to increment j.
-      if (curGroupOfNodes[index].data.length === 0) {
-        curGroupOfNodes[index] = insertedNode.firstChild;
-      } else {
-        curGroupOfNodes.splice(index + 1, 0, insertedNode.firstChild);
-        index++;
-      }
-
-      // move on to the next node and increment sameMatchID for tag
+    // if the splitText() call happened on index 0 of the
+    // text node in curGroupOfNodes[index], replace that node
+    // with the inserted node and do not increment index.
+    // if the splitText() call happened on an index other than
+    // 0, insert the text node into the groupedNodes array after
+    // curGroupOfNodes[index] and make sure to increment index.
+    if (curGroupOfNodes[index].data.length === 0) {
+      curGroupOfNodes[index] = insertedText;
+    } else {
+      curGroupOfNodes.splice(index + 1, 0, insertedText);
       index++;
-      sameMatchID++;
-
-      // push the text of the next node to helpArr for the continuation of the loop
-      helpArr.push(curGroupOfNodes[index].data);
     }
+
+    // move on to the next node and increment sameMatchID for tag
+    index++;
+    sameMatchID++;
+
+    // push the text of the next node to helpArr for the continuation of the loop
+    helpArr.push(curGroupOfNodes[index].data);
   }
-  return {
-    helpArr,
-    curGroupOfNodes,
-    index,
-    sameMatchID,
-    nodeGroup,
-  };
+
+  // get the full text of the last node containing the match
+  let lastNode = helpArr.pop();
+  if (lastNode == null) {
+    throw 'helpArr is an empty array';
+  }
+  // get the tag and provide, the part of the match that is in this node,
+  // from the start or 0 index to the length of the match minus the length
+  // of the text of the nodes containing the match, and provide -1 to signify
+  // this is the last node containing the match
+  tag = callback(
+    lastNode.substring(0, fullMatchLength - helpArr.join('').length),
+    -1
+  );
+  let { insertedNode, insertedText, newNode } = replacePartOfNode(
+    curGroupOfNodes[index],
+    tag,
+    0,
+    fullMatchLength - helpArr.join('').length
+  );
+
+  // if the inserted was successful
+  // push the inserted node to the last group in nodeList
+  nodeGroup.push(insertedNode);
+
+  // replace curGroupOfNodes[j] with the inserted text node
+  curGroupOfNodes[index] = insertedText;
+
+  // if newNode has text, make sure to insert it back into curGroupOfNodes after index j
+  if (newNode.data.length > 0) {
+    curGroupOfNodes.splice(index + 1, 0, newNode);
+  }
+
+  return nodeGroup;
 };
 
 const findClosestMatch = (str1: string, str2: string): ClosestMatch => {
