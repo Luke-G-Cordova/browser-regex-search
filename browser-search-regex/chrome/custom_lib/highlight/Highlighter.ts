@@ -169,8 +169,6 @@ namespace Highlighter {
               }
             }
           }
-          // reset nodeParts
-          nodeParts = '';
           // replace the current regex match index with the last matches index
           options.regex.lastIndex = lastRegIndex;
         }
@@ -220,8 +218,9 @@ namespace Highlighter {
             // increment j and sameMatchID
             j++;
             sameMatchID++;
-            // if the full match occurs across multiple nodes
           } else {
+            // if the full match occurs across multiple nodes
+
             let helpStr = '';
             // split the node at the index of the match in the node
             newNode = curGroupOfNodes[j].splitText(nodeStartIndex);
