@@ -133,9 +133,9 @@ namespace Highlighter {
             );
 
             nodeList.push(nodeGroup);
-
-            // else if the match occurs in only one node
           } else {
+            // else if the match occurs in only one node
+
             // create a tag
             tag = callback(test2[0], -1);
 
@@ -191,128 +191,61 @@ namespace Highlighter {
           let nodeStartIndex =
             match.index - (nodeParts.length - curGroupOfNodes[j].data.length);
 
-          // push a node group array to nodeList
-          nodeList.push([]);
+          // if the full match is across multiple nodes
+          if (nodeStartIndex + match.size > curGroupOfNodes[j].data.length) {
+            // get the string that starts at the found match
+            // and ends at the end of the containing nodes text
+            let inThisNode = nodeParts.substring(match.index);
 
-          // if the full match is in the current node
-          if (nodeStartIndex + match.size <= curGroupOfNodes[j].data.length) {
-            // create the tag
-            tag = callback(match[0], sameMatchID);
-            let { insertedNode, insertedText } = replacePartOfNode(
+            test2 = makeCustomRegExpExecArray(
+              inThisNode,
+              curGroupOfNodes[j].data.length - inThisNode.length,
+              curGroupOfNodes[j].data
+            );
+
+            let nodeGroup = insertOverSeveralNodes(
+              match.size,
+              test2[0],
+              curGroupOfNodes,
+              j,
+              callback
+            );
+
+            nodeList.push(nodeGroup);
+          } else {
+            // else if the match occurs in only one node
+
+            // create a tag
+            tag = callback(match[0], -1);
+
+            let { insertedNode, insertedText, newNode } = replacePartOfNode(
               curGroupOfNodes[j],
               tag,
-              nodeStartIndex,
+              match.index,
               match.size
             );
-            // if the insert was successful
-            // push the insertedNode to the last group in nodeList
-            nodeList[nodeList.length - 1].push(insertedNode);
-            // if curGroupOfNodes[j] has no text, replace curGroupOfNodes[j] with insertedNode's text
-            if (curGroupOfNodes[j].data.length === 0) {
-              curGroupOfNodes[j] = insertedText;
+
+            // push the inserted node to the last group in nodeList
+            nodeList.push([insertedNode]);
+
+            // if the match occurred at the beginning of the node, curGroupOfNodes[j].data === ''
+            // this means that we did not create a new node, we just replaced one and don't need to increment j
+            if (curGroupOfNodes[j].data === '') {
+              // if the match occurs across the rest of the node, newNode.data === ''
+              // this means that we need to delete newNode from curGroupOfNodes because we added an empty node
+              if (newNode.data === '') {
+                // delete newNode from curGroupOfNodes and replace it with insertedNodes text
+                curGroupOfNodes.splice(j, 1, insertedText);
+              } else {
+                // insert insertedNodes text into curGroupOfNodes while keeping newNode
+                curGroupOfNodes.splice(j, 1, insertedText, newNode);
+              }
             } else {
-              // insert insertedNode between curGroupOfNodes[j] and newNode in groupedNodes and increment j
-              curGroupOfNodes.splice(j + 1, 0, insertedText);
-              j++;
-            }
-            // increment j and sameMatchID
-            j++;
-            sameMatchID++;
-          } else {
-            // if the full match occurs across multiple nodes
-
-            let helpStr = '';
-            // split the node at the index of the match in the node
-            newNode = curGroupOfNodes[j].splitText(nodeStartIndex);
-            // add the newNode's text to the helpStr
-            helpStr += newNode.data;
-            // create the tag
-            tag = callback(newNode.data, sameMatchID);
-            // clear newNode's text
-            newNode.data = '';
-            // insert the tag in between curGroupOfNodes[j] and newNode
-            insertedNode = newNode.parentNode?.insertBefore(tag, newNode);
-            // if the insert was successful
-            if (
-              insertedNode != null &&
-              insertedNode.firstChild instanceof Text
-            ) {
-              // push the insertedNode to the last group in nodeList
-              nodeList[nodeList.length - 1].push(insertedNode);
-              // if curGroupOfNodes[j] text is empty, replace curGroupOfNodes[j] with insertedNode's text
-              if (curGroupOfNodes[j].data.length === 0) {
-                curGroupOfNodes[j] = insertedNode.firstChild;
+              if (newNode.data === '') {
+                curGroupOfNodes.splice(j + 1, 0, insertedText);
               } else {
-                // insert insertedNode after curGroupOfNodes[j] and increment j
-                curGroupOfNodes.splice(j + 1, 0, insertedNode.firstChild);
-                j++;
+                curGroupOfNodes.splice(j + 1, 0, insertedText, newNode);
               }
-              // increment j and sameMatchID
-              j++;
-              sameMatchID++;
-            }
-
-            // loop through this group of nodes between the first node that the
-            // match occurs in and the last node that the match occurs in
-            while ((helpStr + curGroupOfNodes[j].data).length < match.size) {
-              // add the current nodes text to the helpStr
-              helpStr += curGroupOfNodes[j].data;
-              // split the current node at the start of the nodes text
-              newNode = curGroupOfNodes[j].splitText(0);
-              // create the tag
-              tag = callback(newNode.data, sameMatchID);
-              // clear the newNode's data
-              newNode.data = '';
-              // insert the tag before the newNode
-              insertedNode = newNode.parentNode?.insertBefore(tag, newNode);
-              // if the insert was successful
-              if (
-                insertedNode != null &&
-                insertedNode.firstChild instanceof Text
-              ) {
-                // push the insertedNode to the last group in nodeList
-                nodeList[nodeList.length - 1].push(insertedNode);
-                // if curGroupOfNodes[j] text is empty, replace curGroupOfNodes[j] with insertedNode's text
-                if (curGroupOfNodes[j].data.length === 0) {
-                  curGroupOfNodes[j] = insertedNode.firstChild;
-                } else {
-                  // insert insertedNode after curGroupOfNodes[j] and increment j
-                  curGroupOfNodes.splice(j + 1, 0, insertedNode.firstChild);
-                  j++;
-                }
-                // increment j and sameMatchID
-                j++;
-                sameMatchID++;
-              }
-            }
-
-            // j is now the index of the last node that the match occurs in, split the node at index 0
-            newNode = curGroupOfNodes[j].splitText(0);
-            // create the tag with just the text containing the match
-            tag = callback(
-              newNode.data.substring(0, match.size - helpStr.length),
-              sameMatchID
-            );
-            // replace newNode's text with its text that was after the end of the match
-            newNode.data = newNode.data.substring(match.size - helpStr.length);
-            // insert the node before newNode
-            insertedNode = newNode.parentNode?.insertBefore(tag, newNode);
-            // if the insert was successful
-            if (
-              insertedNode != null &&
-              insertedNode.firstChild instanceof Text
-            ) {
-              // push the insertedNode to the last group in the nodeList
-              nodeList[nodeList.length - 1].push(insertedNode);
-              // if curGroupOfNodes[j] text is empty, replace curGroupOfNodes[j] with insertedNode's text
-              if (curGroupOfNodes[j].data.length === 0) {
-                curGroupOfNodes[j] = insertedNode.firstChild;
-              } else {
-                // insert insertedNode after curGroupOfNodes[j] and don't increment j
-                curGroupOfNodes.splice(j + 1, 0, insertedNode.firstChild);
-              }
-              // increment sameMatchID
-              sameMatchID++;
             }
           }
         }
@@ -595,6 +528,7 @@ const findClosestMatch = (str1: string, str2: string): ClosestMatch => {
   match['length'] = 6;
   return match;
 };
+
 /**
  *
  * @param testIndex the index of the found match in the master string
