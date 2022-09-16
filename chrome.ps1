@@ -17,7 +17,7 @@ function buildDir {
   # copy all files that are not of type .ts or .json from the src directory to the build directory
   Get-ChildItem $srcDir -Exclude *.ts, *.json | 
     ForEach-Object {
-      Copy-Item $_ "$buildDir$(Split-Path -Leaf -Resolve $_)" -Exclude *.ts, *.json -Recurse
+      Copy-Item $_ "$buildDir\$(Split-Path -Leaf -Resolve $_)" -Exclude *.ts, *.json -Recurse
     }
 }
 
@@ -83,18 +83,27 @@ function existsInBuild {
 # build a file or directory given a $srcFile, $buildFile, and a $cType which is the change that was made
 function buildFile {
   param($srcFile, $buildFile, $cType)
-
   # get the extension of the $srcFile
   $srcExtension = [System.IO.Path]::GetExtension($srcFile)
 
   # if the highest parent build/chrome directory does not exist,
   # just build the whole directory
   if (-not (Test-Path -Path "$PSScriptRoot/build/chrome/")) {
+    Write-Host 'restoring build...'
     buildDir "$PSScriptRoot/browser-search-regex/chrome/" "$PSScriptRoot/build/chrome/"
+    Write-Host 'build restored'
   }
   # if the $cType is not Deleted and the $srcFile is a dirctory, build the directory
-  elseif (($changeType -ne "Deleted") -and ((Get-Item $srcFile) -is [System.IO.DirectoryInfo])) {
-    buildDir $srcFile $buildFile
+  elseif (($cType -ne "Deleted") -and ((Get-Item $srcFile) -is [System.IO.DirectoryInfo])) {
+    if ($cType -eq "Rebuild") {
+      Write-Host "Rebuilding direcotry : $cType `n $srcFile `n $buildFile "
+      buildDir $srcFile $buildFile
+      # Copy-Item $srcFile $buildFile
+    }
+    elseif ( -not (Test-Path "$srcFile\*")) {
+      Write-Host "building directory with no children : $cType `n $srcFile `n $buildFile "
+      Copy-Item $srcFile $buildFile
+    }
   }
   # if the src file is a file, just build the file based on what changed or $cType
   else {
@@ -104,6 +113,7 @@ function buildFile {
       # if it is a .ts or .css file, build the manifest, if it is
       # a .css file, copy it to the buildFile
       "Created" {
+        Write-Host "Creating : $cType `n $srcFile `n $buildFile "
         if ($srcExtension -eq ".ts") {
           buildManifest
         }
@@ -118,17 +128,18 @@ function buildFile {
       # a changed srcFile should be coppied to the buildFile if it 
       # is not a .ts file, .ts files should be handled by typescript
       "Changed" { 
+        Write-Host "Updating : $cType `n $srcFile `n $buildFile "
         if ($srcFile -eq "$PSScriptRoot/browser-search-regex/chrome/manifest.json") {
-          Write-Host"here"
           buildManifest
         }
         elseif ($srcExtension -ne ".ts") {
-          Copy-Item $srcFile $buildFile
+          Copy-Item $srcFile $buildFile -Recurse
         }
       }
       # a deleted srcFile should be deleted from the build if it 
       # is not a .ts file, .ts files should be handled by typescript
       "Deleted" { 
+        Write-Host "deleting files not in src : $cType "
         # search through the src folder for an extra file
         deleteFilesNotInSrc
         buildManifest
@@ -137,17 +148,18 @@ function buildFile {
       # is not a .ts file, .ts files should be handled by typescript
       # if the srcFile is of type .css, build the manifest
       "Renamed" { 
+        Write-Host "Updating file name : $cType `n $srcFile `n $buildFile "
         if ( $srcExtension -eq ".ts") {
           buildManifest
         }
         elseif ( $srcExtension -eq ".css") {
           deleteFilesNotInSrc
-          Copy-Item $srcFile $buildFile
+          Copy-Item $srcFile $buildFile -Recurse
           buildManifest
         }
         else {
           deleteFilesNotInSrc
-          Copy-Item $srcFile $buildFile
+          Copy-Item $srcFile $buildFile -Recurse
         }
       }
     }
@@ -159,7 +171,8 @@ function deleteFilesNotInSrc {
   Get-ChildItem "$PSScriptRoot/build/chrome/" -Exclude *.js, *.map -Recurse | 
     ForEach-Object {
       if (-not (existsInBuild $_.FullName)) {
-        Remove-Item $_.FullName
+        Write-Host $_.FullName
+        Remove-Item $_.FullName -Recurse
       }
     }
 }
@@ -175,7 +188,7 @@ function getRelativePathToChrome {
   $filePath = $filePath.Replace("/", "\")
   $isChrome = Split-Path -Leaf -Resolve $filePath
   if ($isChrome -eq "chrome") {
-    return $filePath
+    return "$PSScriptRoot/build/chrome".replace('/', '\')
   }
   $retPath = ""
   $parDir = Split-Path $filePath

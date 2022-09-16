@@ -1,6 +1,8 @@
 
 $chromeSrc = "$PSScriptRoot\browser-search-regex\chrome"
 
+./chrome.ps1 $chromeSrc "Rebuild"
+
 # file watching logic
 $fileWatcher = New-Object System.IO.FileSystemWatcher
 $fileWatcher.Path = $chromeSrc 
