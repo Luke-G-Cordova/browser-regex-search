@@ -3,10 +3,23 @@
   "tasks": [
     {
       "label": "build",
-      "dependsOn": ["Custom Build", "Typescript Build"],
+      "dependsOn": ["Stop Build", "Custom Build", "Typescript Build"],
       "group": {
         "kind": "build",
         "isDefault": true
+      }
+    },
+    {
+      "label": "Stop Build",
+      "type": "shell",
+      "command": "echo ${input:terminate}",
+      "windows": {
+        "command": "echo ${input:terminate}"
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared",
+        "close": true
       }
     },
     {
@@ -34,6 +47,14 @@
         "panel": "new",
         "close": true
       }
+    }
+  ],
+  "inputs": [
+    {
+      "id": "terminate",
+      "type": "command",
+      "command": "workbench.action.tasks.terminate",
+      "args": "terminateAll"
     }
   ]
 }
