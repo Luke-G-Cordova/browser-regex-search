@@ -136,8 +136,7 @@ namespace Highlighter {
             tag = callback(test2[0], -1);
 
             let { insertedNode, insertedText, newNode } = replacePartOfNode(
-              curGroupOfNodes,
-              j,
+              curGroupOfNodes[j],
               tag,
               test2.index,
               test2[0].length
@@ -145,6 +144,26 @@ namespace Highlighter {
 
             // push the inserted node to the last group in nodeList
             nodeList.push([insertedNode]);
+
+            // if the match occurred at the beginning of the node, curGroupOfNodes[j].data === ''
+            // this means that we did not create a new node, we just replaced one and don't need to increment j
+            if (curGroupOfNodes[j].data === '') {
+              // if the match occurs across the rest of the node, newNode.data === ''
+              // this means that we need to delete newNode from curGroupOfNodes because we added an empty node
+              if (newNode.data === '') {
+                // delete newNode from curGroupOfNodes and replace it with insertedNodes text
+                curGroupOfNodes.splice(j, 1, insertedText);
+              } else {
+                // insert insertedNodes text into curGroupOfNodes while keeping newNode
+                curGroupOfNodes.splice(j, 1, insertedText, newNode);
+              }
+            } else {
+              if (newNode.data === '') {
+                curGroupOfNodes.splice(j + 1, 0, insertedText);
+              } else {
+                curGroupOfNodes.splice(j + 1, 0, insertedText, newNode);
+              }
+            }
           }
           // replace the current regex match index with the last matches index
           options.regex.lastIndex = lastRegIndex;
@@ -196,8 +215,7 @@ namespace Highlighter {
             tag = callback(match[0], -1);
 
             let { insertedNode, insertedText, newNode } = replacePartOfNode(
-              curGroupOfNodes,
-              j,
+              curGroupOfNodes[j],
               tag,
               nodeStartIndex,
               match.size
@@ -205,6 +223,26 @@ namespace Highlighter {
 
             // push the inserted node to the last group in nodeList
             nodeList.push([insertedNode]);
+
+            // if the match occurred at the beginning of the node, curGroupOfNodes[j].data === ''
+            // this means that we did not create a new node, we just replaced one and don't need to increment j
+            if (curGroupOfNodes[j].data === '') {
+              // if the match occurs across the rest of the node, newNode.data === ''
+              // this means that we need to delete newNode from curGroupOfNodes because we added an empty node
+              if (newNode.data === '') {
+                // delete newNode from curGroupOfNodes and replace it with insertedNodes text
+                curGroupOfNodes.splice(j, 1, insertedText);
+              } else {
+                // insert insertedNodes text into curGroupOfNodes while keeping newNode
+                curGroupOfNodes.splice(j, 1, insertedText, newNode);
+              }
+            } else {
+              if (newNode.data === '') {
+                curGroupOfNodes.splice(j + 1, 0, insertedText);
+              } else {
+                curGroupOfNodes.splice(j + 1, 0, insertedText, newNode);
+              }
+            }
           }
         }
       }
@@ -273,13 +311,11 @@ const getLastBlockElem = (node: Node, root: HTMLElement) => {
 };
 
 const replacePartOfNode = (
-  curGroupOfNodes: Text[],
-  indexOfNodeToReplace: number,
+  nodeToReplace: Text,
   replaceWith: HTMLElement,
   startOfReplace: number,
   endOfReplace: number
 ) => {
-  let nodeToReplace = curGroupOfNodes[indexOfNodeToReplace];
   // split the node at index startOfReplace
   let newNode = nodeToReplace.splitText(startOfReplace);
 
@@ -290,13 +326,6 @@ const replacePartOfNode = (
   let insertedNode = newNode.parentNode?.insertBefore(replaceWith, newNode);
   if (insertedNode != null && insertedNode.firstChild instanceof Text) {
     let insertedText = insertedNode.firstChild;
-
-    if (curGroupOfNodes[indexOfNodeToReplace].data.length === 0) {
-      curGroupOfNodes[indexOfNodeToReplace] = insertedText;
-    } else {
-      curGroupOfNodes.splice(indexOfNodeToReplace + 1, 0, insertedText);
-      indexOfNodeToReplace++;
-    }
     return { insertedNode, insertedText, newNode };
   } else {
     throw 'replacePartOfNode() tried inserting something that is not a node';
@@ -395,14 +424,26 @@ const insertOverSeveralNodes = (
     tag = callback(helpArr[k], sameMatchID);
 
     let { insertedNode, insertedText } = replacePartOfNode(
-      curGroupOfNodes,
-      index,
+      curGroupOfNodes[index],
       tag,
       curGroupOfNodes[index].length - helpArr[k].length,
       curGroupOfNodes[index].data.length
     );
     // push the inserted node to the last group in nodeList
     nodeGroup.push(insertedNode);
+
+    // if the splitText() call happened on index 0 of the
+    // text node in curGroupOfNodes[index], replace that node
+    // with the inserted node and do not increment index.
+    // if the splitText() call happened on an index other than
+    // 0, insert the text node into the groupedNodes array after
+    // curGroupOfNodes[index] and make sure to increment index.
+    if (curGroupOfNodes[index].data.length === 0) {
+      curGroupOfNodes[index] = insertedText;
+    } else {
+      curGroupOfNodes.splice(index + 1, 0, insertedText);
+      index++;
+    }
 
     // move on to the next node and increment sameMatchID for tag
     index++;
@@ -426,8 +467,7 @@ const insertOverSeveralNodes = (
     -1
   );
   let { insertedNode, insertedText, newNode } = replacePartOfNode(
-    curGroupOfNodes,
-    index,
+    curGroupOfNodes[index],
     tag,
     0,
     fullMatchLength - helpArr.join('').length
@@ -436,6 +476,14 @@ const insertOverSeveralNodes = (
   // if the inserted was successful
   // push the inserted node to the last group in nodeList
   nodeGroup.push(insertedNode);
+
+  // replace curGroupOfNodes[j] with the inserted text node
+  curGroupOfNodes[index] = insertedText;
+
+  // if newNode has text, make sure to insert it back into curGroupOfNodes after index j
+  if (newNode.data.length > 0) {
+    curGroupOfNodes.splice(index + 1, 0, newNode);
+  }
 
   return nodeGroup;
 };
