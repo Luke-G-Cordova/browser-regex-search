@@ -97,13 +97,13 @@ namespace Highlighter {
           let lastRegIndex = options.regex.lastIndex;
           amountOfSelectedMatches++;
 
-          options.regex.lastIndex = 0;
-
           // find the node index j in curGroupOfNodes that the first match occurs in
           let { nodeParts, indexOfNodeThatMatchStartsIn: j } = getNodeParts(
             test.index,
             curGroupOfNodes
           );
+
+          options.regex.lastIndex = 0;
 
           // try to find the whole match in the node the match first appears in
           test2 = options.regex.exec(curGroupOfNodes[j].data);
@@ -114,9 +114,15 @@ namespace Highlighter {
             // and ends at the end of the containing nodes text
             let inThisNode = nodeParts.substring(test.index);
 
+            test2 = makeCustomRegExpExecArray(
+              inThisNode,
+              curGroupOfNodes[j].data.length - inThisNode.length,
+              curGroupOfNodes[j].data
+            );
+
             let nodeGroup = insertOverSeveralNodes(
               test[0].length,
-              inThisNode,
+              test2[0],
               curGroupOfNodes,
               j,
               callback
