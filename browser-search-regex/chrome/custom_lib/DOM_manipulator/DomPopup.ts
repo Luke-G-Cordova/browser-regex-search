@@ -380,10 +380,28 @@ namespace DomPopup {
   // };
 }
 const newInputHelper = (formWrapper: HTMLElement) => {
-  let input = formWrapper.appendChild(Components.NewInput());
-  if (input instanceof HTMLElement) {
-    Globals.popupDragger.addNoDragElems(input);
-    input.querySelector('#bsr-new-input');
+  let inputWrapper = formWrapper.appendChild(
+    Components.NewInput()
+  ) as HTMLElement;
+  if (inputWrapper != null) {
+    Globals.popupDragger.addNoDragElems(inputWrapper);
+    const input = inputWrapper.querySelector(
+      'input.mainInputField'
+    ) as HTMLInputElement;
+    const colorInput = inputWrapper.querySelector(
+      'input[type="color"]'
+    ) as HTMLInputElement;
+    input.addEventListener('input', () => {
+      highlightMe(input.name, {
+        match: input.value,
+        color: colorInput.value,
+        mods: 'i',
+        litReg: false,
+        limit: 100,
+        loose: false,
+      });
+      input.focus();
+    });
   }
 };
 

@@ -25,10 +25,10 @@ namespace Components {
   ) => {
     let div = document.createElement('div');
     div.innerHTML = `
-      <bsr-div id="bsr-input-wrapper">
-        <bsr-div class="icWrapper" id="bsr-ic-wrapper" style="width: 100%;">
-          <input class="myInput" id="bsr-new-input" type="text" placeholder="regular expression" name="${key}" />
-          <bsr-span class="modifiersWrapper" id="bsr-modifiers-wrapper">
+      <bsr-div>
+        <bsr-div class="icWrapper" style="width: 100%;">
+          <input class="mainInputField" type="text" placeholder="regular expression" name="${key}" />
+          <bsr-span class="modifiersWrapper">
             <bsr-button style="">/i</bsr-button>
             <bsr-button style="">/r</bsr-button>
             <bsr-button style="">/s</bsr-button>
@@ -41,7 +41,7 @@ namespace Components {
             <bsr-span>0</bsr-span>
           </bsr-span>
         </bsr-div>
-        <bsr-div class="buttonWrapper" id="bsr-button-wrapper">
+        <bsr-div class="buttonWrapper">
           <bsr-div class="npWrapper" style="float: left; display: flex; align-items: center;">
             <bsr-button class="prev" style="box-shadow: rgba(255, 255, 255, 0.5) 0px 2px 0px inset, rgba(0, 0, 0, 0.3) 0px -2px 0px inset;">
               ⇐
@@ -56,9 +56,9 @@ namespace Components {
               ⛶
             </bsr-button>
           </bsr-div>
-          <bsr-div class="cWrapper" id="bsr-c-wrapper">
+          <bsr-div class="cWrapper">
             <bsr-p style="margin: 0px 5px;">#ffff00</bsr-p>
-            <input type="color" class="colorInput" style="box-shadow: rgba(255, 255, 255, 0.5) 0px 2px 0px inset, rgba(0, 0, 0, 0.3) 0px -2px 0px inset;">
+            <input type="color" class="colorInput" value="#FBFF00" style="box-shadow: rgba(255, 255, 255, 0.5) 0px 2px 0px inset, rgba(0, 0, 0, 0.3) 0px -2px 0px inset;">
           </bsr-div>
         </bsr-div>
       </bsr-div>
