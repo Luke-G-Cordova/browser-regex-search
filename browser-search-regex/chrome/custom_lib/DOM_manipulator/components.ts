@@ -63,6 +63,10 @@ namespace Components {
         </bsr-div>
       </bsr-div>
       `;
-    return div.firstChild;
+    if (div.firstElementChild instanceof Node) {
+      return div.firstElementChild;
+    } else {
+      throw 'creation of input failed';
+    }
   };
 }

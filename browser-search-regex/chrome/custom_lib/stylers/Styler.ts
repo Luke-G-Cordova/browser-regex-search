@@ -7,16 +7,32 @@ namespace Styler {
     private notDraggable: number;
 
     /**
-     *
+     * the top most parent element to be made draggable
+     */
+    private draggableElement: HTMLElement;
+
+    /**
+     * the child elements of draggableElement that should not be draggable
+     */
+    private nonDraggableChildElements: HTMLElement[];
+
+    /**
+     * sets the draggableElement and its nonDraggableChildElements
      * @param draggableElement the wrapper element that contains the HTML that should be draggable
      * @param nonDraggableChildElements any child elements of draggableElement that should not drag draggableElement when selected or moused on
      */
     constructor(
-      private draggableElement: HTMLElement,
-      private nonDraggableChildElements: HTMLElement[] = []
+      draggableElement: HTMLElement,
+      nonDraggableChildElements: HTMLElement[] = []
     ) {
+      this.draggableElement = draggableElement;
+      this.nonDraggableChildElements = nonDraggableChildElements;
       this.notDraggable = 0;
     }
+
+    /**
+     * call to allow the element to be draggable
+     */
     drag() {
       let startX: number;
       let startY: number;
@@ -113,6 +129,23 @@ namespace Styler {
         previousWindowY = window.scrollY;
         previousWindowX = window.scrollX;
       };
+    }
+
+    /**
+     * setter to add to the nonDraggableChildElements
+     * @param elems elements that should not be able to be dragged
+     */
+    addNoDragElems(elems: HTMLElement[]) {
+      this.nonDraggableChildElements =
+        this.nonDraggableChildElements.concat(elems);
+      this.nonDraggableChildElements.forEach((ndElem) => {
+        ndElem.onmouseover = () => {
+          this.notDraggable++;
+        };
+        ndElem.onmouseout = () => {
+          this.notDraggable--;
+        };
+      });
     }
   }
 }
