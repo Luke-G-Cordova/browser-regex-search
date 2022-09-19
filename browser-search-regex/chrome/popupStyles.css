@@ -1,7 +1,7 @@
-regex-div {
+bsr-div {
   display: block;
 }
-regex-button {
+bsr-button {
   width: 25px;
   height: 25px;
   border-radius: 50%;
@@ -10,14 +10,14 @@ regex-button {
   text-align: center;
   display: inline-block;
 }
-regex-button:hover {
+bsr-button:hover {
   cursor: pointer;
   background-color: #ffde26;
 }
-regex-button:active {
+bsr-button:active {
   background-color: #dbba00;
 }
-bsr-popup-card#bsr-popup-card-id {
+bsr-popup-card {
   background-color: #6f03fc;
   display: block;
   position: absolute;
@@ -32,7 +32,7 @@ bsr-popup-card#bsr-popup-card-id {
   font-family: 'Trebuchet MS', sans-serif !important;
   color: black !important;
 }
-regex-div#regex-p-content-id {
+bsr-div#bsr-p-content {
   width: 100%;
   height: 100%;
   max-height: inherit;
@@ -42,11 +42,11 @@ regex-div#regex-p-content-id {
   flex-direction: column;
   padding-bottom: 25px;
 }
-regex-div#regex-control-wrapper-id {
+bsr-div#bsr-control-wrapper {
   display: inline-block;
   width: 100%;
 }
-regex-div.controlButton {
+bsr-div.controlButton {
   border-radius: 5px;
   width: 30px;
   height: 30px;
@@ -60,23 +60,23 @@ regex-div.controlButton {
   margin: 10px;
   user-select: none;
 }
-regex-div#regex-exit-button-id {
+bsr-div#bsr-exit-button {
   float: right;
   background-color: red;
   font-size: initial;
 }
-regex-div#regex-exit-button-id:hover {
+bsr-div#bsr-exit-button:hover {
   cursor: pointer;
 }
-regex-div#regex-input-adder-id {
+bsr-div#bsr-input-button {
   font-size: 20px;
   float: left;
   background-color: #0a9c00;
 }
-regex-div#regex-input-adder-id:hover {
+bsr-div#bsr-input-button:hover {
   cursor: pointer;
 }
-regex-div#regex-form-wrapper-id {
+bsr-div#bsr-form-wrapper {
   overflow: auto;
   max-height: 200px;
   margin: 0 10px;
@@ -84,13 +84,13 @@ regex-div#regex-form-wrapper-id {
   padding: 5px;
   border-radius: 10px;
 }
-regex-div#regex-form-wrapper-id::-webkit-scrollbar {
+bsr-div#bsr-form-wrapper::-webkit-scrollbar {
   border-radius: 10px;
   background-color: gold;
   width: 10px;
   box-shadow: inset 0 0 2px rgba(0, 0, 0, 0.2);
 }
-regex-div#regex-form-wrapper-id::-webkit-scrollbar-thumb {
+bsr-div#bsr-form-wrapper::-webkit-scrollbar-thumb {
   background-color: #6f03fc;
   border-radius: 10px;
   border: 1px solid black;

@@ -1,26 +1,30 @@
 namespace Components {
-  export const BsrPopup = (styles: ElementCSSInlineStyle) => {
-    return `
-    <!-- BSR POPUP START -->
-    <bsr-popup-card style="${styles}">
-      <bsr-div id="bsr-p-content">
-        <bsr-div id="bsr-control-wrapper">
-          <bsr-div id="bsr-input-button" class="controlButton">+</bsr-div>
-          <bsr-div id="bsr-exit-button" class="controlButton">X</bsr-div>
+  export const BsrPopup = (styles?: string): HTMLElement => {
+    let div = document.createElement('div');
+    div.innerHTML = `
+      <bsr-popup-card style="${styles}">
+        <bsr-div id="bsr-p-content">
+          <bsr-div id="bsr-control-wrapper">
+            <bsr-div id="bsr-input-button" class="controlButton">+</bsr-div>
+            <bsr-div id="bsr-exit-button" class="controlButton">X</bsr-div>
+          </bsr-div>
+          <bsr-div id="bsr-form-wrapper">
+          </bsr-div>
         </bsr-div>
-        <bsr-div id="bsr-form-wrapper">
-        </bsr-div>
-      </bsr-div>
-    </bsr-popup-card>
-    <!-- BSR POPUP END -->
+      </bsr-popup-card>
     `;
+    if (div.firstElementChild instanceof HTMLElement) {
+      return div.firstElementChild;
+    } else {
+      throw 'creation of bsr-popup-card failed';
+    }
   };
 
   export const NewInput = (
     key: string = `regex-key-${Math.random().toString(36).substring(2, 5)}`
   ) => {
-    return `
-      <!-- NEW INPUT START -->
+    let div = document.createElement('div');
+    div.innerHTML = `
       <bsr-div id="bsr-input-wrapper">
         <bsr-div class="icWrapper" id="bsr-ic-wrapper" style="width: 100%;">
           <input class="myInput" id="bsr-new-input" type="text" placeholder="regular expression" name="${key}" />
@@ -58,7 +62,7 @@ namespace Components {
           </bsr-div>
         </bsr-div>
       </bsr-div>
-      <!-- NEW INPUT END -->
       `;
+    return div.firstChild;
   };
 }
