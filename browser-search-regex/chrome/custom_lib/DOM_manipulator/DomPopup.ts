@@ -186,20 +186,12 @@ namespace DomPopup {
     cWrapper.id = 'regex-cWrapper-id';
 
     let next: any = document.createElement('regex-button');
-    // new Shine(next, { bubble: false, overrideArgs: [2, 0, 0, 0] });
-
     let prev: any = document.createElement('regex-button');
-    // new Shine(prev, { bubble: false, overrideArgs: [2, 0, 0, 0] });
-
     let minus = document.createElement('regex-button');
-    // new Shine(minus, { bubble: false, overrideArgs: [2, 0, 0, 0] });
-
     let copy = document.createElement('regex-button');
-    // new Shine(copy, { bubble: false, overrideArgs: [2, 0, 0, 0] });
-
     let colorInput = document.createElement('input');
-    // new Shine(colorInput, { bubble: false, overrideArgs: [2, 0, 0, 0] });
     let colorFacts = document.createElement('regex-p');
+
     colorFacts.style.margin = '0 5px';
 
     colorInput.type = 'color';
@@ -401,302 +393,297 @@ namespace DomPopup {
 
     return div;
   };
+}
 
-  const changeColor = (key: string, color: string) => {
-    let matches = document.querySelectorAll(`highlight-me.${key}`);
-    matches.forEach((elem: any) => {
-      elem.style.backgroundColor = color;
-      elem.style.color = invertColor(color);
-    });
-  };
-  const highlightMe = (
-    key: string,
-    options: highlightMeOptions = {
-      match: '',
-      color: '#FFFF00',
-      mods: '',
-      litReg: false,
-      limit: 1000,
-      loose: false,
+const changeColor = (key: string, color: string) => {
+  let matches = document.querySelectorAll(`highlight-me.${key}`);
+  matches.forEach((elem: any) => {
+    elem.style.backgroundColor = color;
+    elem.style.color = invertColor(color);
+  });
+};
+
+const highlightMe = (
+  key: string,
+  options: highlightMeOptions = {
+    match: '',
+    color: '#FFFF00',
+    mods: '',
+    litReg: false,
+    limit: 1000,
+    loose: false,
+  }
+) => {
+  if (options) {
+    options.match = options.litReg
+      ? options.match
+      : options.loose
+      ? options.match
+      : escapeRegExp(options.match);
+  }
+  let GI = Globals.getGI(key);
+  Globals.CUR_INDEX = 0;
+  if (GI === -1) {
+    Globals.ELEM_KEYS.push(key);
+    GI = Globals.getGI(key);
+    Globals.CURRENT_INDEXES.push(Globals.CUR_INDEX);
+  } else {
+    Globals.CURRENT_INDEXES[GI] = Globals.CUR_INDEX;
+  }
+
+  Highlighter.clearHighlight(key);
+  let finalRegex;
+  if (!options.loose) {
+    try {
+      finalRegex = new RegExp(options.match, `${options.mods}g`);
+    } catch (e) {
+      finalRegex = null;
     }
-  ) => {
-    if (options) {
-      options.match = options.litReg
-        ? options.match
-        : options.loose
-        ? options.match
-        : escapeRegExp(options.match);
-    }
-    let GI = Globals.getGI(key);
-    Globals.CUR_INDEX = 0;
-    if (GI === -1) {
-      Globals.ELEM_KEYS.push(key);
-      GI = Globals.getGI(key);
-      Globals.CURRENT_INDEXES.push(Globals.CUR_INDEX);
-    } else {
-      Globals.CURRENT_INDEXES[GI] = Globals.CUR_INDEX;
-    }
+  } else {
+    finalRegex = options.match;
+  }
+  if (
+    options.match !== '' &&
+    Globals.DEF_REJECTS.indexOf(options.match) === -1 &&
+    !!finalRegex
+  ) {
+    let multiNodeMatchId;
+    Globals.MY_HIGHLIGHTS[GI] = Highlighter.highlight(
+      document.body,
+      {
+        regex: finalRegex,
+        excludes: ['bsr-popup-card'],
+        limit: options.limit,
+      },
+      function (match, sameMatchID) {
+        multiNodeMatchId = sameMatchID;
+        var highlightMeElem = document.createElement('highlight-me');
 
-    Highlighter.clearHighlight(key);
-    let finalRegex;
-    if (!options.loose) {
-      try {
-        finalRegex = new RegExp(options.match, `${options.mods}g`);
-      } catch (e) {
-        finalRegex = null;
-      }
-    } else {
-      finalRegex = options.match;
-    }
-    if (
-      options.match !== '' &&
-      Globals.DEF_REJECTS.indexOf(options.match) === -1 &&
-      !!finalRegex
-    ) {
-      let multiNodeMatchId;
-      Globals.MY_HIGHLIGHTS[GI] = Highlighter.highlight(
-        document.body,
-        {
-          regex: finalRegex,
-          excludes: ['regex-card'],
-          limit: options.limit,
-        },
-        function (match, sameMatchID) {
-          multiNodeMatchId = sameMatchID;
-          var highlightMeElem = document.createElement('highlight-me');
-
-          highlightMeElem.className = `chrome-regeggz-highlight-me ${key}`;
-          if (Globals.CUR_INDEX === 0) {
-            highlightMeElem.className += ' current';
-          }
-          highlightMeElem.style.backgroundColor = `${options.color}`;
-          highlightMeElem.style.color = invertColor(options.color);
-
-          // highlightMeElem.id = `${CUR_INDEX}|${key}|${multiNodeMatchId}`;
-
-          Globals.CUR_INDEX =
-            multiNodeMatchId > -1 ? Globals.CUR_INDEX : Globals.CUR_INDEX + 1;
-          highlightMeElem.textContent = match;
-          return highlightMeElem;
+        highlightMeElem.className = `chrome-regeggz-highlight-me ${key}`;
+        if (Globals.CUR_INDEX === 0) {
+          highlightMeElem.className += ' current';
         }
+        highlightMeElem.style.backgroundColor = `${options.color}`;
+        highlightMeElem.style.color = invertColor(options.color);
+
+        // highlightMeElem.id = `${CUR_INDEX}|${key}|${multiNodeMatchId}`;
+
+        Globals.CUR_INDEX =
+          multiNodeMatchId > -1 ? Globals.CUR_INDEX : Globals.CUR_INDEX + 1;
+        highlightMeElem.textContent = match;
+        return highlightMeElem;
+      }
+    );
+    return true;
+  }
+  return false;
+};
+
+const escapeRegExp = (text: string) => {
+  return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
+};
+const invertColor = (hex: string) => {
+  if (hex.indexOf('#') === 0) {
+    hex = hex.slice(1);
+  }
+  if (hex.length === 3) {
+    hex = hex[0] + hex[0] + hex[1] + hex[1] + hex[2] + hex[2];
+  }
+  if (hex.length !== 6) {
+    throw new Error('Invalid HEX color.');
+  }
+  var r = (255 - parseInt(hex.slice(0, 2), 16)).toString(16),
+    g = (255 - parseInt(hex.slice(2, 4), 16)).toString(16),
+    b = (255 - parseInt(hex.slice(4, 6), 16)).toString(16);
+  return '#' + padZero(r) + padZero(g) + padZero(b);
+};
+
+const padZero = (str: string, len?: number) => {
+  len = len || 2;
+  var zeros = new Array(len).join('0');
+  return (zeros + str).slice(-len);
+};
+
+const nextMatch = (
+  elements: [HTMLElement[]],
+  cIndex: number,
+  options: nextMatchOptions = {
+    direction: 1,
+    newStyles: {},
+    oldStyles: {},
+    scrollBehavior: 'smooth',
+    scrollable: true,
+  }
+) => {
+  const regCurrent = /(^|\s)current(\s|$)/;
+  const current = ' current';
+
+  //loop through the old current selection of elements and apply the old styles
+  for (let i in elements[cIndex]) {
+    if (regCurrent.test(elements[cIndex][i].className)) {
+      elements[cIndex][i].className = elements[cIndex][i].className.replace(
+        regCurrent,
+        ''
       );
-      return true;
-    }
-    return false;
-  };
-
-  const escapeRegExp = (text: string) => {
-    return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
-  };
-
-  const invertColor = (hex: string) => {
-    if (hex.indexOf('#') === 0) {
-      hex = hex.slice(1);
-    }
-    if (hex.length === 3) {
-      hex = hex[0] + hex[0] + hex[1] + hex[1] + hex[2] + hex[2];
-    }
-    if (hex.length !== 6) {
-      throw new Error('Invalid HEX color.');
-    }
-    var r = (255 - parseInt(hex.slice(0, 2), 16)).toString(16),
-      g = (255 - parseInt(hex.slice(2, 4), 16)).toString(16),
-      b = (255 - parseInt(hex.slice(4, 6), 16)).toString(16);
-    return '#' + padZero(r) + padZero(g) + padZero(b);
-  };
-  const padZero = (str: string, len?: number) => {
-    len = len || 2;
-    var zeros = new Array(len).join('0');
-    return (zeros + str).slice(-len);
-  };
-
-  export const nextMatch = (
-    elements: [HTMLElement[]],
-    cIndex: number,
-    options: nextMatchOptions = {
-      direction: 1,
-      newStyles: {},
-      oldStyles: {},
-      scrollBehavior: 'smooth',
-      scrollable: true,
-    }
-  ) => {
-    const regCurrent = /(^|\s)current(\s|$)/;
-    const current = ' current';
-
-    //loop through the old current selection of elements and apply the old styles
-    for (let i in elements[cIndex]) {
-      if (regCurrent.test(elements[cIndex][i].className)) {
-        elements[cIndex][i].className = elements[cIndex][i].className.replace(
-          regCurrent,
-          ''
-        );
-        if (!!options.oldStyles) {
-          Object.assign(elements[cIndex][i].style, options.oldStyles);
-        }
+      if (!!options.oldStyles) {
+        Object.assign(elements[cIndex][i].style, options.oldStyles);
       }
     }
+  }
 
-    //edge detection, wrap if we hit an edge
-    if (!elements[cIndex + options.direction]) {
-      if (options.direction > 0) {
-        cIndex = 0;
-      } else {
-        cIndex = elements.length - 1;
-      }
+  //edge detection, wrap if we hit an edge
+  if (!elements[cIndex + options.direction]) {
+    if (options.direction > 0) {
+      cIndex = 0;
     } else {
-      cIndex += options.direction;
+      cIndex = elements.length - 1;
     }
-    // loop through the new current selection of elements and apply the new styles
-    for (let i in elements[cIndex]) {
-      if (!regCurrent.test(elements[cIndex][i].className)) {
-        elements[cIndex][i].className += current;
-        if (!!options.newStyles) {
-          Object.assign(elements[cIndex][i].style, options.newStyles);
-        }
-        // scroll to the new current selection so that it is in view
-        if (options.scrollable && options.scrollBehavior != null)
-          goto(elements[cIndex][i], options.scrollBehavior);
+  } else {
+    cIndex += options.direction;
+  }
+  // loop through the new current selection of elements and apply the new styles
+  for (let i in elements[cIndex]) {
+    if (!regCurrent.test(elements[cIndex][i].className)) {
+      elements[cIndex][i].className += current;
+      if (!!options.newStyles) {
+        Object.assign(elements[cIndex][i].style, options.newStyles);
       }
+      // scroll to the new current selection so that it is in view
+      if (options.scrollable && options.scrollBehavior != null)
+        goto(elements[cIndex][i], options.scrollBehavior);
     }
-    return cIndex;
-  };
+  }
+  return cIndex;
+};
 
-  export const goto = (
-    elem: HTMLElement,
-    scrollBehavior: 'smooth' | 'auto'
-  ) => {
-    // scObj is either null or an Object that looks like
-    // {
-    //      element: dom element - the closest ancestor of elem that can scroll in some direction ,
-    //      bScroll: boolean - true if there is only one word for the overflow css style of
-    //                  element and it is not 'hidden', 'visible', or '',
-    //      xScroll: boolean - true if the overflow-x css style of element is not
-    //                  'hidden', 'visible', or '',
-    //      yScroll: boolean - true if the overflow-y css style of element is not
-    //                  'hidden', 'visible', or ''
-    // }
-    var scObj = scrollable(elem);
+const goto = (elem: HTMLElement, scrollBehavior: 'smooth' | 'auto') => {
+  // scObj is either null or an Object that looks like
+  // {
+  //      element: dom element - the closest ancestor of elem that can scroll in some direction ,
+  //      bScroll: boolean - true if there is only one word for the overflow css style of
+  //                  element and it is not 'hidden', 'visible', or '',
+  //      xScroll: boolean - true if the overflow-x css style of element is not
+  //                  'hidden', 'visible', or '',
+  //      yScroll: boolean - true if the overflow-y css style of element is not
+  //                  'hidden', 'visible', or ''
+  // }
+  var scObj = scrollable(elem);
 
-    var bodyCoords = document.body.getBoundingClientRect();
-    var elemCoords = !!scObj
-      ? scObj.element.getBoundingClientRect()
-      : elem.getBoundingClientRect();
+  var bodyCoords = document.body.getBoundingClientRect();
+  var elemCoords = !!scObj
+    ? scObj.element.getBoundingClientRect()
+    : elem.getBoundingClientRect();
 
-    // scElem is for if scObj is not null and stores scObj.element
-    var scElem;
+  // scElem is for if scObj is not null and stores scObj.element
+  var scElem;
 
-    // scCoords = elem.getBoundingClientRect() if elemCoords isn't already
-    var scCoords;
+  // scCoords = elem.getBoundingClientRect() if elemCoords isn't already
+  var scCoords;
 
-    // scElemH = height of scElem
-    var scElemH;
-    // scElemW = width of scElem
-    var scElemW;
+  // scElemH = height of scElem
+  var scElemH;
+  // scElemW = width of scElem
+  var scElemW;
 
-    // if there is an ancestor to elem that is scrollable
-    // and is not the body, then set relevant variables
-    if (!!scObj) {
-      scElem = scObj.element;
-      scCoords = elem.getBoundingClientRect();
+  // if there is an ancestor to elem that is scrollable
+  // and is not the body, then set relevant variables
+  if (!!scObj) {
+    scElem = scObj.element;
+    scCoords = elem.getBoundingClientRect();
 
-      scElemH = window
-        .getComputedStyle(scElem, null)
-        .getPropertyValue('height');
-      scElemH =
-        scElemH === ''
-          ? scElemH
-          : Number(scElemH.substring(0, scElemH.length - 2));
+    scElemH = window.getComputedStyle(scElem, null).getPropertyValue('height');
+    scElemH =
+      scElemH === ''
+        ? scElemH
+        : Number(scElemH.substring(0, scElemH.length - 2));
 
-      scElemW = window.getComputedStyle(scElem, null).getPropertyValue('width');
-      scElemW =
-        scElemW === ''
-          ? scElemW
-          : Number(scElemW.substring(0, scElemW.length - 2));
-    } else {
-      return null;
-    }
+    scElemW = window.getComputedStyle(scElem, null).getPropertyValue('width');
+    scElemW =
+      scElemW === ''
+        ? scElemW
+        : Number(scElemW.substring(0, scElemW.length - 2));
+  } else {
+    return null;
+  }
 
-    // if the element that should be in view
-    // is out of view, scroll to the element
-    // --- TODO --- this statement does not account for if
-    // --- TODO ---     the body can scroll on the x axis yet
-    if (elemCoords.top < 0 || elemCoords.bottom > window.innerHeight) {
-      window.scroll({
-        top: elemCoords.top - bodyCoords.top - window.innerHeight / 2.5,
-        behavior: scrollBehavior,
-      });
-    }
+  // if the element that should be in view
+  // is out of view, scroll to the element
+  // --- TODO --- this statement does not account for if
+  // --- TODO ---     the body can scroll on the x axis yet
+  if (elemCoords.top < 0 || elemCoords.bottom > window.innerHeight) {
+    window.scroll({
+      top: elemCoords.top - bodyCoords.top - window.innerHeight / 2.5,
+      behavior: scrollBehavior,
+    });
+  }
 
-    if (typeof scElemH === 'string' || typeof scElemW === 'string') {
-      return null;
-    }
-    // if the element is not in view of its scrollable parent element
-    // scroll the parent element so that it is in view.
-    // Keep in mind this statement checks if both axises are scrollable
-    // according to the scObj.bScroll first and if they are not it then
-    // scrolls individually.
+  if (typeof scElemH === 'string' || typeof scElemW === 'string') {
+    return null;
+  }
+  // if the element is not in view of its scrollable parent element
+  // scroll the parent element so that it is in view.
+  // Keep in mind this statement checks if both axises are scrollable
+  // according to the scObj.bScroll first and if they are not it then
+  // scrolls individually.
+  if (
+    !!scObj &&
+    !!scObj.bScroll &&
+    (scCoords.top < 0 ||
+      scCoords.bottom > scElemH + elemCoords.top ||
+      scCoords.left < 0 ||
+      scCoords.right > scElemW + elemCoords.left)
+  ) {
+    scElem.scroll({
+      top: scCoords.top - elemCoords.top + scElem.scrollTop - scElemH / 2,
+      left: scCoords.left - elemCoords.left + scElem.scrollLeft - scElemW / 2,
+      behavior: scrollBehavior,
+    });
+  } else {
     if (
       !!scObj &&
-      !!scObj.bScroll &&
-      (scCoords.top < 0 ||
-        scCoords.bottom > scElemH + elemCoords.top ||
-        scCoords.left < 0 ||
-        scCoords.right > scElemW + elemCoords.left)
+      !!scObj.yBool &&
+      (scCoords.top < 0 || scCoords.bottom > scElemH + elemCoords.top)
     ) {
       scElem.scroll({
         top: scCoords.top - elemCoords.top + scElem.scrollTop - scElemH / 2,
+        behavior: scrollBehavior,
+      });
+    }
+    if (
+      !!scObj &&
+      !!scObj.xBool &&
+      (scCoords.left < 0 || scCoords.right > scElemW + elemCoords.left)
+    ) {
+      scElem.scroll({
         left: scCoords.left - elemCoords.left + scElem.scrollLeft - scElemW / 2,
         behavior: scrollBehavior,
       });
-    } else {
-      if (
-        !!scObj &&
-        !!scObj.yBool &&
-        (scCoords.top < 0 || scCoords.bottom > scElemH + elemCoords.top)
-      ) {
-        scElem.scroll({
-          top: scCoords.top - elemCoords.top + scElem.scrollTop - scElemH / 2,
-          behavior: scrollBehavior,
-        });
-      }
-      if (
-        !!scObj &&
-        !!scObj.xBool &&
-        (scCoords.left < 0 || scCoords.right > scElemW + elemCoords.left)
-      ) {
-        scElem.scroll({
-          left:
-            scCoords.left - elemCoords.left + scElem.scrollLeft - scElemW / 2,
-          behavior: scrollBehavior,
-        });
-      }
     }
-  };
+  }
+};
 
-  const scrollable = (elem: HTMLElement) => {
-    const noScroll = ['hidden', 'visible', ''];
-    while (elem !== document.body) {
-      let [xScroll, yScroll] = window
-        .getComputedStyle(elem, null)
-        .getPropertyValue('overflow')
-        .split(' ');
-      let bScroll = !!xScroll && noScroll.indexOf(xScroll) === -1 && !yScroll;
-      let xBool = !!xScroll && noScroll.indexOf(xScroll) === -1;
-      let yBool = !!yScroll && noScroll.indexOf(yScroll) === -1;
-      if (xBool || yBool) {
-        return {
-          element: elem,
-          bScroll,
-          xBool,
-          yBool,
-        };
-      }
-      if (elem.parentElement == null) {
-        return null;
-      }
-      elem = elem.parentElement;
+const scrollable = (elem: HTMLElement) => {
+  const noScroll = ['hidden', 'visible', ''];
+  while (elem !== document.body) {
+    let [xScroll, yScroll] = window
+      .getComputedStyle(elem, null)
+      .getPropertyValue('overflow')
+      .split(' ');
+    let bScroll = !!xScroll && noScroll.indexOf(xScroll) === -1 && !yScroll;
+    let xBool = !!xScroll && noScroll.indexOf(xScroll) === -1;
+    let yBool = !!yScroll && noScroll.indexOf(yScroll) === -1;
+    if (xBool || yBool) {
+      return {
+        element: elem,
+        bScroll,
+        xBool,
+        yBool,
+      };
     }
-    return null;
-  };
-}
+    if (elem.parentElement == null) {
+      return null;
+    }
+    elem = elem.parentElement;
+  }
+  return null;
+};
