@@ -147,5 +147,24 @@ namespace Styler {
         };
       });
     }
+    deleteNoDragElems(elems: HTMLElement | HTMLElement[]) {
+      if (elems instanceof HTMLElement) {
+        elems = [elems];
+      }
+      elems.forEach((elem) => {
+        delete this.nonDraggableChildElements[
+          this.nonDraggableChildElements.indexOf(elem)
+        ];
+      });
+      this.notDraggable--;
+      this.nonDraggableChildElements.forEach((ndElem) => {
+        ndElem.onmouseover = () => {
+          this.notDraggable++;
+        };
+        ndElem.onmouseout = () => {
+          this.notDraggable--;
+        };
+      });
+    }
   }
 }
