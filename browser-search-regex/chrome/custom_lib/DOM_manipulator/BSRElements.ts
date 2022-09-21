@@ -446,7 +446,7 @@ namespace BSRElements {
       var scElem;
 
       // scCoords = elem.getBoundingClientRect() if elemCoords isn't already
-      var scCoords;
+      var scCoords = elem.getBoundingClientRect();
 
       // scElemH = height of scElem
       var scElemH;
@@ -474,8 +474,6 @@ namespace BSRElements {
           scElemW === ''
             ? scElemW
             : Number(scElemW.substring(0, scElemW.length - 2));
-      } else {
-        return null;
       }
 
       // if the element that should be in view
@@ -492,46 +490,53 @@ namespace BSRElements {
       if (typeof scElemH === 'string' || typeof scElemW === 'string') {
         return null;
       }
+
       // if the element is not in view of its scrollable parent element
       // scroll the parent element so that it is in view.
       // Keep in mind this statement checks if both axises are scrollable
       // according to the scObj.bScroll first and if they are not it then
       // scrolls individually.
-      if (
-        !!scObj &&
-        !!scObj.bScroll &&
-        (scCoords.top < 0 ||
-          scCoords.bottom > scElemH + elemCoords.top ||
-          scCoords.left < 0 ||
-          scCoords.right > scElemW + elemCoords.left)
-      ) {
-        scElem.scroll({
-          top: scCoords.top - elemCoords.top + scElem.scrollTop - scElemH / 2,
-          left:
-            scCoords.left - elemCoords.left + scElem.scrollLeft - scElemW / 2,
-          behavior: scrollBehavior,
-        });
-      } else {
+      if (scElemH != null && scElemW != null && scElem != null) {
         if (
           !!scObj &&
-          !!scObj.yBool &&
-          (scCoords.top < 0 || scCoords.bottom > scElemH + elemCoords.top)
+          !!scObj.bScroll &&
+          (scCoords.top < 0 ||
+            scCoords.bottom > scElemH + elemCoords.top ||
+            scCoords.left < 0 ||
+            scCoords.right > scElemW + elemCoords.left)
         ) {
           scElem.scroll({
             top: scCoords.top - elemCoords.top + scElem.scrollTop - scElemH / 2,
-            behavior: scrollBehavior,
-          });
-        }
-        if (
-          !!scObj &&
-          !!scObj.xBool &&
-          (scCoords.left < 0 || scCoords.right > scElemW + elemCoords.left)
-        ) {
-          scElem.scroll({
             left:
               scCoords.left - elemCoords.left + scElem.scrollLeft - scElemW / 2,
             behavior: scrollBehavior,
           });
+        } else {
+          if (
+            !!scObj &&
+            !!scObj.yBool &&
+            (scCoords.top < 0 || scCoords.bottom > scElemH + elemCoords.top)
+          ) {
+            scElem.scroll({
+              top:
+                scCoords.top - elemCoords.top + scElem.scrollTop - scElemH / 2,
+              behavior: scrollBehavior,
+            });
+          }
+          if (
+            !!scObj &&
+            !!scObj.xBool &&
+            (scCoords.left < 0 || scCoords.right > scElemW + elemCoords.left)
+          ) {
+            scElem.scroll({
+              left:
+                scCoords.left -
+                elemCoords.left +
+                scElem.scrollLeft -
+                scElemW / 2,
+              behavior: scrollBehavior,
+            });
+          }
         }
       }
     }

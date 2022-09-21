@@ -18,13 +18,13 @@
  */
 function nextMatch(elements, cIndex, options) {
   const regCurrent = /(^|\s)current(\s|$)/;
-  const current = " current";
+  const current = ' current';
 
   var ogo = {
     direction: 1,
     newStyles: {},
     oldStyles: {},
-    scrollBehavior: "",
+    scrollBehavior: '',
     scrollable: true,
   };
   if (options) {
@@ -36,7 +36,7 @@ function nextMatch(elements, cIndex, options) {
     if (regCurrent.test(elements[cIndex][i].className)) {
       elements[cIndex][i].className = elements[cIndex][i].className.replace(
         regCurrent,
-        ""
+        ''
       );
       if (!!ogo.oldStyles) {
         for (let sty in ogo.oldStyles) {
@@ -81,12 +81,12 @@ function nextMatch(elements, cIndex, options) {
  */
 function goto(elem, options) {
   var ogo = {
-    scrollBehavior: "smooth",
+    scrollBehavior: 'smooth',
   };
   if (options) {
-    let scbs = ["smooth", "auto"];
+    let scbs = ['smooth', 'auto'];
     if (scbs.indexOf(options.scrollBehavior) === -1)
-      options.scrollBehavior = "smooth";
+      options.scrollBehavior = 'smooth';
     Object.assign(ogo, options);
   }
 
@@ -124,13 +124,13 @@ function goto(elem, options) {
     scElem = scObj.element;
     scCoords = elem.getBoundingClientRect();
 
-    scElemH = window.getComputedStyle(scElem, null).getPropertyValue("height");
+    scElemH = window.getComputedStyle(scElem, null).getPropertyValue('height');
     scElemH =
-      scElemH === "" ? scElemH : Number(scElemH.substr(0, scElemH.length - 2));
+      scElemH === '' ? scElemH : Number(scElemH.substr(0, scElemH.length - 2));
 
-    scElemW = window.getComputedStyle(scElem, null).getPropertyValue("width");
+    scElemW = window.getComputedStyle(scElem, null).getPropertyValue('width');
     scElemW =
-      scElemW === "" ? scElemW : Number(scElemW.substr(0, scElemW.length - 2));
+      scElemW === '' ? scElemW : Number(scElemW.substr(0, scElemW.length - 2));
   }
 
   // if the element that should be in view
@@ -200,12 +200,12 @@ function goto(elem, options) {
  *   }
  */
 function scrollable(elem) {
-  const noScroll = ["hidden", "visible", ""];
+  const noScroll = ['hidden', 'visible', ''];
   while (elem !== document.body) {
     let [xScroll, yScroll] = window
       .getComputedStyle(elem, null)
-      .getPropertyValue("overflow")
-      .split(" ");
+      .getPropertyValue('overflow')
+      .split(' ');
     let bScroll = !!xScroll && noScroll.indexOf(xScroll) === -1 && !yScroll;
     if (
       (xScroll = !!xScroll && noScroll.indexOf(xScroll) === -1) ||
