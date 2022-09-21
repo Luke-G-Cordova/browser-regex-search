@@ -20,9 +20,7 @@ namespace Components {
     }
   };
 
-  export const NewInput = (
-    key: string = `regex-key-${Math.random().toString(36).substring(2, 5)}`
-  ) => {
+  export const NewInput = (key: string) => {
     let div = document.createElement('div');
     div.innerHTML = `
       <bsr-div>
@@ -36,9 +34,9 @@ namespace Components {
             <input type="number" style="width:50px;" />
           </bsr-span>
           <bsr-span class="matchCount" style="float: right;">
-            <bsr-span>0</bsr-span>
+            <bsr-span id="count-numerator">0</bsr-span>
             <bsr-span>/</bsr-span>
-            <bsr-span>0</bsr-span>
+            <bsr-span id="count-denominator">0</bsr-span>
           </bsr-span>
         </bsr-div>
         <bsr-div class="buttonWrapper">
@@ -64,7 +62,7 @@ namespace Components {
       </bsr-div>
       `;
     if (div.firstElementChild instanceof Node) {
-      return div.firstElementChild;
+      return div.firstElementChild as HTMLElement;
     } else {
       throw 'creation of input failed';
     }

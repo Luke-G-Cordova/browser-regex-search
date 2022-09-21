@@ -24,11 +24,7 @@ namespace Highlighter {
     let keysArray: Array<string> = Array.prototype.concat(keys);
 
     for (let j = 0; j < keysArray.length; j++) {
-      elements = Array.from(
-        document.querySelectorAll(
-          `highlight-me.chrome-regeggz-highlight-me.${keysArray[j]}`
-        )
-      );
+      elements = Array.from(document.querySelectorAll(`.${keysArray[j]}`));
 
       for (let i = 0; i < elements.length; i++) {
         nodes = Array.from(elements[i].childNodes);
