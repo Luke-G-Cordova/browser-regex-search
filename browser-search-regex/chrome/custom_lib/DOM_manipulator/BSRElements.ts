@@ -16,29 +16,115 @@ interface nextMatchOptions {
 namespace BSRElements {
   export class BSRMainInput {
     public preserveCase = 'i';
+
     public preserveRegex = false;
-    public maxLimit = 100;
+
     public preserveLevenshtein = false;
-    public nextOrPrev: HTMLElement | null = null;
-    public key: string = '';
-    public inputWrapper: HTMLElement;
-    public input: HTMLInputElement;
-    public colorInput: HTMLInputElement;
-    public maxMatchLimit: HTMLInputElement;
-    public colorFacts: HTMLElement;
-    public next: HTMLElement;
-    public prev: HTMLElement;
-    public countNum: HTMLElement;
-    public countDen: HTMLElement;
-    public caseSensitive: HTMLElement;
-    public isRegex: HTMLElement;
-    public shouldScroll: HTMLElement;
+
     public preserveScroll = true;
+
+    /**
+     * preserves the last pressed button between next and previous
+     */
+    private nextOrPrev: HTMLElement | null = null;
+
+    /**
+     * unique key for this input
+     */
+    public key: string;
+
+    /**
+     * the parent wrapper that is this element
+     */
+    public inputWrapper: HTMLElement;
+
+    /**
+     * the main input that gets the search string
+     */
+    public input: HTMLInputElement;
+
+    /**
+     * input that determines the color of selections
+     */
+    public colorInput: HTMLInputElement;
+
+    /**
+     * the hex code of the current color for the selection
+     */
+    public colorFacts: HTMLElement;
+
+    /**
+     * maximum amount of selections at a time
+     */
+    public maxLimit = 100;
+
+    /**
+     * the input that determines maxLimit
+     */
+    public maxMatchLimit: HTMLInputElement;
+
+    /**
+     * the button to go to the next match in the selection
+     */
+    public next: HTMLElement;
+
+    /**
+     * the button to go to the previous match in the selection
+     */
+    public prev: HTMLElement;
+
+    /**
+     * the element that represents the numerator to show which match
+     * is currently focused
+     */
+    public countNum: HTMLElement;
+
+    /**
+     * the element that represents the denominator to show which match
+     * is currently focused
+     */
+    public countDen: HTMLElement;
+
+    /**
+     * the element that determines preserveCase
+     */
+    public caseSensitive: HTMLElement;
+
+    /**
+     * the element that determines preserveRegex
+     */
+    public isRegex: HTMLElement;
+
+    /**
+     * the element that determines preserveScroll
+     */
+    public shouldScroll: HTMLElement;
+
+    /**
+     * the element that determines preserveLevenshtein
+     */
     public levenshtein: HTMLElement;
+
+    /**
+     * the element that deletes this
+     */
     public minus: HTMLElement;
+
+    /**
+     * the element that copies the current selection to the clipboard
+     */
     public copy: HTMLElement;
+
+    /**
+     * creates a new input for the popup
+     * @param formWrapper the parent element for this element
+     */
     constructor(public formWrapper: HTMLElement) {
+      // element setters
+
+      // create the key to identify this element
       this.key = `regex-key-${Math.random().toString(36).substring(2, 5)}`;
+
       // create and append the element to the form
       this.inputWrapper = formWrapper.appendChild(
         Components.NewInput(this.key)
@@ -57,6 +143,7 @@ namespace BSRElements {
         'input[type="color"]'
       ) as HTMLInputElement;
 
+      // get the color facts input
       this.colorFacts = this.inputWrapper.querySelector(
         '#color-facts'
       ) as HTMLElement;
@@ -81,6 +168,7 @@ namespace BSRElements {
         'bsr-span#count-denominator'
       ) as HTMLElement;
 
+      // get the case sensitivity element
       this.caseSensitive = this.inputWrapper.querySelector(
         'bsr-button.caseSensitive'
       ) as HTMLElement;
@@ -108,6 +196,8 @@ namespace BSRElements {
       this.copy = this.inputWrapper.querySelector(
         'bsr-button.copySelection'
       ) as HTMLElement;
+
+      // event listeners
 
       // listen for the input event
       this.input.addEventListener('input', () => {
