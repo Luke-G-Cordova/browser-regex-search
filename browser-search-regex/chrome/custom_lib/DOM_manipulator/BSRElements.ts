@@ -399,7 +399,6 @@ namespace BSRElements {
         Globals.DEF_REJECTS.indexOf(options.match) === -1 &&
         !!finalRegex
       ) {
-        let multiNodeMatchId;
         Globals.MY_HIGHLIGHTS[GI] = Highlighter.highlight(
           document.body,
           {
@@ -408,7 +407,6 @@ namespace BSRElements {
             limit: options.limit,
           },
           (match, sameMatchID) => {
-            multiNodeMatchId = sameMatchID;
             var highlightMeElem = document.createElement('highlight-me');
 
             highlightMeElem.className = `chrome-bsr-highlight-me ${this.key}`;
@@ -421,7 +419,7 @@ namespace BSRElements {
             // highlightMeElem.id = `${CUR_INDEX}|${key}|${multiNodeMatchId}`;
 
             Globals.CUR_INDEX =
-              multiNodeMatchId > -1 ? Globals.CUR_INDEX : Globals.CUR_INDEX + 1;
+              sameMatchID > -1 ? Globals.CUR_INDEX : Globals.CUR_INDEX + 1;
             highlightMeElem.textContent = match;
             return highlightMeElem;
           }
