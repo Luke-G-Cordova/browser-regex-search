@@ -1,3 +1,6 @@
 
 jsTestFiles/
 htmlTestFiles/
+node_modules/
+build/
+*.back
