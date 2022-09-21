@@ -27,11 +27,11 @@ namespace Components {
         <bsr-div class="icWrapper" style="width: 100%;">
           <input class="mainInputField" type="text" placeholder="regular expression" name="${key}" />
           <bsr-span class="modifiersWrapper">
-            <bsr-button style="">/i</bsr-button>
-            <bsr-button style="">/r</bsr-button>
-            <bsr-button style="">/s</bsr-button>
-            <bsr-button style="">/l</bsr-button>
-            <input type="number" style="width:50px;" />
+            <bsr-button class="caseSensitive">/i</bsr-button>
+            <bsr-button class="isRegex">/r</bsr-button>
+            <bsr-button class="shouldScroll">/s</bsr-button>
+            <bsr-button class="levenshtein">/l</bsr-button>
+            <input class="maxMatchLimit" type="number" style="width:50px;" />
           </bsr-span>
           <bsr-span class="matchCount" style="float: right;">
             <bsr-span id="count-numerator">0</bsr-span>
@@ -55,7 +55,7 @@ namespace Components {
             </bsr-button>
           </bsr-div>
           <bsr-div class="cWrapper">
-            <bsr-p style="margin: 0px 5px;">#ffff00</bsr-p>
+            <bsr-p id="color-facts" style="margin: 0px 5px;">#ffff00</bsr-p>
             <input type="color" class="colorInput" value="#FBFF00" style="box-shadow: rgba(255, 255, 255, 0.5) 0px 2px 0px inset, rgba(0, 0, 0, 0.3) 0px -2px 0px inset;">
           </bsr-div>
         </bsr-div>

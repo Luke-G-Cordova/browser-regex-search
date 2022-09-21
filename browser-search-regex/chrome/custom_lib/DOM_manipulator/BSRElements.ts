@@ -1,3 +1,18 @@
+interface highlightMeOptions {
+  match: string;
+  color: string;
+  mods: string;
+  litReg: boolean;
+  limit: number;
+  loose: boolean;
+}
+interface nextMatchOptions {
+  direction: number;
+  newStyles: any;
+  oldStyles: any;
+  scrollBehavior: 'smooth' | 'auto';
+  scrollable: boolean;
+}
 namespace BSRElements {
   export class BSRMainInput {
     public preserveCase = 'i';
@@ -9,10 +24,19 @@ namespace BSRElements {
     public inputWrapper: HTMLElement;
     public input: HTMLInputElement;
     public colorInput: HTMLInputElement;
+    public maxMatchLimit: HTMLInputElement;
+    public colorFacts: HTMLElement;
     public next: HTMLElement;
     public prev: HTMLElement;
     public countNum: HTMLElement;
     public countDen: HTMLElement;
+    public caseSensitive: HTMLElement;
+    public isRegex: HTMLElement;
+    public shouldScroll: HTMLElement;
+    public preserveScroll = true;
+    public levenshtein: HTMLElement;
+    public minus: HTMLElement;
+    public copy: HTMLElement;
     constructor(public formWrapper: HTMLElement) {
       this.key = `regex-key-${Math.random().toString(36).substring(2, 5)}`;
       // create and append the element to the form
@@ -32,6 +56,10 @@ namespace BSRElements {
       this.colorInput = this.inputWrapper.querySelector(
         'input[type="color"]'
       ) as HTMLInputElement;
+
+      this.colorFacts = this.inputWrapper.querySelector(
+        '#color-facts'
+      ) as HTMLElement;
 
       // get the next button
       this.next = this.inputWrapper.querySelector(
@@ -53,10 +81,170 @@ namespace BSRElements {
         'bsr-span#count-denominator'
       ) as HTMLElement;
 
+      this.caseSensitive = this.inputWrapper.querySelector(
+        'bsr-button.caseSensitive'
+      ) as HTMLElement;
+
+      this.isRegex = this.inputWrapper.querySelector(
+        'bsr-button.isRegex'
+      ) as HTMLElement;
+
+      this.shouldScroll = this.inputWrapper.querySelector(
+        'bsr-button.shouldScroll'
+      ) as HTMLElement;
+
+      this.levenshtein = this.inputWrapper.querySelector(
+        'bsr-button.levenshtein'
+      ) as HTMLElement;
+
+      this.maxMatchLimit = this.inputWrapper.querySelector(
+        'input.maxMatchLimit'
+      ) as HTMLInputElement;
+
+      this.minus = this.inputWrapper.querySelector(
+        'bsr-button.minus'
+      ) as HTMLElement;
+
+      this.copy = this.inputWrapper.querySelector(
+        'bsr-button.copySelection'
+      ) as HTMLElement;
+
       // listen for the input event
       this.input.addEventListener('input', () => {
         this.handleHighlighting();
         this.input.focus();
+      });
+
+      this.input.addEventListener('focus', () => {
+        document.onkeydown = (e) => {
+          if (e.key.toLocaleLowerCase() === 'enter') {
+            e.preventDefault();
+            if (this.nextOrPrev == null) {
+              this.nextOrPrev = this.next;
+            }
+            this.nextOrPrev.click();
+          }
+        };
+      });
+
+      this.input.addEventListener('blur', () => (document.onkeydown = null));
+
+      this.colorInput.addEventListener('input', () => {
+        this.changeColor(this.key, this.colorInput.value);
+        this.colorFacts.innerHTML = this.colorInput.value;
+      });
+      this.caseSensitive.addEventListener('click', (e) => {
+        e.preventDefault();
+        this.preserveCase = this.preserveCase === 'i' ? '' : 'i';
+        if (this.preserveCase === 'i') {
+          this.caseSensitive.style.backgroundColor = 'gold';
+        } else {
+          this.caseSensitive.style.backgroundColor = 'red';
+        }
+        this.handleHighlighting();
+      });
+      this.isRegex.addEventListener('click', (e) => {
+        e.preventDefault();
+        this.preserveRegex = !this.preserveRegex;
+        if (!this.preserveRegex) {
+          this.isRegex.style.backgroundColor = 'gold';
+        } else {
+          this.isRegex.style.backgroundColor = 'red';
+        }
+        this.handleHighlighting();
+      });
+      this.shouldScroll.addEventListener('click', (e) => {
+        e.preventDefault();
+        this.preserveScroll = !this.preserveScroll;
+        if (this.preserveScroll) {
+          this.shouldScroll.style.backgroundColor = 'gold';
+        } else {
+          this.shouldScroll.style.backgroundColor = 'red';
+        }
+      });
+      this.levenshtein.addEventListener('click', (e) => {
+        e.preventDefault();
+        this.preserveLevenshtein = !this.preserveLevenshtein;
+        if (!this.preserveLevenshtein) {
+          this.levenshtein.style.backgroundColor = 'gold';
+        } else {
+          this.levenshtein.style.backgroundColor = 'red';
+        }
+        this.handleHighlighting();
+      });
+      this.maxMatchLimit.addEventListener('input', (e) => {
+        e.preventDefault();
+        this.maxLimit = Number(this.maxMatchLimit.value);
+        this.handleHighlighting();
+      });
+      this.next.addEventListener('click', (e: any) => {
+        e.preventDefault();
+        this.nextOrPrev = this.next;
+        let GI = Globals.getGI(this.key);
+        if (!!Globals.MY_HIGHLIGHTS[GI]) {
+          Globals.CURRENT_INDEXES[GI] = this.nextMatch(
+            Globals.MY_HIGHLIGHTS[GI].elements,
+            Globals.CURRENT_INDEXES[GI],
+            {
+              direction: 1,
+              newStyles: {
+                backgroundColor: 'orange',
+              },
+              oldStyles: {
+                backgroundColor: this.colorInput.value,
+              },
+              scrollBehavior: 'smooth',
+              scrollable: this.preserveScroll,
+            }
+          );
+          this.countNum.innerHTML = `${Globals.CURRENT_INDEXES[GI] + 1}`;
+          this.countDen.innerHTML = Globals.MY_HIGHLIGHTS[GI].elements.length;
+        }
+      });
+      this.prev.addEventListener('click', (e: any) => {
+        e.preventDefault();
+        this.nextOrPrev = this.prev;
+        let GI = Globals.getGI(this.key);
+        if (!!Globals.MY_HIGHLIGHTS[GI]) {
+          Globals.CURRENT_INDEXES[GI] = this.nextMatch(
+            Globals.MY_HIGHLIGHTS[GI].elements,
+            Globals.CURRENT_INDEXES[GI],
+            {
+              direction: -1,
+              newStyles: {
+                backgroundColor: 'orange',
+              },
+              oldStyles: {
+                backgroundColor: this.colorInput.value,
+              },
+              scrollBehavior: 'smooth',
+              scrollable: this.preserveScroll,
+            }
+          );
+          this.countNum.innerHTML = `${Globals.CURRENT_INDEXES[GI] + 1}`;
+          this.countDen.innerHTML = Globals.MY_HIGHLIGHTS[GI].elements.length;
+        }
+      });
+      this.minus.addEventListener('click', (e) => {
+        e.preventDefault();
+        Highlighter.clearHighlight(this.key);
+        Globals.popupDragger.deleteNoDragElems(this.inputWrapper);
+        if (formWrapper == null) return;
+        formWrapper.removeChild(this.inputWrapper);
+      });
+      this.copy.addEventListener('click', (e) => {
+        e.preventDefault();
+        let GI = Globals.getGI(this.key);
+        if (!!Globals.MY_HIGHLIGHTS[GI]) {
+          let selection = '';
+          Globals.MY_HIGHLIGHTS[GI].elements.forEach((elem: any) => {
+            for (let i = 0; i < elem.length; i++) {
+              selection += elem[i].innerText;
+            }
+            selection += '\n';
+          });
+          navigator.clipboard.writeText(selection);
+        }
       });
     }
     handleHighlighting() {
@@ -133,7 +321,7 @@ namespace BSRElements {
             multiNodeMatchId = sameMatchID;
             var highlightMeElem = document.createElement('highlight-me');
 
-            highlightMeElem.className = `chrome-regeggz-highlight-me ${this.key}`;
+            highlightMeElem.className = `chrome-bsr-highlight-me ${this.key}`;
             if (Globals.CUR_INDEX === 0) {
               highlightMeElem.className += ' current';
             }
@@ -229,8 +417,9 @@ namespace BSRElements {
             Object.assign(elements[cIndex][i].style, options.newStyles);
           }
           // scroll to the new current selection so that it is in view
-          if (options.scrollable && options.scrollBehavior != null)
+          if (options.scrollable && options.scrollBehavior != null) {
             this.goto(elements[cIndex][i], options.scrollBehavior);
+          }
         }
       }
       return cIndex;
@@ -246,7 +435,7 @@ namespace BSRElements {
       //      yScroll: boolean - true if the overflow-y css style of element is not
       //                  'hidden', 'visible', or ''
       // }
-      var scObj = this.scrollable(elem);
+      var scObj = this.getScrollable(elem);
 
       var bodyCoords = document.body.getBoundingClientRect();
       var elemCoords = !!scObj
@@ -346,7 +535,7 @@ namespace BSRElements {
         }
       }
     }
-    scrollable(elem: HTMLElement) {
+    getScrollable(elem: HTMLElement) {
       const noScroll = ['hidden', 'visible', ''];
       while (elem !== document.body) {
         let [xScroll, yScroll] = window
