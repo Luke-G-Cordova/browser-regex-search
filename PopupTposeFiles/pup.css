@@ -1,0 +1,97 @@
+bsr-div-t {
+  display: block;
+}
+bsr-button-t {
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  background-color: gold;
+  border: 1px solid black;
+  text-align: center;
+  display: inline-block;
+}
+bsr-button-t:hover {
+  cursor: pointer;
+  background-color: #ffde26;
+}
+bsr-button-t:active {
+  background-color: #dbba00;
+}
+bsr-popup-card-t {
+  background-color: #6f03fc;
+  display: block;
+  position: absolute;
+  z-index: 99999;
+  border-radius: 10px;
+  padding: 15px;
+  min-width: 400px;
+  max-height: 430px;
+  justify-content: center;
+  box-shadow: 0 1px 1px rgb(0 0 0 / 60%);
+  border-radius: 5px;
+  font-family: 'Trebuchet MS', sans-serif !important;
+  color: black !important;
+}
+bsr-div-t#bsr-p-content {
+  width: 100%;
+  height: 100%;
+  max-height: inherit;
+  background-color: #ababab;
+  border-radius: 7px;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 25px;
+}
+bsr-div-t#bsr-control-wrapper {
+  display: inline-block;
+  width: 100%;
+}
+bsr-div-t.controlButtonT {
+  border-radius: 5px;
+  width: 30px;
+  height: 30px;
+  border: 1px solid black;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  text-shadow: 2px 2px 0px black;
+  font-weight: 900;
+  margin: 10px;
+  user-select: none;
+}
+bsr-div-t#bsr-exit-button {
+  float: right;
+  background-color: red;
+  font-size: initial;
+}
+bsr-div-t#bsr-exit-button:hover {
+  cursor: pointer;
+}
+bsr-div-t#bsr-input-button {
+  font-size: 20px;
+  float: left;
+  background-color: #0a9c00;
+}
+bsr-div-t#bsr-input-button:hover {
+  cursor: pointer;
+}
+bsr-div-t#bsr-form-wrapper {
+  overflow: auto;
+  max-height: 200px;
+  margin: 0 10px;
+  box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+  padding: 5px;
+  border-radius: 10px;
+}
+bsr-div-t#bsr-form-wrapper::-webkit-scrollbar {
+  border-radius: 10px;
+  background-color: gold;
+  width: 10px;
+  box-shadow: inset 0 0 2px rgba(0, 0, 0, 0.2);
+}
+bsr-div-t#bsr-form-wrapper::-webkit-scrollbar-thumb {
+  background-color: #6f03fc;
+  border-radius: 10px;
+  border: 1px solid black;
+}

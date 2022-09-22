@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" href="pup.css" />
+    <link rel="stylesheet" href="index.css" />
+    <link href='https://fonts.googleapis.com/css?family=Almarai' rel='stylesheet'>
+  </head>
+  <body style="background-color: #424242">
+    <bsr-popup-card style="top: 220px; left: 280px"> 
+      <bsr-div id="bsr-control-wrapper">
+        <bsr-span id="bsr-input-button" class="BSRButton BSRControlButton">NEW</bsr-span>
+        <bsr-span id="bsr-exit-button" class="BSRButton BSRControlButton">X</bsr-span>
+      </bsr-div>
+      <bsr-break></bsr-break>
+      <bsr-div id="bsr-form-wrapper">
+        <bsr-div class="BSRIcWrapper">
+          <input class="BSRMainInputField" type="text" placeholder="regular expression" name="some-key"/>
+          <bsr-span class="BSRButton BSRModifierWrapper">
+            <bsr-div class="BSRModifierCoverButton">V</bsr-div>
+            <bsr-div class="BSRModifierDropdown">
+              <bsr-div id="bsr-case-sensitive" class="BSRButton BSRModifierButton">case insensitive</bsr-div>
+              <bsr-div id="bsr-is-regex" class="BSRButton BSRModifierButton">regular expression</bsr-div>
+              <bsr-div id="bsr-should-scroll" class="BSRButton BSRModifierButton">stop auto scroll</bsr-div>
+              <bsr-div id="bsr-levenshtein" class="BSRButton BSRModifierButton">loose search</bsr-div>
+            </bsr-div>
+          </bsr-span>
+        </bsr-div>
+        <!-- insert more icWrappers-->
+      </bsr-div>
+    </bsr-popup-card>
+
+    <bsr-popup-card-t style="top: 20px; left: 280px">
+      <bsr-div-t id="bsr-p-content">
+        <bsr-div-t id="bsr-control-wrapper">
+          <bsr-div-t id="bsr-input-button" class="controlButtonT">+</bsr-div-t>
+          <bsr-div-t id="bsr-exit-button" class="controlButtonT">X</bsr-div-t>
+        </bsr-div-t>
+        <bsr-div-t id="bsr-form-wrapper">
+          <bsr-div-t>
+            <bsr-div-t class="icWrapper" style="width: 100%">
+              <input
+                class="mainInputField"
+                type="text"
+                placeholder="regular expression"
+                name="${key}"
+              />
+              <bsr-span-t class="modifiersWrapper">
+                <bsr-button-t class="caseSensitive">/i</bsr-button-t>
+                <bsr-button-t class="isRegex">/r</bsr-button-t>
+                <bsr-button-t class="shouldScroll">/s</bsr-button-t>
+                <bsr-button-t class="levenshtein">/l</bsr-button-t>
+                <input
+                  class="maxMatchLimit"
+                  type="number"
+                  style="width: 50px"
+                />
+              </bsr-span-t>
+              <bsr-span-t class="matchCount" style="float: right">
+                <bsr-span-t id="count-numerator">0</bsr-span-t>
+                <bsr-span-t>/</bsr-span-t>
+                <bsr-span-t id="count-denominator">0</bsr-span-t>
+              </bsr-span-t>
+            </bsr-div-t>
+            <bsr-div-t class="buttonWrapper">
+              <bsr-div-t
+                class="npWrapper"
+                style="float: left; display: flex; align-items: center"
+              >
+                <bsr-button-t
+                  class="prev"
+                  style="
+                    box-shadow: rgba(255, 255, 255, 0.5) 0px 2px 0px inset,
+                      rgba(0, 0, 0, 0.3) 0px -2px 0px inset;
+                  "
+                >
+                  ⇐
+                </bsr-button-t>
+                <bsr-button-t
+                  class="next"
+                  style="
+                    box-shadow: rgba(255, 255, 255, 0.5) 0px 2px 0px inset,
+                      rgba(0, 0, 0, 0.3) 0px -2px 0px inset;
+                  "
+                >
+                  ⇒
+                </bsr-button-t>
+                <bsr-button-t
+                  class="minus"
+                  style="
+                    box-shadow: rgba(255, 255, 255, 0.5) 0px 2px 0px inset,
+                      rgba(0, 0, 0, 0.3) 0px -2px 0px inset;
+                  "
+                >
+                  -
+                </bsr-button-t>
+                <bsr-button-t
+                  title="Copy This Selection"
+                  class="copySelection"
+                  style="
+                    box-shadow: rgba(255, 255, 255, 0.5) 0px 2px 0px inset,
+                      rgba(0, 0, 0, 0.3) 0px -2px 0px inset;
+                  "
+                >
+                  ⛶
+                </bsr-button-t>
+              </bsr-div-t>
+              <bsr-div-t class="cWrapper">
+                <bsr-p-t id="color-facts" style="margin: 0px 5px">#ffff00</bsr-p-t>
+                <input
+                  type="color"
+                  class="colorInput"
+                  value="#FBFF00"
+                  style="
+                    box-shadow: rgba(255, 255, 255, 0.5) 0px 2px 0px inset,
+                      rgba(0, 0, 0, 0.3) 0px -2px 0px inset;
+                  "
+                />
+              </bsr-div-t>
+            </bsr-div-t>
+          </bsr-div-t>
+        </bsr-div-t>
+      </bsr-div-t>
+    </bsr-popup-card>
+  </body>
+</html>
