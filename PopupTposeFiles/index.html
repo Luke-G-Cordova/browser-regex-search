@@ -25,18 +25,36 @@
               <bsr-div class="BSRButton BSRModifierCoverButton">V</bsr-div>
               <bsr-div class="BSRModifierDropdown">
                 <bsr-div class="BSRScrollBar">
-                  <bsr-div id="bsr-case-sensitive" class="BSRButton BSRModifierButton">case insensitive</bsr-div>
-                  <bsr-div id="bsr-is-regex" class="BSRButton BSRModifierButton">regular expression</bsr-div>
-                  <bsr-div id="bsr-should-scroll" class="BSRButton BSRModifierButton">stop auto scroll</bsr-div>
-                  <bsr-div id="bsr-levenshtein" class="BSRButton BSRModifierButton">loose search</bsr-div>
-                  <bsr-div id="bsr-max-matches" class="BSRButton BSRModifierButton BSRMaxMatchLimitWrapper">
+                  <bsr-div class="BSRButton BSRModifierButton">
+                    <input class="BSRModifierInput" id="bsr-case-sensitive" type="checkbox" />
+                    <label for="bsr-case-sensitive">case insensitive</label>
+                  </bsr-div>
+                  <bsr-div class="BSRButton BSRModifierButton">
+                    <input class="BSRModifierInput" id="bsr-is-regex" type="checkbox" />
+                    <label for="bsr-is-regex">regular expression</label>
+                  </bsr-div>
+                  <bsr-div class="BSRButton BSRModifierButton">
+                    <input class="BSRModifierInput" id="bsr-should-scroll" type="checkbox" />
+                    <label for="bsr-should-scroll">stop auto scroll</label>
+                  </bsr-div>
+                  <bsr-div class="BSRButton BSRModifierButton">
+                    <input class="BSRModifierInput" id="bsr-levenshtein" type="checkbox" />
+                    <label for="bsr-levenshtein">loose search</label>
+                  </bsr-div>
+                  <bsr-div class="BSRButton BSRModifierButton BSRMaxMatchLimitWrapper">
                     max matches
-                    <input class="BSRMaxMatchLimit" type="number" value="100"/>
+                    <input class="BSRModifierInput BSRMaxMatchLimit" id="bsr-max-matches" type="number" value="100"/>
                   </bsr-div>
                   <bsr-div class="BSRButton BSRModifierButton BSRColorPickerWrapper">
                     selection color
-                    <input class="BSRColorPicker" type="color" value="#FBFF00"/>
-                    <bsr-span>#FBF00</bsr-span>
+                    <input class="BSRModifierInput BSRColorPicker" id="bsr-color-input" type="color" value="#FBFF00"/>
+                    <bsr-span>#FBFF00</bsr-span>
+                    <bsr-span class="BSRFloatingWrapper" style="padding: 2px;">
+                      <bsr-span class="BSRButton">⛶</bsr-span>
+                      <bsr-div class="BSRFloater">
+                        Hex copied to your clipboard
+                      </bsr-div>
+                    </bsr-span>
                   </bsr-div>
                 </bsr-div>
               </bsr-div>
