@@ -22,6 +22,7 @@ bsr-break {
 }
 .BSRScrollBar::-webkit-scrollbar-thumb {
   background-color: #111113;
+  border-radius: 4px;
 }
 #bsr-control-wrapper {
   display: inline-block;
@@ -46,7 +47,23 @@ bsr-break {
   color: #acaeb1;
   cursor: pointer;
 }
-
+.BSRFloatingWrapper {
+  position: relative;
+}
+.BSRFloatingWrapper:hover .BSRButton:active .BSRFloater {
+  display: block;
+}
+.BSRFloater {
+  display: none;
+  position: absolute;
+  bottom: 1.2em;
+  width: 100px;
+  left: -50px;
+  background-color: #ffffff;
+  color: #202124;
+  border: 1px solid #111113;
+  padding: 3px;
+}
 bsr-popup-card {
   display: block;
   position: absolute;
@@ -109,7 +126,7 @@ input.BSRMainInputField {
   display: none;
   position: absolute;
   max-height: 200px;
-  width: 130px;
+  width: 160px;
   overflow: hidden;
   left: -45px;
   top: 23px;
@@ -121,13 +138,28 @@ input.BSRMainInputField {
 .BSRModifierButton {
   background-color: #202124;
   padding: 5px;
+  position: relative;
+}
+.BSRModifierButton label:before {
+  position: absolute;
+  content: '';
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+}
+.BSRModifierButton label:hover {
+  cursor: pointer;
+}
+.BSRModifierInput {
+  float: right;
 }
 .BSRModifierButton:hover {
   background-color: #111113;
   padding: 5px;
 }
 .BSRMaxMatchLimitWrapper:hover {
-  cursor: initial;
+  cursor: default;
 }
 .BSRMaxMatchLimit {
   width: 50px;
@@ -149,7 +181,7 @@ input.BSRMainInputField {
   border: none;
 }
 .BSRColorPickerWrapper:hover {
-  cursor: initial;
+  cursor: default;
 }
 .BSRColorPicker:hover {
   cursor: pointer;
