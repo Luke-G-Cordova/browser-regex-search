@@ -1,8 +1,10 @@
 bsr-div {
   display: block;
+  user-select: none;
 }
 bsr-span {
   display: inline;
+  user-select: none;
 }
 bsr-break {
   display: block;
@@ -46,23 +48,6 @@ bsr-break {
 .BSRButton:hover {
   color: #acaeb1;
   cursor: pointer;
-}
-.BSRFloatingWrapper {
-  position: relative;
-}
-.BSRFloatingWrapper:hover .BSRButton:active .BSRFloater {
-  display: block;
-}
-.BSRFloater {
-  display: none;
-  position: absolute;
-  bottom: 1.2em;
-  width: 100px;
-  left: -50px;
-  background-color: #ffffff;
-  color: #202124;
-  border: 1px solid #111113;
-  padding: 3px;
 }
 bsr-popup-card {
   display: block;
@@ -188,11 +173,13 @@ input.BSRMainInputField {
 }
 .BSRInputBottomHalf {
   display: flex;
+  padding-top: 5px;
 }
 .BSRActionButton {
   width: 25px;
   height: 25px;
   display: flex;
+  border-radius: 7px;
   justify-content: center;
   align-items: center;
 }
