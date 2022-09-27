@@ -10,7 +10,7 @@ bsr-break {
   display: block;
   height: 0.5px;
   margin: 0 5% 2% 5%;
-  background-color: #6b7074;
+  background-color: #3c3f41;
 }
 .BSRScrollBar {
   max-height: inherit;
@@ -80,7 +80,7 @@ bsr-popup-card {
 }
 input.BSRMainInputField {
   background-color: #111113;
-  color: #acaeb1;
+  color: #202124;
   border: 1px solid #6b7074;
   height: 25px;
   width: 200px;
