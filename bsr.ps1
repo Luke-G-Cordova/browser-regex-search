@@ -16,4 +16,6 @@ Register-ObjectEvent $fileWatcher "Changed" -Action { ./chrome.ps1 $Event.Source
 Register-ObjectEvent $fileWatcher "Deleted" -Action { ./chrome.ps1 "Deleted" "Deleted" }
 Register-ObjectEvent $fileWatcher "Renamed" -Action { ./chrome.ps1 $Event.SourceEventArgs.FullPath "Renamed" }
 
+cp "$PSScriptRoot\node_modules\@webcomponents\webcomponentsjs\webcomponents-bundle.js" "$PSScriptRoot\build\chrome\webcomponents-bundle.js"
+
 while ($true) { sleep 1 }
