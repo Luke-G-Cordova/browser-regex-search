@@ -7,4 +7,8 @@ namespace Globals {
   export let popup: HTMLElement | null;
   export let popupDragger: any;
   export const getGI = (key: string) => ELEM_KEYS.indexOf(key);
+  export let formWrapper: HTMLElement | null;
 }
+
+customElements.define('bsr-popup-card', Components.BSRPopupCard);
+customElements.define('bsr-input', Components.BSRInput);
