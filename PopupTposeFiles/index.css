@@ -1,17 +1,20 @@
-bsr-div {
-  display: block;
+/* no select */
+div {
   user-select: none;
 }
-bsr-span {
-  display: inline;
+span {
   user-select: none;
 }
+
+/* custom break */
 bsr-break {
   display: block;
   height: 0.5px;
   margin: 0 5% 2% 5%;
   background-color: #3c3f41;
 }
+
+/* scroll bars */
 .BSRScrollBar {
   max-height: inherit;
   overflow-y: scroll;
@@ -26,6 +29,8 @@ bsr-break {
   background-color: #111113;
   border-radius: 4px;
 }
+
+/* control wrapper */
 #bsr-control-wrapper {
   display: inline-block;
   width: 100%;
@@ -41,6 +46,8 @@ bsr-break {
   margin: 3px;
   display: inline-block;
 }
+
+/* buttons */
 .BSRButton {
   color: #6b7074;
   transition: color 500ms ease-out;
@@ -49,6 +56,8 @@ bsr-break {
   color: #acaeb1;
   cursor: pointer;
 }
+
+/* custom element for the popup */
 bsr-popup-card {
   display: block;
   position: absolute;
@@ -62,11 +71,12 @@ bsr-popup-card {
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.7);
 }
 
-.BSRIcWrapper {
-  height: auto;
-  margin: 5%;
-  /* display: flex; */
+/* form wrapper, inputs are children of this wrapper */
+#bsr-form-wrapper {
+  padding: 5%;
 }
+
+/* top half of an input */
 .BSRInputTopHalf {
   display: flex;
 }
@@ -78,6 +88,8 @@ bsr-popup-card {
   border-top-right-radius: 3px;
   border-bottom-right-radius: 3px;
 }
+
+/* main input, this is where a search term is entered */
 input.BSRMainInputField {
   background-color: #111113;
   color: #e8eaed;
@@ -91,13 +103,8 @@ input.BSRMainInputField {
 input.BSRMainInputField::placeholder {
   color: #55595d;
 }
-.BSRModifierCoverButton {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-width: 25px;
-  height: 25px;
-}
+
+/* search modifiers */
 .BSRModifierWrapper {
   border-top: 1px solid #6b7074;
   border-right: 1px solid #6b7074;
@@ -107,9 +114,20 @@ input.BSRMainInputField::placeholder {
   box-sizing: border-box;
   position: relative;
 }
+
+/* the element that when hovered shows the modifier dropdown */
+.BSRModifierCoverButton {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-width: 25px;
+  height: 25px;
+}
 .BSRModifierWrapper:hover .BSRModifierDropdown {
   display: block;
 }
+
+/* modifier dropdown */
 .BSRModifierDropdown {
   display: none;
   position: absolute;
@@ -123,6 +141,8 @@ input.BSRMainInputField::placeholder {
   overflow-x: hidden;
   z-index: 1;
 }
+
+/* modifier buttons and inputs */
 .BSRModifierButton {
   background-color: #202124;
   padding: 5px;
@@ -174,6 +194,8 @@ input.BSRMainInputField::placeholder {
 .BSRColorPicker:hover {
   cursor: pointer;
 }
+
+/* bottom half of an input */
 .BSRInputBottomHalf {
   display: flex;
   padding-top: 5px;
