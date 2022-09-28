@@ -1,7 +1,6 @@
 /// <reference path="../stylers/Styler.ts" />
 /// <reference path="./Globals.ts" />
 /// <reference path="../highlight/Highlighter.ts" />
-/// <reference path="./BSRElements.ts" />
 
 namespace DomPopup {
   export const showPopup = () => {
