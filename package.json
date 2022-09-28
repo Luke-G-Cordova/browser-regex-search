@@ -20,5 +20,8 @@
   "homepage": "https://github.com/Luke-G-Cordova/browser-search-regeggs#readme",
   "devDependencies": {
     "@types/chrome": "^0.0.193"
+  },
+  "dependencies": {
+    "@webcomponents/webcomponentsjs": "^2.6.0"
   }
 }
