@@ -62,11 +62,6 @@ namespace DomPopup {
           }
         });
 
-        // change pointer on mouseover
-        exitBtn.addEventListener('mouseover', () => {
-          Object.assign(exitBtn, { cursor: 'pointer' });
-        });
-
         // exit popup if clicked
         exitBtn.addEventListener('mouseup', () => {
           showPopup();
