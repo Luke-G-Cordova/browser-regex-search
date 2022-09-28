@@ -104,6 +104,9 @@ namespace Components {
   };
 }
 const styles = `
+*{
+  font-family: 'Almarai';
+}
 /* no select */
 div {
   user-select: none;
@@ -129,7 +132,7 @@ bsr-break {
   width: 4px;
 }
 .BSRScrollBar::-webkit-scrollbar-track {
-  background-color: #202124;
+  background-color: #3c3f41;
 }
 .BSRScrollBar::-webkit-scrollbar-thumb {
   background-color: #111113;
@@ -161,20 +164,6 @@ bsr-break {
 .BSRButton:hover {
   color: #acaeb1;
   cursor: pointer;
-}
-
-/* custom element for the popup */
-bsr-popup-card {
-  display: block;
-  position: absolute;
-  max-height: 430px;
-  background-color: #202124;
-  color: #6b7074 !important;
-  border-radius: 5px;
-  z-index: 99999;
-  font-family: 'Almarai';
-  font-size: 15px;
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.7);
 }
 
 /* form wrapper, inputs are children of this wrapper */

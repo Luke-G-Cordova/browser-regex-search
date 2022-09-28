@@ -6,6 +6,16 @@
 namespace DomPopup {
   export const showPopup = () => {
     if (!Globals.popup) {
+      let alreadyLinkedFont = document.querySelector('#bsr-alamari-font-link');
+      let newFontLink = document.createElement('link');
+      newFontLink.rel = 'stylesheet';
+      newFontLink.href = 'https://fonts.googleapis.com/css?family=Almarai';
+      newFontLink.id = 'bsr-alamari-font-link';
+      if (alreadyLinkedFont) {
+        alreadyLinkedFont.remove();
+      }
+      document.head.appendChild(newFontLink);
+
       Globals.popup = document.createElement('bsr-popup-card');
       Object.assign(Globals.popup.style, {
         top: `${20 + window.scrollY}px`,
@@ -44,11 +54,6 @@ namespace DomPopup {
 
         // add original input
         formWrapper.appendChild(document.createElement('bsr-input'));
-
-        // change pointer on mouseover
-        inputBtn.addEventListener('mouseover', () => {
-          Object.assign(inputBtn, { cursor: 'pointer' });
-        });
 
         // add input if clicked
         inputBtn.addEventListener('click', () => {
