@@ -10,64 +10,65 @@
     <link href='https://fonts.googleapis.com/css?family=Almarai' rel='stylesheet'>
   </head>
   <body style="background-color: #ffffff">
+
     <bsr-popup-card style="top: 220px; left: 280px"> 
-      <bsr-div id="bsr-control-wrapper">
-        <bsr-span id="bsr-input-button" class="BSRButton BSRControlButton">NEW</bsr-span>
-        <bsr-span id="bsr-exit-button" class="BSRButton BSRControlButton">X</bsr-span>
-      </bsr-div>
+      <div id="bsr-control-wrapper">
+        <span id="bsr-input-button" class="BSRButton BSRControlButton">NEW</span>
+        <span id="bsr-exit-button" class="BSRButton BSRControlButton">X</span>
+      </div>
       <bsr-break></bsr-break>
-      <bsr-div id="bsr-form-wrapper">
+      <div id="bsr-form-wrapper">
         <!-- insert inputs -->
-        <bsr-div class="BSRIcWrapper">
-          <bsr-div class="BSRInputTopHalf">
+        <bsr-input class="BSRInputWrapper">
+          <div class="BSRInputTopHalf">
             <input class="BSRMainInputField" type="text" placeholder="regular expression" name="some-key"/>
-            <bsr-span class="BSRModifierWrapper">
-              <bsr-div class="BSRButton BSRModifierCoverButton">V</bsr-div>
-              <bsr-div class="BSRModifierDropdown">
-                <bsr-div class="BSRScrollBar">
-                  <bsr-div class="BSRButton BSRModifierButton">
+            <span class="BSRModifierWrapper">
+              <div class="BSRButton BSRModifierCoverButton">V</div>
+              <div class="BSRModifierDropdown">
+                <div class="BSRScrollBar">
+                  <div class="BSRButton BSRModifierButton">
                     <input class="BSRModifierInput" id="bsr-case-sensitive" type="checkbox" />
                     <label for="bsr-case-sensitive">Case insensitive</label>
-                  </bsr-div>
-                  <bsr-div class="BSRButton BSRModifierButton">
+                  </div>
+                  <div class="BSRButton BSRModifierButton">
                     <input class="BSRModifierInput" id="bsr-is-regex" type="checkbox" />
                     <label for="bsr-is-regex">Regular expression</label>
-                  </bsr-div>
-                  <bsr-div class="BSRButton BSRModifierButton">
+                  </div>
+                  <div class="BSRButton BSRModifierButton">
                     <input class="BSRModifierInput" id="bsr-should-scroll" type="checkbox" />
                     <label for="bsr-should-scroll">Stop auto scroll</label>
-                  </bsr-div>
-                  <bsr-div class="BSRButton BSRModifierButton">
+                  </div>
+                  <div class="BSRButton BSRModifierButton">
                     <input class="BSRModifierInput" id="bsr-levenshtein" type="checkbox" />
                     <label for="bsr-levenshtein">Loose search</label>
-                  </bsr-div>
-                  <bsr-div class="BSRButton BSRModifierButton BSRMaxMatchLimitWrapper">
+                  </div>
+                  <div class="BSRButton BSRModifierButton BSRMaxMatchLimitWrapper">
                     <input class="BSRModifierInput BSRMaxMatchLimit" id="bsr-max-matches" type="number" value="100"/>
-                    <bsr-div>Maximum matches</bsr-div>
-                  </bsr-div>
-                  <bsr-div class="BSRButton BSRModifierButton BSRColorPickerWrapper">
+                    <div>Maximum matches</div>
+                  </div>
+                  <div class="BSRButton BSRModifierButton BSRColorPickerWrapper">
                     <input class="BSRModifierInput BSRColorPicker" id="bsr-color-input" type="color" value="#FBFF00"/>
-                    <bsr-div>Selection color <bsr-span class="BSRButton">#FBFF00 <bsr-span>⛶</bsr-span></bsr-div>
-                  </bsr-div>
-                </bsr-div>
-              </bsr-div>
-            </bsr-span>
-          </bsr-div>
-          <bsr-div class="BSRInputBottomHalf">
-            <bsr-span class="BSRButton BSRActionButton">⇐</bsr-span>
-            <bsr-span class="BSRButton BSRActionButton">⇒</bsr-span>
-            <bsr-span class="BSRButton BSRActionButton">-</bsr-span>
-            <bsr-span class="BSRButton BSRActionButton">⛶</bsr-span>
-            <bsr-span style="flex-grow:1;"></bsr-span>
-            <bsr-span class="BSRFoundMatches BSRActionButton">
-              <bsr-span class="BSRMatcNumerator">0</bsr-span>
+                    <div>Selection color <span class="BSRButton">#FBFF00 <span>⛶</span></div>
+                  </div>
+                </div>
+              </div>
+            </span>
+          </div>
+          <div class="BSRInputBottomHalf">
+            <span class="BSRButton BSRActionButton">⇐</span>
+            <span class="BSRButton BSRActionButton">⇒</span>
+            <span class="BSRButton BSRActionButton">-</span>
+            <span class="BSRButton BSRActionButton">⛶</span>
+            <span style="flex-grow:1;"></span>
+            <span class="BSRFoundMatches BSRActionButton">
+              <span class="BSRMatcNumerator">0</span>
               /
-              <bsr-span class="BSRMatcNumerator">0</bsr-span>
-            </bsr-span>
-          </bsr-div>
-        </bsr-div>
+              <span class="BSRMatcNumerator">0</span>
+            </span>
+          </div>
+        </bsr-input>
         <!-- insert more inputs-->
-      </bsr-div>
+      </div>
     </bsr-popup-card>
 
     <bsr-popup-card-t style="top: 20px; left: 280px">
