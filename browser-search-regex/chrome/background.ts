@@ -31,7 +31,11 @@ const sendData = (data: communicationInfo) => {
  * these send the open_popup event to the content scripts
  */
 chrome.commands.onCommand.addListener((command) => {
-  if (command === 'open_popup') {
+  if (
+    command === 'toggle_popup' ||
+    command === 'close_popup' ||
+    command === 'open_popup'
+  ) {
     let sendObj: communicationInfo = {
       from: 'background',
       subject: command,
