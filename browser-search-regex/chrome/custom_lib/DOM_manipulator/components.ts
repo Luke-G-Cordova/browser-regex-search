@@ -228,6 +228,8 @@ namespace Components {
       this.minus = bsrInput.querySelector('.BSRDeleteButton') as HTMLElement;
       this.copy = bsrInput.querySelector('.BSRCopyButton') as HTMLElement;
 
+      // auto focus the input
+      setTimeout(() => this.searchInput.focus(), 1);
       // event listeners
 
       // listen for the input event
