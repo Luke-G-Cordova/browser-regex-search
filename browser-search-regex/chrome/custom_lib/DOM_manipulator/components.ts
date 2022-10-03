@@ -267,6 +267,7 @@ namespace Components {
           this.preserveCase = 'i';
         }
         this.handleHighlighting();
+        this.searchInput.focus();
       });
       this.isRegex.addEventListener('change', (e) => {
         e.preventDefault();
@@ -276,6 +277,7 @@ namespace Components {
           this.preserveRegex = false;
         }
         this.handleHighlighting();
+        this.searchInput.focus();
       });
       this.shouldScroll.addEventListener('change', (e) => {
         e.preventDefault();
@@ -284,6 +286,7 @@ namespace Components {
         } else {
           this.preserveScroll = true;
         }
+        this.searchInput.focus();
       });
       this.levenshtein.addEventListener('change', (e) => {
         e.preventDefault();
@@ -294,6 +297,7 @@ namespace Components {
           this.preserveLevenshtein = false;
         }
         this.handleHighlighting();
+        this.searchInput.focus();
       });
       this.maxMatchLimit.addEventListener('input', (e) => {
         e.preventDefault();
@@ -323,6 +327,7 @@ namespace Components {
           this.countNum.innerHTML = `${Globals.CURRENT_INDEXES[GI] + 1}`;
           this.countDen.innerHTML = Globals.MY_HIGHLIGHTS[GI].elements.length;
         }
+        this.searchInput.focus();
       });
       this.prev.addEventListener('click', (e: any) => {
         e.preventDefault();
@@ -347,6 +352,7 @@ namespace Components {
           this.countNum.innerHTML = `${Globals.CURRENT_INDEXES[GI] + 1}`;
           this.countDen.innerHTML = Globals.MY_HIGHLIGHTS[GI].elements.length;
         }
+        this.searchInput.focus();
       });
       this.minus.addEventListener('click', (e) => {
         e.preventDefault();
@@ -371,6 +377,7 @@ namespace Components {
           });
           navigator.clipboard.writeText(selection);
         }
+        this.searchInput.focus();
       });
     }
     handleHighlighting() {
