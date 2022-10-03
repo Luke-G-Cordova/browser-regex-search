@@ -28,11 +28,11 @@
     "128": "./images/regex.png"
   },
   "commands": {
-    "open_popup": {
+    "toggle_popup": {
       "suggested_key": {
         "default": "Ctrl+Shift+F"
       },
-      "description": "opens the dom based popup"
+      "description": "Toggles the dom based popup"
     }
   }
 }
