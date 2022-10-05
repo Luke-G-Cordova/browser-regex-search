@@ -208,3 +208,18 @@ input.BSRMainInputField::placeholder {
   justify-content: center;
   align-items: center;
 }
+
+.BSRToolTip {
+  display: none;
+  background-color: #acaeb1;
+  color: #202124 !important;
+  position: absolute;
+  top: -25px;
+  left: -20px;
+  padding: 2px;
+  border-radius: 3px;
+  opacity: 0.8;
+}
+.BSRCopyButton {
+  position: relative;
+}
