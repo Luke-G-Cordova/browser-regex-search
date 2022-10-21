@@ -63,7 +63,7 @@ namespace DomPopup {
 
       // add input if clicked
       inputBtn.addEventListener('click', () => {
-        if (formWrapper != null) {
+        if (formWrapper != null && Globals.INPUT_AMT < 6) {
           formWrapper.appendChild(document.createElement('bsr-input'));
         }
       });

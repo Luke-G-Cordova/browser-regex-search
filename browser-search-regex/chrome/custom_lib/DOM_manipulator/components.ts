@@ -195,6 +195,7 @@ namespace Components {
       style.textContent = styles;
       shadowRoot.appendChild(style);
       shadowRoot.appendChild(bsrInput);
+      Globals.INPUT_AMT++;
 
       // create the key to identify this element
       this.key = `regex-key-${Math.random().toString(36).substring(2, 5)}`;
@@ -389,6 +390,7 @@ namespace Components {
           this.parentElement.appendChild(document.createElement('bsr-input'));
         }
         this.parentElement.removeChild(this);
+        Globals.INPUT_AMT--;
       });
       this.copy.addEventListener('click', (e) => {
         e.preventDefault();
