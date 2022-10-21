@@ -129,6 +129,10 @@ namespace Components {
     public minus: HTMLElement;
 
     public inputWrapper: HTMLElement;
+
+    public colorCopyButton: HTMLElement;
+    public colorCopyTooltip: HTMLElement;
+
     /**
      * the element that copies the current selection to the clipboard
      */
@@ -168,7 +172,7 @@ namespace Components {
                 </div>
                 <div class="BSRButton BSRModifierButton BSRColorPickerWrapper">
                   <input class="BSRModifierInput BSRColorPicker" id="bsr-color-input" type="color" value="#FBFF00"/>
-                  <div>Selection color <span class="BSRButton"><span class="BSRColorFacts">#FBFF00</span> <span>⛶</span></div>
+                    <div>Selection color <span class="BSRButton BSRColorFacts"><span>#FBFF00</span> <span class="BSRCopyButton BSRColorCopyButton">⛶<div class="BSRToolTip BSRColorCopyToolTip">Copied</div></span></div>
                 </div>
               </div>
             </div>
@@ -227,7 +231,14 @@ namespace Components {
       ) as HTMLElement;
       this.minus = bsrInput.querySelector('.BSRDeleteButton') as HTMLElement;
       this.copy = bsrInput.querySelector('.BSRCopyButton') as HTMLElement;
+      this.colorCopyButton = bsrInput.querySelector(
+        '.BSRColorCopyButton'
+      ) as HTMLElement;
+      this.colorCopyTooltip = bsrInput.querySelector(
+        '.BSRColorCopyToolTip'
+      ) as HTMLElement;
 
+      // this.colorCopyButton.addEventListener('click', () => {});
       // auto focus the input
       setTimeout(() => this.searchInput.focus(), 1);
       // event listeners
@@ -257,7 +268,22 @@ namespace Components {
 
       this.colorInput.addEventListener('input', () => {
         this.changeColor(this.key, this.colorInput.value);
-        this.colorFacts.innerHTML = this.colorInput.value;
+        let hexCode = this.colorFacts.querySelector('span');
+        if (hexCode != null) {
+          hexCode.innerHTML = this.colorInput.value;
+        }
+      });
+      this.colorFacts.addEventListener('click', () => {
+        let hexCode = this.colorFacts.querySelector('span');
+        if (hexCode != null) {
+          navigator.clipboard.writeText(this.colorInput.value);
+          // this.colorCopyTooltip.style.display = 'block';
+          this.colorCopyTooltip.style.opacity = '1';
+        }
+        setTimeout(() => {
+          this.colorCopyTooltip.style.opacity = '0';
+          // this.colorCopyTooltip.style.display = 'none';
+        }, 1000);
       });
       this.caseSensitive.addEventListener('change', (e) => {
         e.preventDefault();
@@ -832,14 +858,15 @@ input.BSRMainInputField::placeholder {
   height: 25px;
 }
 .BSRModifierWrapper:hover .BSRModifierDropdown {
-  display: block;
+  visibility: visible;
+  max-height: 200px;
 }
 
 /* modifier dropdown */
 .BSRModifierDropdown {
-  display: none;
+  visibility: hidden;
   position: absolute;
-  max-height: 200px;
+  max-height: 0px;
   width: 160px;
   overflow: hidden;
   left: -45px;
@@ -848,6 +875,7 @@ input.BSRMainInputField::placeholder {
   border-radius: 10px;
   overflow-x: hidden;
   z-index: 1;
+  transition: max-height 1s, visibility 1s;
 }
 
 /* modifier buttons and inputs */
@@ -915,5 +943,20 @@ input.BSRMainInputField::placeholder {
   border-radius: 7px;
   justify-content: center;
   align-items: center;
+}
+
+.BSRToolTip {
+  background-color: #acaeb1;
+  color: #202124 !important;
+  position: absolute;
+  top: -25px;
+  left: -20px;
+  padding: 2px;
+  border-radius: 3px;
+  opacity: 0;
+  transition: opacity .2s;
+}
+.BSRCopyButton {
+  position: relative;
 }
 `;
