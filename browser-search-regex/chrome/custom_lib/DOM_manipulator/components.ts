@@ -21,7 +21,7 @@ namespace Components {
 
       const bsrPopupCard = document.createElement('div');
       bsrPopupCard.className = 'BSRPopupWrapper shadowWrapper';
-      bsrPopupCard.innerHTML = `
+      bsrPopupCard.innerHTML = /*html*/ `
         <div id="bsr-control-wrapper">
           <span id="bsr-input-button" class="BSRButton BSRControlButton">NEW</span>
           <span id="bsr-exit-button" class="BSRButton BSRControlButton">X</span>
@@ -145,7 +145,7 @@ namespace Components {
 
       const bsrInput = document.createElement('div');
       bsrInput.className = 'BSRInputWrapper shadowWrapper';
-      bsrInput.innerHTML = `
+      bsrInput.innerHTML = /*html*/ `
         <div class="BSRInputTopHalf">
           <input class="BSRMainInputField" type="text" placeholder="regular expression" name="some-key"/>
           <span class="BSRModifierWrapper">
@@ -753,7 +753,7 @@ namespace Components {
     return null;
   };
 }
-const styles = `
+const styles = /*css*/ `
 *{
   font-family: 'Almarai';
 }
