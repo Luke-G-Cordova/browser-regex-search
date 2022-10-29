@@ -734,6 +734,27 @@ namespace Components {
       return null;
     }
   }
+
+  export class BSRDifference extends HTMLElement {
+    constructor() {
+      super();
+      const shadowRoot = this.attachShadow({ mode: 'open' });
+
+      const bsrDiff = document.createElement('div');
+      bsrDiff.className = 'BSRDiffWrapper shadowWrapper';
+      bsrDiff.innerHTML = /*html*/ `
+        <div>
+          
+        </div>
+      `;
+
+      const style = document.createElement('style');
+      style.textContent = styles;
+      shadowRoot.appendChild(style);
+      shadowRoot.appendChild(bsrDiff);
+    }
+  }
+
   export const queryShadowSelector = (elem: HTMLElement, selector: string) => {
     const shadow = elem.shadowRoot;
     if (shadow != null) {

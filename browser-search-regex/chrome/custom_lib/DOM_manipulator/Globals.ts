@@ -13,3 +13,4 @@ namespace Globals {
 
 customElements.define('bsr-popup-card', Components.BSRPopupCard);
 customElements.define('bsr-input', Components.BSRInput);
+customElements.define('bsr-difference', Components.BSRDifference);
