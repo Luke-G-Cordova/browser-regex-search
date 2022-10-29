@@ -133,6 +133,8 @@ namespace Components {
     public colorCopyButton: HTMLElement;
     public colorCopyTooltip: HTMLElement;
 
+    public diffInput: HTMLInputElement;
+
     /**
      * the element that copies the current selection to the clipboard
      */
@@ -165,6 +167,10 @@ namespace Components {
                 <div class="BSRButton BSRModifierButton">
                   <input class="BSRModifierInput" id="bsr-levenshtein" type="checkbox" />
                   <label for="bsr-levenshtein">Loose search</label>
+                </div>
+                <div class="BSRButton BSRModifierButton">
+                  <input class="BSRModifierInput" id="bsr-diff" type="checkbox" />
+                  <label for="bsr-difference">Difference</label>
                 </div>
                 <div class="BSRButton BSRModifierButton BSRMaxMatchLimitWrapper">
                   <input class="BSRModifierInput BSRMaxMatchLimit" id="bsr-max-matches" type="number" value="100"/>
@@ -217,6 +223,9 @@ namespace Components {
       ) as HTMLInputElement;
       this.maxMatchLimit = bsrInput.querySelector(
         '#bsr-max-matches'
+      ) as HTMLInputElement;
+      this.diffInput = bsrInput.querySelector(
+        'bsr-difference'
       ) as HTMLInputElement;
       this.colorInput = bsrInput.querySelector(
         '#bsr-color-input'
