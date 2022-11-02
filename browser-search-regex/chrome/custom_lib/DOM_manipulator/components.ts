@@ -468,7 +468,6 @@ namespace Components {
         }
 
         if (searchType === 'exact') {
-          let mods = this.preserveCase ? 'i' : '';
           Globals.MY_HIGHLIGHTS[GI] = Highlighter.highlightExactMatch(
             searchTerm,
             (match, sameMatchID) =>
@@ -477,14 +476,13 @@ namespace Components {
               excludes: ['bsr-popup-card'],
               limit: options.limit,
               root: document.body,
-              mods,
+              mods: this.preserveCase,
             }
           );
         } else if (searchType === 'regexp') {
-          let mods = this.preserveCase ? 'i' : '';
           let regExp;
           try {
-            regExp = new RegExp(searchTerm, `${mods}g`);
+            regExp = new RegExp(searchTerm, `${this.preserveCase}g`);
           } catch (e) {
             regExp = null;
           }
