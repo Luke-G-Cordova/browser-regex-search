@@ -446,11 +446,8 @@ namespace Components {
         limit: 1000,
       }
     ) {
-      if (
-        searchTerm &&
-        searchTerm !== '' &&
-        Globals.DEF_REJECTS.indexOf(searchTerm) === -1
-      ) {
+      Highlighter.clearHighlight(this.key);
+      if (searchTerm !== '' && Globals.DEF_REJECTS.indexOf(searchTerm) === -1) {
         options = Object.assign(
           {
             color: '#FFFF00',
@@ -469,30 +466,41 @@ namespace Components {
         } else {
           Globals.CURRENT_INDEXES[GI] = Globals.CUR_INDEX;
         }
-        Highlighter.clearHighlight(this.key);
 
         if (searchType === 'exact') {
+          let mods = this.preserveCase ? 'i' : '';
           Globals.MY_HIGHLIGHTS[GI] = Highlighter.highlightExactMatch(
             searchTerm,
-            (match, sameMatchID) =>
-              this.createTag(match, sameMatchID, options.color),
-            {
-              excludes: ['bsr-popup-card', 'highlight-me'],
-              limit: options.limit,
-              root: document.body,
-            }
-          );
-        } else if (searchType === 'regexp') {
-          Globals.MY_HIGHLIGHTS[GI] = Highlighter.highlightRegExp(
-            new RegExp(searchTerm),
             (match, sameMatchID) =>
               this.createTag(match, sameMatchID, options.color),
             {
               excludes: ['bsr-popup-card'],
               limit: options.limit,
               root: document.body,
+              mods,
             }
           );
+        } else if (searchType === 'regexp') {
+          let mods = this.preserveCase ? 'i' : '';
+          let regExp;
+          try {
+            regExp = new RegExp(searchTerm, `${mods}g`);
+          } catch (e) {
+            regExp = null;
+          }
+          if (regExp != null) {
+            Globals.MY_HIGHLIGHTS[GI] = Highlighter.highlightRegExp(
+              regExp,
+              (match, sameMatchID) => {
+                return this.createTag(match, sameMatchID, options.color);
+              },
+              {
+                excludes: ['bsr-popup-card'],
+                limit: options.limit,
+                root: document.body,
+              }
+            );
+          }
         } else if (searchType === 'lev') {
           Globals.MY_HIGHLIGHTS[GI] = Highlighter.highlightLevenshtein(
             searchTerm,

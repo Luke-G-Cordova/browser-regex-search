@@ -2,6 +2,7 @@ interface HighlightOptions {
   excludes: string[];
   limit: number;
   root: HTMLElement;
+  mods?: string;
 }
 interface HighlightLevenshteinOptions {
   excludes: string[];
@@ -32,7 +33,6 @@ namespace Highlighter {
 
     for (let j = 0; j < keysArray.length; j++) {
       elements = Array.from(document.querySelectorAll(`.${keysArray[j]}`));
-
       for (let i = 0; i < elements.length; i++) {
         nodes = Array.from(elements[i].childNodes);
         let nodesFragment = document.createDocumentFragment();
@@ -53,10 +53,11 @@ namespace Highlighter {
       excludes: ['script', 'style', 'iframe', 'canvas', 'noscript'],
       limit: 1000,
       root: document.body,
+      mods: '',
     }
   ) => {
     return highlightRegExp(
-      new RegExp(escapeRegExp(searchTerm)),
+      new RegExp(escapeRegExp(searchTerm), `${options.mods}g`),
       callback,
       options
     );
@@ -71,14 +72,21 @@ namespace Highlighter {
       root: document.body,
     }
   ) => {
+    if (!searchTerm.global) throw 'regex must have a global modifier //g';
     options = Object.assign(
       {
-        excludes: ['script', 'style', 'iframe', 'canvas', 'noscript'],
         limit: 1000,
         root: document.body,
       },
       options
     );
+    options.excludes = [
+      'script',
+      'style',
+      'iframe',
+      'canvas',
+      'noscript',
+    ].concat(options.excludes);
     let tw = makeTreeWalker(options.excludes, options.root);
 
     let groupedNodes = makeGroupedNodeArray(tw, options.root);
@@ -186,6 +194,7 @@ namespace Highlighter {
       }
       searchTerm.lastIndex = 0;
     }
+
     return {
       amountOfSelectedMatches,
       elements: nodeList,
@@ -211,6 +220,13 @@ namespace Highlighter {
       },
       options
     );
+    options.excludes = [
+      'script',
+      'style',
+      'iframe',
+      'canvas',
+      'noscript',
+    ].concat(options.excludes);
     let tw = makeTreeWalker(options.excludes, options.root);
 
     let groupedNodes = makeGroupedNodeArray(tw, options.root);
