@@ -525,12 +525,26 @@ namespace Components {
         b = (255 - parseInt(hex.slice(4, 6), 16)).toString(16);
       return '#' + this.padZero(r) + this.padZero(g) + this.padZero(b);
     }
+
+    /**
+     * pads zeros for proper hex format
+     * @param str
+     * @param len
+     * @returns
+     */
     padZero(str: string, len?: number) {
       len = len || 2;
       var zeros = new Array(len).join('0');
       return (zeros + str).slice(-len);
     }
 
+    /**
+     * rotates to the next match
+     * @param elements the array of elements to rotate through
+     * @param cIndex the index of the current element in the array
+     * @param options
+     * @returns the new index of the current element in the array
+     */
     nextMatch(
       elements: [HTMLElement[]],
       cIndex: number,
@@ -583,6 +597,11 @@ namespace Components {
       }
       return cIndex;
     }
+    /**
+     * scrolls to the desired element
+     * @param elem a dom element that should be scrolled to view
+     * @param scrollBehavior an optional options object
+     */
     goto(elem: HTMLElement, scrollBehavior: 'smooth' | 'auto') {
       // scObj is either null or an Object that looks like
       // {
@@ -647,7 +666,7 @@ namespace Components {
       }
 
       if (typeof scElemH === 'string' || typeof scElemW === 'string') {
-        return null;
+        return;
       }
 
       // if the element is not in view of its scrollable parent element
@@ -699,6 +718,23 @@ namespace Components {
         }
       }
     }
+
+    /**
+     * @param elem a dom element that could be the child of a scrollable element
+     * @returns
+     *
+     *       elem: HTMLElement - the closest ancestor of elem that can scroll
+     *                   in some direction
+     *
+     *       bScroll: boolean - true if there is only one word for the overflow css style of
+     *                   element and it is not 'hidden', 'visible', or '',
+     *
+     *       xScroll: boolean - true if the overflow-x css style of element is not
+     *                   'hidden', 'visible', or '',
+     *
+     *       yScroll: boolean - true if the overflow-y css style of element is not
+     *                   'hidden', 'visible', or ''
+     */
     getScrollable(elem: HTMLElement) {
       const noScroll = ['hidden', 'visible', ''];
       while (elem !== document.body) {
