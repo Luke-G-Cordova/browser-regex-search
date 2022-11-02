@@ -1,5 +1,5 @@
 {
   "eslint.validate": ["typescript", "javascript"],
   "files.eol": "\n",
-  "cSpell.words": ["Almarai", "Elems"]
+  "cSpell.words": ["Almarai", "BSRD", "Elems"]
 }
