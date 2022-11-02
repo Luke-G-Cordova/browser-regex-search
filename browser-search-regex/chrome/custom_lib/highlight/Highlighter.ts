@@ -26,6 +26,10 @@ interface NodeParts {
 }
 
 namespace Highlighter {
+  /**
+   * clears the highlights on elements that have className keys
+   * @param keys class name or names of highlights to clear.
+   */
   export const clearHighlight = (keys: string[] | string) => {
     let elements: Array<Node>;
     let nodes: Array<ChildNode>;
@@ -46,6 +50,16 @@ namespace Highlighter {
     }
   };
 
+  /**
+   * Highlights every exact match of the searchTerm on a page of html.
+   * It is not case sensitive by default but passing `i` to the `mods`
+   * option performs a case sensitive search.
+   * @param searchTerm the plain text search to be looked for in a page of html
+   * @param callback the tag to replace text node containing the search term with
+   * @param options
+   * @returns an object containing the amount of selected matches and an array
+   *  containing the nodes of each selection
+   */
   export const highlightExactMatch = (
     searchTerm: string,
     callback: (match: string, id: number) => HTMLElement,
@@ -63,6 +77,15 @@ namespace Highlighter {
     );
   };
 
+  /**
+   * Highlights every found instances that matches the regexp searchTerm on a page of html.
+   * This RegExp MUST have a `g` or global tag.
+   * @param searchTerm the RegExp containing a `g` or global tag
+   * @param callback the tag to replace text node containing the search term with
+   * @param options
+   * @returns an object containing the amount of selected matches and an array
+   *  containing the nodes of each selection
+   */
   export const highlightRegExp = (
     searchTerm: RegExp,
     callback: (match: string, id: number) => HTMLElement,
@@ -201,6 +224,15 @@ namespace Highlighter {
     };
   };
 
+  /**
+   * Highlights every found instances that matches the searchTerm on a page of html
+   * using Levenshtein search as inspiration for the search algorithm.
+   * @param searchTerm the plain text string used for searching
+   * @param callback the tag to replace text node containing the search term with
+   * @param options
+   * @returns an object containing the amount of selected matches and an array
+   *  containing the nodes of each selection
+   */
   export const highlightLevenshtein = (
     searchTerm: string,
     callback: (match: string, id: number) => HTMLElement,
