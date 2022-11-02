@@ -7,6 +7,12 @@ namespace Globals {
   export let INPUT_AMT: number = 0;
   export let popup: HTMLElement | null;
   export let popupDragger: any;
+
+  /**
+   * gets the index of key in Globals.ELEM_KEYS
+   * @param key the key signifying which index to return
+   * @returns the index of the key in ELEM_KEYS. -1 if not found.
+   */
   export const getGI = (key: string) => ELEM_KEYS.indexOf(key);
   export let formWrapper: HTMLElement | null;
 }
