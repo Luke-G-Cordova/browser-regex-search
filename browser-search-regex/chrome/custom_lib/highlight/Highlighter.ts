@@ -1,8 +1,16 @@
 interface HighlightOptions {
-  regex: RegExp | string;
   excludes: string[];
   limit: number;
+  root: HTMLElement;
+  mods?: string;
 }
+interface HighlightLevenshteinOptions {
+  excludes: string[];
+  limit: number;
+  root: HTMLElement;
+  percentMatch: number;
+}
+
 interface ClosestMatch extends Array<string> {
   input: string;
   size: number;
@@ -18,6 +26,10 @@ interface NodeParts {
 }
 
 namespace Highlighter {
+  /**
+   * clears the highlights on elements that have className keys
+   * @param keys class name or names of highlights to clear.
+   */
   export const clearHighlight = (keys: string[] | string) => {
     let elements: Array<Node>;
     let nodes: Array<ChildNode>;
@@ -25,7 +37,6 @@ namespace Highlighter {
 
     for (let j = 0; j < keysArray.length; j++) {
       elements = Array.from(document.querySelectorAll(`.${keysArray[j]}`));
-
       for (let i = 0; i < elements.length; i++) {
         nodes = Array.from(elements[i].childNodes);
         let nodesFragment = document.createDocumentFragment();
@@ -39,15 +50,59 @@ namespace Highlighter {
     }
   };
 
-  export const highlight = (
-    root: HTMLElement,
+  /**
+   * Highlights every exact match of the searchTerm on a page of html.
+   * It is not case sensitive by default but passing `i` to the `mods`
+   * option performs a case sensitive search.
+   * @param searchTerm the plain text search to be looked for in a page of html
+   * @param callback the tag to replace text node containing the search term with
+   * @param options
+   * @returns an object containing the amount of selected matches and an array
+   *  containing the nodes of each selection
+   */
+  export const highlightExactMatch = (
+    searchTerm: string,
+    callback: (match: string, id: number) => HTMLElement,
     options: HighlightOptions = {
-      regex: '',
-      excludes: [],
+      excludes: ['script', 'style', 'iframe', 'canvas', 'noscript'],
       limit: 1000,
-    },
-    callback: (match: string, id: number) => HTMLElement
+      root: document.body,
+      mods: '',
+    }
   ) => {
+    return highlightRegExp(
+      new RegExp(escapeRegExp(searchTerm), `${options.mods}g`),
+      callback,
+      options
+    );
+  };
+
+  /**
+   * Highlights every found instances that matches the regexp searchTerm on a page of html.
+   * This RegExp MUST have a `g` or global tag.
+   * @param searchTerm the RegExp containing a `g` or global tag
+   * @param callback the tag to replace text node containing the search term with
+   * @param options
+   * @returns an object containing the amount of selected matches and an array
+   *  containing the nodes of each selection
+   */
+  export const highlightRegExp = (
+    searchTerm: RegExp,
+    callback: (match: string, id: number) => HTMLElement,
+    options: HighlightOptions = {
+      excludes: ['script', 'style', 'iframe', 'canvas', 'noscript'],
+      limit: 1000,
+      root: document.body,
+    }
+  ) => {
+    if (!searchTerm.global) throw 'regex must have a global modifier //g';
+    options = Object.assign(
+      {
+        limit: 1000,
+        root: document.body,
+      },
+      options
+    );
     options.excludes = [
       'script',
       'style',
@@ -55,10 +110,9 @@ namespace Highlighter {
       'canvas',
       'noscript',
     ].concat(options.excludes);
+    let tw = makeTreeWalker(options.excludes, options.root);
 
-    let tw = makeTreeWalker(options.excludes, root);
-
-    let groupedNodes = makeGroupedNodeArray(tw, root);
+    let groupedNodes = makeGroupedNodeArray(tw, options.root);
 
     let masterStr = '';
     let test: RegExpExecArray | null;
@@ -80,170 +134,230 @@ namespace Highlighter {
       // get a string that is formed from a group of nodes
       masterStr = curGroupOfNodes.map((elem: Text) => elem.data).join('');
 
-      // determine wether or not the search string
-      // is a regular expression or a string
-      if (options.regex instanceof RegExp) {
-        // loop through the matches in masterStr
-        while (
-          (test = options.regex.exec(masterStr)) &&
-          test[0] !== '' &&
-          nodeList.length < options.limit
-        ) {
-          // store the index of the last match
-          let lastRegIndex = options.regex.lastIndex;
-          amountOfSelectedMatches++;
+      // loop through the matches in masterStr
+      while (
+        (test = searchTerm.exec(masterStr)) &&
+        test[0] !== '' &&
+        nodeList.length < options.limit
+      ) {
+        // store the index of the last match
+        let lastRegIndex = searchTerm.lastIndex;
+        amountOfSelectedMatches++;
 
-          // find the node index j in curGroupOfNodes that the first match occurs in
-          let { nodeParts, indexOfNodeThatMatchStartsIn: j } = getNodeParts(
-            test.index,
-            curGroupOfNodes
+        // find the node index j in curGroupOfNodes that the first match occurs in
+        let { nodeParts, indexOfNodeThatMatchStartsIn: j } = getNodeParts(
+          test.index,
+          curGroupOfNodes
+        );
+
+        searchTerm.lastIndex = 0;
+
+        // try to find the whole match in the node the match first appears in
+        test2 = searchTerm.exec(curGroupOfNodes[j].data);
+
+        // if match is in several nodes, test2 == null
+        if (test2 == null) {
+          // get the string that starts at the found match
+          // and ends at the end of the containing nodes text
+          let inThisNode = nodeParts.substring(test.index);
+
+          test2 = makeCustomRegExpExecArray(
+            inThisNode,
+            curGroupOfNodes[j].data.length - inThisNode.length,
+            curGroupOfNodes[j].data
           );
 
-          options.regex.lastIndex = 0;
+          let nodeGroup = insertOverSeveralNodes(
+            test[0].length,
+            test2[0],
+            curGroupOfNodes,
+            j,
+            callback
+          );
 
-          // try to find the whole match in the node the match first appears in
-          test2 = options.regex.exec(curGroupOfNodes[j].data);
+          nodeList.push(nodeGroup);
+        } else {
+          // else if the match occurs in only one node
 
-          // if match is in several nodes, test2 == null
-          if (test2 == null) {
-            // get the string that starts at the found match
-            // and ends at the end of the containing nodes text
-            let inThisNode = nodeParts.substring(test.index);
+          // create a tag
+          tag = callback(test2[0], -1);
 
-            test2 = makeCustomRegExpExecArray(
-              inThisNode,
-              curGroupOfNodes[j].data.length - inThisNode.length,
-              curGroupOfNodes[j].data
-            );
+          let { insertedNode, insertedText, newNode } = replacePartOfNode(
+            curGroupOfNodes[j],
+            tag,
+            test2.index,
+            test2[0].length
+          );
 
-            let nodeGroup = insertOverSeveralNodes(
-              test[0].length,
-              test2[0],
-              curGroupOfNodes,
-              j,
-              callback
-            );
+          // push the inserted node to the last group in nodeList
+          nodeList.push([insertedNode]);
 
-            nodeList.push(nodeGroup);
-          } else {
-            // else if the match occurs in only one node
-
-            // create a tag
-            tag = callback(test2[0], -1);
-
-            let { insertedNode, insertedText, newNode } = replacePartOfNode(
-              curGroupOfNodes[j],
-              tag,
-              test2.index,
-              test2[0].length
-            );
-
-            // push the inserted node to the last group in nodeList
-            nodeList.push([insertedNode]);
-
-            // if the match occurred at the beginning of the node, curGroupOfNodes[j].data === ''
-            // this means that we did not create a new node, we just replaced one and don't need to increment j
-            if (curGroupOfNodes[j].data === '') {
-              // if the match occurs across the rest of the node, newNode.data === ''
-              // this means that we need to delete newNode from curGroupOfNodes because we added an empty node
-              if (newNode.data === '') {
-                // delete newNode from curGroupOfNodes and replace it with insertedNodes text
-                curGroupOfNodes.splice(j, 1, insertedText);
-              } else {
-                // insert insertedNodes text into curGroupOfNodes while keeping newNode
-                curGroupOfNodes.splice(j, 1, insertedText, newNode);
-              }
+          // if the match occurred at the beginning of the node, curGroupOfNodes[j].data === ''
+          // this means that we did not create a new node, we just replaced one and don't need to increment j
+          if (curGroupOfNodes[j].data === '') {
+            // if the match occurs across the rest of the node, newNode.data === ''
+            // this means that we need to delete newNode from curGroupOfNodes because we added an empty node
+            if (newNode.data === '') {
+              // delete newNode from curGroupOfNodes and replace it with insertedNodes text
+              curGroupOfNodes.splice(j, 1, insertedText);
             } else {
-              if (newNode.data === '') {
-                curGroupOfNodes.splice(j + 1, 0, insertedText);
-              } else {
-                curGroupOfNodes.splice(j + 1, 0, insertedText, newNode);
-              }
+              // insert insertedNodes text into curGroupOfNodes while keeping newNode
+              curGroupOfNodes.splice(j, 1, insertedText, newNode);
+            }
+          } else {
+            if (newNode.data === '') {
+              curGroupOfNodes.splice(j + 1, 0, insertedText);
+            } else {
+              curGroupOfNodes.splice(j + 1, 0, insertedText, newNode);
             }
           }
-          // replace the current regex match index with the last matches index
-          options.regex.lastIndex = lastRegIndex;
         }
-        options.regex.lastIndex = 0;
-      } else {
-        // find the closest match in the masterStr
-        let match = findClosestMatch(options.regex, masterStr);
+        // replace the current regex match index with the last matches index
+        searchTerm.lastIndex = lastRegIndex;
+      }
+      searchTerm.lastIndex = 0;
+    }
 
-        // if the match is within 80% of the test string
-        if (match.percent >= 0.75) {
-          amountOfSelectedMatches++;
+    return {
+      amountOfSelectedMatches,
+      elements: nodeList,
+    };
+  };
 
-          // create nodeParts array and find the index j signifying the node that the match starts in
-          let { nodeParts, indexOfNodeThatMatchStartsIn: j } = getNodeParts(
-            match.index,
-            curGroupOfNodes
+  /**
+   * Highlights every found instances that matches the searchTerm on a page of html
+   * using Levenshtein search as inspiration for the search algorithm.
+   * @param searchTerm the plain text string used for searching
+   * @param callback the tag to replace text node containing the search term with
+   * @param options
+   * @returns an object containing the amount of selected matches and an array
+   *  containing the nodes of each selection
+   */
+  export const highlightLevenshtein = (
+    searchTerm: string,
+    callback: (match: string, id: number) => HTMLElement,
+    options: HighlightLevenshteinOptions = {
+      excludes: ['script', 'style', 'iframe', 'canvas', 'noscript'],
+      limit: 1000,
+      root: document.body,
+      percentMatch: 0.75,
+    }
+  ) => {
+    options = Object.assign(
+      {
+        excludes: ['script', 'style', 'iframe', 'canvas', 'noscript'],
+        limit: 1000,
+        root: document.body,
+        percentMatch: 0.75,
+      },
+      options
+    );
+    options.excludes = [
+      'script',
+      'style',
+      'iframe',
+      'canvas',
+      'noscript',
+    ].concat(options.excludes);
+    let tw = makeTreeWalker(options.excludes, options.root);
+
+    let groupedNodes = makeGroupedNodeArray(tw, options.root);
+
+    let masterStr = '';
+    let test: RegExpExecArray | null;
+    let tag: HTMLElement;
+    let amountOfSelectedMatches = 0;
+    let nodeList: Node[][] = [];
+    let groupedNodesLength = groupedNodes.length;
+
+    // loop through all groups of nodes or until we have looped options.limit times
+    for (
+      let i = 0;
+      i < groupedNodesLength && nodeList.length < options.limit;
+      i++
+    ) {
+      // assign a pointer to the groupedNodes array that represents the current node for readability
+      let curGroupOfNodes = groupedNodes[i];
+
+      // get a string that is formed from a group of nodes
+      masterStr = curGroupOfNodes.map((elem: Text) => elem.data).join('');
+
+      // find the closest match in the masterStr
+      let match = findClosestMatch(searchTerm, masterStr);
+
+      // if the match is within percentMatch of the test string
+      if (match.percent >= 0.75) {
+        amountOfSelectedMatches++;
+
+        // create nodeParts array and find the index j signifying the node that the match starts in
+        let { nodeParts, indexOfNodeThatMatchStartsIn: j } = getNodeParts(
+          match.index,
+          curGroupOfNodes
+        );
+
+        // find the index at which the match occurs within the first node
+        let nodeStartIndex =
+          match.index - (nodeParts.length - curGroupOfNodes[j].data.length);
+
+        // if the full match is across multiple nodes
+        if (nodeStartIndex + match.size > curGroupOfNodes[j].data.length) {
+          // get the string that starts at the found match
+          // and ends at the end of the containing nodes text
+          let inThisNode = nodeParts.substring(match.index);
+
+          test = makeCustomRegExpExecArray(
+            inThisNode,
+            curGroupOfNodes[j].data.length - inThisNode.length,
+            curGroupOfNodes[j].data
           );
 
-          // find the index at which the match occurs within the first node
-          let nodeStartIndex =
-            match.index - (nodeParts.length - curGroupOfNodes[j].data.length);
+          let nodeGroup = insertOverSeveralNodes(
+            match.size,
+            test[0],
+            curGroupOfNodes,
+            j,
+            callback
+          );
 
-          // if the full match is across multiple nodes
-          if (nodeStartIndex + match.size > curGroupOfNodes[j].data.length) {
-            // get the string that starts at the found match
-            // and ends at the end of the containing nodes text
-            let inThisNode = nodeParts.substring(match.index);
+          nodeList.push(nodeGroup);
+        } else {
+          // else if the match occurs in only one node
 
-            test2 = makeCustomRegExpExecArray(
-              inThisNode,
-              curGroupOfNodes[j].data.length - inThisNode.length,
-              curGroupOfNodes[j].data
-            );
+          // create a tag
+          tag = callback(match[0], -1);
 
-            let nodeGroup = insertOverSeveralNodes(
-              match.size,
-              test2[0],
-              curGroupOfNodes,
-              j,
-              callback
-            );
+          let { insertedNode, insertedText, newNode } = replacePartOfNode(
+            curGroupOfNodes[j],
+            tag,
+            nodeStartIndex,
+            match.size
+          );
 
-            nodeList.push(nodeGroup);
-          } else {
-            // else if the match occurs in only one node
+          // push the inserted node to the last group in nodeList
+          nodeList.push([insertedNode]);
 
-            // create a tag
-            tag = callback(match[0], -1);
-
-            let { insertedNode, insertedText, newNode } = replacePartOfNode(
-              curGroupOfNodes[j],
-              tag,
-              nodeStartIndex,
-              match.size
-            );
-
-            // push the inserted node to the last group in nodeList
-            nodeList.push([insertedNode]);
-
-            // if the match occurred at the beginning of the node, curGroupOfNodes[j].data === ''
-            // this means that we did not create a new node, we just replaced one and don't need to increment j
-            if (curGroupOfNodes[j].data === '') {
-              // if the match occurs across the rest of the node, newNode.data === ''
-              // this means that we need to delete newNode from curGroupOfNodes because we added an empty node
-              if (newNode.data === '') {
-                // delete newNode from curGroupOfNodes and replace it with insertedNodes text
-                curGroupOfNodes.splice(j, 1, insertedText);
-              } else {
-                // insert insertedNodes text into curGroupOfNodes while keeping newNode
-                curGroupOfNodes.splice(j, 1, insertedText, newNode);
-              }
+          // if the match occurred at the beginning of the node, curGroupOfNodes[j].data === ''
+          // this means that we did not create a new node, we just replaced one and don't need to increment j
+          if (curGroupOfNodes[j].data === '') {
+            // if the match occurs across the rest of the node, newNode.data === ''
+            // this means that we need to delete newNode from curGroupOfNodes because we added an empty node
+            if (newNode.data === '') {
+              // delete newNode from curGroupOfNodes and replace it with insertedNodes text
+              curGroupOfNodes.splice(j, 1, insertedText);
             } else {
-              if (newNode.data === '') {
-                curGroupOfNodes.splice(j + 1, 0, insertedText);
-              } else {
-                curGroupOfNodes.splice(j + 1, 0, insertedText, newNode);
-              }
+              // insert insertedNodes text into curGroupOfNodes while keeping newNode
+              curGroupOfNodes.splice(j, 1, insertedText, newNode);
+            }
+          } else {
+            if (newNode.data === '') {
+              curGroupOfNodes.splice(j + 1, 0, insertedText);
+            } else {
+              curGroupOfNodes.splice(j + 1, 0, insertedText, newNode);
             }
           }
         }
       }
     }
-    // return the amountOfSelectedMatches and the elements that contain the matches
     return {
       amountOfSelectedMatches,
       elements: nodeList,
@@ -484,6 +598,29 @@ const insertOverSeveralNodes = (
   return nodeGroup;
 };
 
+/**
+ *
+ * @param testIndex the index of the found match in the master string
+ * @param currentGroupOfNodes the group of nodes who's text forms the master string
+ * @returns `NodeParts` interface that stores a nodeParts array or the text from each node
+ * in the current group of nodes and the index of the node from which the current match was found in
+ */
+const getNodeParts = (
+  testIndex: number,
+  currentGroupOfNodes: Text[]
+): NodeParts => {
+  let j = 0;
+  let nodeParts = '' + currentGroupOfNodes[j].data;
+
+  while (testIndex > nodeParts.length - 1) {
+    j++;
+    nodeParts = nodeParts + currentGroupOfNodes[j].data;
+  }
+  return { nodeParts, indexOfNodeThatMatchStartsIn: j };
+};
+
+// levenshtein comparison
+
 const findClosestMatch = (str1: string, str2: string): ClosestMatch => {
   let mat = lev_distance_matrix(str1, str2);
   let i, j;
@@ -520,29 +657,6 @@ const findClosestMatch = (str1: string, str2: string): ClosestMatch => {
   match['length'] = 6;
   return match;
 };
-
-/**
- *
- * @param testIndex the index of the found match in the master string
- * @param currentGroupOfNodes the group of nodes who's text forms the master string
- * @returns `NodeParts` interface that stores a nodeParts array or the text from each node
- * in the current group of nodes and the index of the node from which the current match was found in
- */
-const getNodeParts = (
-  testIndex: number,
-  currentGroupOfNodes: Text[]
-): NodeParts => {
-  let j = 0;
-  let nodeParts = '' + currentGroupOfNodes[j].data;
-
-  while (testIndex > nodeParts.length - 1) {
-    j++;
-    nodeParts = nodeParts + currentGroupOfNodes[j].data;
-  }
-  return { nodeParts, indexOfNodeThatMatchStartsIn: j };
-};
-
-// levenshtein comparison
 
 const lev_distance = (str1: string, str2: string) => {
   let mat = [];
@@ -586,4 +700,8 @@ const lev_distance_matrix = (str1: string, str2: string) => {
     }
   }
   return mat;
+};
+
+const escapeRegExp = (text: string) => {
+  return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
 };
