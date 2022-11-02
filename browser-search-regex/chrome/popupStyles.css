@@ -10,3 +10,14 @@ bsr-popup-card {
   font-size: 15px;
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.7);
 }
+bsr-difference {
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  background-color: #202124;
+  width: 100vw;
+  margin-bottom: inherit;
+  color: #acaeb1;
+  font-family: 'Almarai';
+  font-size: 20px;
+}

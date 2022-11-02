@@ -28,6 +28,10 @@ namespace Components {
           <input class="BSRModifierInput" id="bsr-should-scroll" type="checkbox" />
           <label for="bsr-should-scroll">Stop auto scroll</label>
         </div>
+        <div class="BSRButton BSRModifierButton">
+          <input class="BSRModifierInput" id="bsr-diff-input" type="checkbox" />
+          <label for="bsr-diff-input">Difference</label>
+        </div>
         <div class="BSRButton BSRModifierButton BSRMaxMatchLimitWrapper">
           <input class="BSRModifierInput BSRMaxMatchLimit" id="bsr-max-matches" type="number" value="100"/>
           <div>Maximum matches</div>

@@ -7,6 +7,7 @@ namespace Globals {
   export let INPUT_AMT: number = 0;
   export let popup: HTMLElement | null;
   export let popupDragger: any;
+  export let diff: HTMLElement | null;
 
   /**
    * gets the index of key in Globals.ELEM_KEYS

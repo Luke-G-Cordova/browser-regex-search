@@ -144,9 +144,11 @@ namespace Components {
       this.maxMatchLimit = bsrInput.querySelector(
         '#bsr-max-matches'
       ) as HTMLInputElement;
+
       this.diffInput = bsrInput.querySelector(
-        'bsr-difference'
+        '#bsr-diff-input'
       ) as HTMLInputElement;
+
       this.colorInput = bsrInput.querySelector(
         '#bsr-color-input'
       ) as HTMLInputElement;
@@ -180,6 +182,21 @@ namespace Components {
       // auto focus the input
       setTimeout(() => this.searchInput.focus(), 1);
       // event listeners
+
+      this.diffInput.addEventListener('change', () => {
+        if (this.diffInput.checked) {
+          Globals.diff = document.createElement('bsr-difference');
+          Globals.diff = document.body.insertBefore(
+            Globals.diff,
+            document.body.firstChild
+          );
+        } else {
+          if (Globals.diff != null) {
+            Globals.diff.remove();
+            Globals.diff = null;
+          }
+        }
+      });
 
       // listen for the input event
       this.searchInput.addEventListener('input', () => {
