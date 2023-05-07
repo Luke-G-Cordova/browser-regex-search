@@ -1,3 +1,4 @@
+# ARCHIVED refer to https://github.com/Luke-G-Cordova/Better-Search for updated versions
 # Browser-Search-Regex
 
 Adding functionality to the ctrl+f search function of Google Chrome and other popular search engines
